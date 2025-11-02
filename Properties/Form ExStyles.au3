@@ -1,5 +1,8 @@
-
 #include-once
+#include <GuiConstantsEx.au3>
+#include <WindowsStylesConstants.au3>
+
+#include "..\AutoItObject.au3"
 
 Func FormExStyles()
 	Local $this = _AutoItObject_Class()
@@ -43,6 +46,7 @@ Func FormExStyles()
 EndFunc   ;==>FormExStyles
 
 Func FormExStyles_Handler(ByRef $this, Const $eventID)
+	#forceref $this, $eventID
 
 EndFunc   ;==>FormExStyles_Handler
 

@@ -9,11 +9,11 @@ Func GuiscapeView()
 	$this.AddMethod("Create", "GuiscapeView_Create")
 	$this.AddMethod("Show", "GuiscapeView_Show")
 
-	$this.AddProperty("Hwnd", $ELSCOPE_READONLY, Null)
-	$this.AddProperty("Width", $ELSCOPE_READONLY, Null)
-	$this.AddProperty("Height", $ELSCOPE_READONLY, Null)
-	$this.AddProperty("Left", $ELSCOPE_READONLY, Null)
-	$this.AddProperty("Top", $ELSCOPE_READONLY, Null)
+	$this.AddProperty("Hwnd", $ELSCOPE_READONLY)
+	$this.AddProperty("Width", $ELSCOPE_READONLY)
+	$this.AddProperty("Height", $ELSCOPE_READONLY)
+	$this.AddProperty("Left", $ELSCOPE_READONLY)
+	$this.AddProperty("Top", $ELSCOPE_READONLY)
 
 	Return $this.Object
 EndFunc   ;==>GuiscapeView
@@ -30,5 +30,5 @@ Func GuiscapeView_Create(ByRef $this, Const $title)
 EndFunc   ;==>GuiscapeView_Create
 
 Func GuiscapeView_Show(Const ByRef $this)
-	GUISetState(@SW_SHOW, HWnd($this.Hwnd))
+	GUISetState(@SW_SHOWNORMAL, HWnd($this.Hwnd))
 EndFunc   ;==>GuiscapeView_Show

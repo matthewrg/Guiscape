@@ -1,5 +1,7 @@
-
 #include-once
+#include <WindowsStylesConstants.au3>
+
+#include "..\AutoItObject.au3"
 
 Func CanvasView()
 	Local $this = _AutoItObject_Class()
@@ -8,8 +10,8 @@ Func CanvasView()
 
 	$this.AddMethod("Create", "CanvasView_Create")
 
-	$this.AddProperty("Hwnd", $ELSCOPE_READONLY, Null)
-	$this.AddProperty("ContextNewForm", $ELSCOPE_READONLY, Null)
+	$this.AddProperty("Hwnd", $ELSCOPE_READONLY)
+	$this.AddProperty("ContextNewForm", $ELSCOPE_READONLY)
 
 	Return $this.Object
 EndFunc   ;==>CanvasView
@@ -20,6 +22,4 @@ Func CanvasView_Create(ByRef $this, Const ByRef $parent)
 	Local Const $contextMenu = GUICtrlCreateContextMenu()
 
 	$this.ContextNewForm = GUICtrlCreateMenuItem("New Form", $contextMenu)
-	
-	$this.EraseCanvas = GUICtrlCreateMenuItem("Erase Canvas", $contextMenu)
 EndFunc   ;==>CanvasView_Create

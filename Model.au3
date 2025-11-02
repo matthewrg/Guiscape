@@ -1,48 +1,58 @@
-
 #include-once
+#include <WinAPISysWin.au3>
 
-Func Model()
-	Local $formList = []
+#include "AutoItObject.au3"
+
+Func GUIScapeModel()
+	Local $formList = ''
+	#forceref $formList
+
 
 	Local $this = _AutoItObject_Class()
 
 	$this.Create()
 
-	$this.AddMethod("EventArrayToMap", "Model_EventArrayToMap")
-	$this.AddMethod("CursorInfoToMap", "Model_CursorInfoToMap")
-	$this.AddMethod("HWndFromPoint", "Model_HWndFromPoint")
+	$this.AddMethod("CreateFormObject", "GuiscapeModel_CreateFormObject")
+	$this.AddMethod("EventArrayToMap", "GuiscapeModel_EventArrayToMap")
+	$this.AddMethod("CursorInfoToMap", "GuiscapeModel_CursorInfoToMap")
+	$this.AddMethod("HWndFromPoint", "GuiscapeModel_HWndFromPoint")
 
 	$this.AddProperty("Title", $ELSCOPE_READONLY, "Guiscape")
 	$this.AddProperty("ResourcesDir", $ELSCOPE_READONLY, @ScriptDir & "\Resources\")
 
 	Return $this.Object
-EndFunc   ;==>Model
+EndFunc   ;==>GUIScapeModel
 
-Func Model_EventArrayToMap(Const ByRef $this, Const ByRef $eventArray)
+Func GUIScapeModel_EventArrayToMap(Const ByRef $this, Const ByRef $eventArray)
+	#forceref $this
 	Local $eventMap[]
 
 	$eventMap.ID = $eventArray[0]
-	$eventMap.Form = HWnd($eventArray[1])
-	$eventMap.Control = HWnd($eventArray[2])
-	$eventMap.X = $eventArray[3]
-	$eventMap.Y = $eventArray[4]
+	$eventMap.FormHwnd = $eventArray[1]
+	$eventMap.ControlHwnd = $eventArray[2]
+	$eventMap.MouseX = $eventArray[3]
+	$eventMap.MouseY = $eventArray[4]
 
 	Return $eventMap
-EndFunc   ;==>Model_EventArrayToMap
+EndFunc   ;==>GUIScapeModel_EventArrayToMap
 
-Func Model_CursorInfoToMap(Const ByRef $this, Const ByRef $cursorInfo)
-	Local $cursorInfoMap[]
+Func GUIScapeModel_CursorInfoToMap(Const ByRef $this, Const ByRef $cursorInfo)
+	#forceref $this
 
-	$cursorInfoMap.X = $cursorInfo[0]
-	$cursorInfoMap.Y = $cursorInfo[1]
-	$cursorInfoMap.Primary = $cursorInfo[2]
-	$cursorInfoMap.Secondary = $cursorInfo[3]
-	$cursorInfoMap.ID = $cursorInfo[4]
+	Local $map[]
 
-	Return $cursorInfoMap
-EndFunc   ;==>Model_CursorInfoToMap
+	$map.MouseX = $cursorInfo[0]
+	$map.MouseY = $cursorInfo[1]
+	$map.Primary = $cursorInfo[2]
+	$map.Secondary = $cursorInfo[3]
+	$map.ID = $cursorInfo[4]
 
-Func Model_HWndFromPoint(Const ByRef $this)
+	Return $map
+EndFunc   ;==>GUIScapeModel_CursorInfoToMap
+
+Func GUIScapeModel_HWndFromPoint(Const ByRef $this)
+	#forceref $this
+
 	Local Static $g_tStruct = DllStructCreate($tagPOINT)
 
 	DllStructSetData($g_tStruct, "x", MouseGetPos(0))
@@ -55,4 +65,4 @@ Func Model_HWndFromPoint(Const ByRef $this)
 
 	;Return _WinAPI_GetClassName($hwnd)
 	Return _WinAPI_GetAncestor($hwnd, $GA_PARENT)
-EndFunc   ;==>Model_HWndFromPoint
+EndFunc   ;==>GUIScapeModel_HWndFromPoint

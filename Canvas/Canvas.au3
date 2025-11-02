@@ -1,6 +1,7 @@
-
 #include-once
 
+#include "..\AutoItObject.au3"
+#include "Form Object\Form Object.au3"
 #include "Model.au3"
 #include "View.au3"
 
@@ -14,24 +15,33 @@ Func Canvas()
 	$this.AddMethod("Show", "Canvas_Show")
 	$this.AddMethod("Hide", "Canvas_Hide")
 
-	$this.AddProperty("View", $ELSCOPE_READONLY, CanvasView())
+	$this.AddProperty("FormObject", $ELSCOPE_READONLY)
+
+	$this.AddProperty("View", $ELSCOPE_PRIVATE, CanvasView())
 	$this.AddProperty("Model", $ELSCOPE_PRIVATE, CanvasModel())
-	$this.AddProperty("Visible", $ELSCOPE_PRIVATE, Null)
+	$this.AddProperty("Visible", $ELSCOPE_PRIVATE, False)
 
 	Return $this.Object
 EndFunc   ;==>Canvas
 
 Func Canvas_Handler(ByRef $this, Const $event)
-	If $event.Form <> HWnd($this.View.Hwnd) Then Return False
+	If ($event.FormHwnd) <> ($this.View.Hwnd) Then Return False
 
 	Switch $event.ID
-		Case $this.View.ContextNewForm
-			$this.Form.Create()
+		Case "Form"
+			$this.FormObject.Create()
 
 			Return True
 
-		Case $GUI_EVENT_PRIMARYUP
-			Return "Canvas"
+		Case "Button"
+			$this.FormObject.CreateButton()
+
+			Return True
+
+		Case $this.View.ContextNewForm
+			$this.FormObject.Create()
+
+			Return True
 	EndSwitch
 
 	Return False
@@ -39,13 +49,13 @@ EndFunc   ;==>Canvas_Handler
 
 Func Canvas_Create(ByRef $this, Const ByRef $parent)
 	$this.View.Create($parent)
-	
-	$this.Visible = False
+
+	$this.FormObject = FormObject($this.View.Hwnd)
 EndFunc   ;==>Canvas_Create
 
 Func Canvas_Show(ByRef $this)
 	If Not $this.Visible Then
-		GUISetState(@SW_SHOW, HWnd($this.View.Hwnd))
+		GUISetState(@SW_SHOWNORMAL, HWnd($this.View.Hwnd))
 
 		$this.Visible = True
 	EndIf

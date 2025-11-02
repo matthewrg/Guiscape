@@ -1,5 +1,8 @@
-
 #include-once
+#include <GuiConstantsEx.au3>
+#include <WindowsStylesConstants.au3>
+
+#include "..\AutoItObject.au3"
 
 Func FormStyles()
 	Local $this = _AutoItObject_Class()
@@ -40,59 +43,60 @@ Func FormStyles()
 EndFunc   ;==>FormStyles
 
 Func FormStyles_Handler(ByRef $this, Const $eventID)
+	#forceref $this, $eventID
 
 EndFunc   ;==>FormStyles_Handler
 
 Func FormStyles_Initialize(ByRef $this, Const $styles)
 	Local Const $allStyles[] = [$WS_BORDER, _
-			                    $WS_POPUP, _
-			                    $WS_CAPTION, _
-			                    $WS_CLIPCHILDREN, _
-			                    $WS_CLIPSIBLINGS, _
-			                    $WS_DISABLED, _
-			                    $WS_DLGFRAME, _
-			                    $WS_HSCROLL, _
-			                    $WS_MAXIMIZE, _
-			                    $WS_MAXIMIZEBOX, _
-			                    $WS_OVERLAPPED, _
-			                    $WS_OVERLAPPEDWINDOW, _
-			                    $WS_POPUPWINDOW, _
-			                    $WS_SIZEBOX, _
-			                    $WS_SYSMENU, _
-			                    $WS_THICKFRAME, _
-			                    $WS_VSCROLL, _
-			                    $WS_VISIBLE, _
-			                    $WS_CHILD, _
-			                    $WS_GROUP, _
-			                    $WS_TABSTOP, _
-			                    $DS_MODALFRAME, _
-			                    $DS_SETFOREGROUND, _
-			                    $DS_CONTEXTHELP]
+			$WS_POPUP, _
+			$WS_CAPTION, _
+			$WS_CLIPCHILDREN, _
+			$WS_CLIPSIBLINGS, _
+			$WS_DISABLED, _
+			$WS_DLGFRAME, _
+			$WS_HSCROLL, _
+			$WS_MAXIMIZE, _
+			$WS_MAXIMIZEBOX, _
+			$WS_OVERLAPPED, _
+			$WS_OVERLAPPEDWINDOW, _
+			$WS_POPUPWINDOW, _
+			$WS_SIZEBOX, _
+			$WS_SYSMENU, _
+			$WS_THICKFRAME, _
+			$WS_VSCROLL, _
+			$WS_VISIBLE, _
+			$WS_CHILD, _
+			$WS_GROUP, _
+			$WS_TABSTOP, _
+			$DS_MODALFRAME, _
+			$DS_SETFOREGROUND, _
+			$DS_CONTEXTHELP]
 
 	Local Const $vars[] = [$this.WS_BORDER, _
-			               $this.WS_POPUP, _
-			               $this.WS_CAPTION, _
-			               $this.WS_CLIPCHILDREN, _
-			               $this.WS_CLIPSIBLINGS, _
-			               $this.WS_DISABLED, _
-			               $this.WS_DLGFRAME, _
-			               $this.WS_HSCROLL, _
-			               $this.WS_MAXIMIZE, _
-			               $this.WS_MAXIMIZEBOX, _
-			               $this.WS_OVERLAPPED, _
-			               $this.WS_OVERLAPPEDWINDOW, _
-			               $this.WS_POPUPWINDOW, _
-			               $this.WS_SIZEBOX, _
-			               $this.WS_SYSMENU, _
-			               $this.WS_THICKFRAME, _
-			               $this.WS_VSCROLL, _
-			               $this.WS_VISIBLE, _
-			               $this.WS_CHILD, _
-			               $this.WS_GROUP, _
-			               $this.WS_TABSTOP, _
-			               $this.DS_MODALFRAME, _
-			               $this.DS_SETFOREGROUND, _
-			               $this.DS_CONTEXTHELP]
+			$this.WS_POPUP, _
+			$this.WS_CAPTION, _
+			$this.WS_CLIPCHILDREN, _
+			$this.WS_CLIPSIBLINGS, _
+			$this.WS_DISABLED, _
+			$this.WS_DLGFRAME, _
+			$this.WS_HSCROLL, _
+			$this.WS_MAXIMIZE, _
+			$this.WS_MAXIMIZEBOX, _
+			$this.WS_OVERLAPPED, _
+			$this.WS_OVERLAPPEDWINDOW, _
+			$this.WS_POPUPWINDOW, _
+			$this.WS_SIZEBOX, _
+			$this.WS_SYSMENU, _
+			$this.WS_THICKFRAME, _
+			$this.WS_VSCROLL, _
+			$this.WS_VISIBLE, _
+			$this.WS_CHILD, _
+			$this.WS_GROUP, _
+			$this.WS_TABSTOP, _
+			$this.DS_MODALFRAME, _
+			$this.DS_SETFOREGROUND, _
+			$this.DS_CONTEXTHELP]
 
 ;~ 	Local Const $names[] = ["WS_BORDER          ", _
 ;~ 			                "WS_POPUP           ", _
@@ -120,35 +124,35 @@ Func FormStyles_Initialize(ByRef $this, Const $styles)
 ;~ 			                "DS_CONTEXTHELP     "]
 
 	GUICtrlSetState($this.SS_DEFAULT_GUI, $GUI_CHECKED + $GUI_DISABLE)
-	
+
 	Local Const $upBound = UBound($allStyles)
 
 	For $i = 0 To $upBound - 1
 		If BitAND($styles, $allStyles[$i]) = $allStyles[$i] Then
 			Switch $allStyles[$i]
-			  Case $WS_MAXIMIZEBOX, $WS_OVERLAPPEDWINDOW, $WS_SIZEBOX, $WS_THICKFRAME, $WS_CHILD, $WS_TABSTOP
-				;ConsoleWrite($names[$i] & " False" & @CRLF)
-				
-				GUICtrlSetState($vars[$i], $GUI_UNCHECKED)
-			  
-			  Case Else
-				;ConsoleWrite($names[$i] & " True" & @CRLF)
-				
-				GUICtrlSetState($vars[$i], $GUI_CHECKED)
+				Case $WS_MAXIMIZEBOX, $WS_OVERLAPPEDWINDOW, $WS_SIZEBOX, $WS_THICKFRAME, $WS_CHILD, $WS_TABSTOP
+					;ConsoleWrite($names[$i] & " False" & @CRLF)
+
+					GUICtrlSetState($vars[$i], $GUI_UNCHECKED)
+
+				Case Else
+					;ConsoleWrite($names[$i] & " True" & @CRLF)
+
+					GUICtrlSetState($vars[$i], $GUI_CHECKED)
 			EndSwitch
 
 		Else
 			Switch $allStyles[$i]
-			  Case $WS_POPUP, $WS_OVERLAPPED
-				;ConsoleWrite($names[$i] & " True" & @CRLF)
-				
-				GUICtrlSetState($vars[$i], $GUI_CHECKED)
-				
-			  Case Else
-				;ConsoleWrite($names[$i] & " False" & @CRLF)
-				
-				GUICtrlSetState($vars[$i], $GUI_UNCHECKED)
-			EndSwitch		  
+				Case $WS_POPUP, $WS_OVERLAPPED
+					;ConsoleWrite($names[$i] & " True" & @CRLF)
+
+					GUICtrlSetState($vars[$i], $GUI_CHECKED)
+
+				Case Else
+					;ConsoleWrite($names[$i] & " False" & @CRLF)
+
+					GUICtrlSetState($vars[$i], $GUI_UNCHECKED)
+			EndSwitch
 		EndIf
 	Next
 EndFunc   ;==>FormStyles_Initialize

@@ -1,5 +1,5 @@
-
 #include-once
+#include "..\AutoItObject.au3"
 
 Func CanvasModel()
 	Local $formList[]
