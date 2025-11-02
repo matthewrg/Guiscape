@@ -1,4 +1,5 @@
 #include-once
+
 #include <GuiConstantsEx.au3>
 
 #include "..\AutoItObject.au3"
@@ -9,7 +10,6 @@ Func Tab()
 	$this.Create()
 
 	$this.AddMethod("Create", "Tab_Create")
-
 	$this.AddMethod("Handler", "Tab_Handler")
 
 	$this.AddProperty("Tab", $ELSCOPE_PRIVATE)
@@ -26,8 +26,6 @@ Func Tab_Create(ByRef $this)
 
 	GUICtrlCreateTabItem("Properties")
 
-	;GUICtrlSetState(-1, $GUI_SHOW)
-
 	GUICtrlCreateTabItem('')
 
 	GUICtrlCreateTabItem("Script")
@@ -35,10 +33,6 @@ Func Tab_Create(ByRef $this)
 	GUICtrlCreateTabItem('')
 
 	GUICtrlCreateTabItem("Object Explorer")
-
-	GUICtrlCreateTabItem('')
-
-	GUICtrlCreateTabItem("GUI Defaults")
 
 	GUICtrlCreateTabItem('')
 EndFunc   ;==>Tab_Create
@@ -60,9 +54,6 @@ Func Tab_Handler(ByRef $this, Const $eventID)
 
 				Case 3
 					Return "Object Explorer"
-
-				Case 4
-					Return "GUI Defaults"
 			EndSwitch
 	EndSwitch
 

@@ -1,4 +1,5 @@
 #include-once
+
 #include "..\AutoItObject.au3"
 
 #include "Model.au3"
@@ -11,13 +12,10 @@ Func Menubar(Const $settingsDir)
 	$this.Create()
 
 	$this.AddMethod("Handler", "Menubar_Handler")
-
 	$this.AddMethod("Create", "Menubar_Create")
-
 	$this.AddMethod("Initialize", "Menubar_Initialize")
 
 	$this.AddProperty("Model", $ELSCOPE_READONLY, MenubarModel($settingsDir))
-
 	$this.AddProperty("View", $ELSCOPE_READONLY, MenubarView())
 
 	Return $this.Object
@@ -25,6 +23,7 @@ EndFunc   ;==>Menubar
 
 Func Menubar_Handler(ByRef $this, Const $eventID)
 	Local $setting
+	
 	Switch $eventID
 		Case $this.View.ShowGrid
 			$setting = $this.View.Toggle($this.View.ShowGrid)

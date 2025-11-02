@@ -1,4 +1,5 @@
 #include-once
+
 #include <GuiConstantsEx.au3>
 #include <WindowsStylesConstants.au3>
 
@@ -144,121 +145,28 @@ Func FormExStyles_Initialize(ByRef $this, Const $exStyles)
 			$this.WS_EX_WINDOWEDGE, _
 			$this.GUI_WS_EX_PARENTDRAG]
 
-;~ 	Local Const $names[] = ["WS_EX_ACCEPTFILES        ", _
-;~ 			"WS_EX_APPWINDOW          ", _
-;~ 			"WS_EX_CLIENTEDGE         ", _
-;~ 			"WS_EX_COMPOSITED         ", _
-;~ 			"WS_EX_CONTEXTHELP        ", _
-;~ 			"WS_EX_CONTROLPARENT      ", _
-;~ 			"WS_EX_DLGMODALFRAME      ", _
-;~ 			"WS_EX_LAYERED            ", _
-;~ 			"WS_EX_LAYOUTRTL          ", _
-;~ 			"WS_EX_LEFT               ", _
-;~ 			"WS_EX_LEFTSCROLLBAR      ", _
-;~ 			"WS_EX_LTRREADING         ", _
-;~ 			"WS_EX_MDICHILD           ", _
-;~ 			"WS_EX_NOACTIVATE         ", _
-;~ 			"WS_EX_NOINHERITLAYOUT    ", _
-;~ 			"WS_EX_NOPARENTNOTIFY     ", _
-;~ 			"WS_EX_NOREDIRECTIONBITMAP", _
-;~ 			"WS_EX_OVERLAPPEDWINDOW   ", _
-;~ 			"WS_EX_PALETTEWINDOW      ", _
-;~ 			"WS_EX_RIGHT              ", _
-;~ 			"WS_EX_RIGHTSCROLLBAR     ", _
-;~ 			"WS_EX_RTLREADING         ", _
-;~ 			"WS_EX_STATICEDGE         ", _
-;~ 			"WS_EX_TOOLWINDOW         ", _
-;~ 			"WS_EX_TOPMOST            ", _
-;~ 			"WS_EX_TRANSPARENT        ", _
-;~ 			"WS_EX_WINDOWEDGE         ", _
-;~ 			"GUI_WS_EX_PARENTDRAG     "]
-
 	Local Const $upBound = UBound($allStyles)
 
+	; This loop just makes the windows that Guiscape creates look like a regular window when
+	; looking at the Styles tab under the Properties tab. Not sure yet if this will cause 
+	; problems down the road!
 	For $i = 0 To $upBound - 1
 		If BitAND($exStyles, $allStyles[$i]) = $allStyles[$i] Then
 			Switch $allStyles[$i]
 				Case $WS_EX_OVERLAPPEDWINDOW, $WS_EX_PALETTEWINDOW
-					;ConsoleWrite($names[$i] & " False" & @CRLF)
-
 					GUICtrlSetState($vars[$i], $GUI_UNCHECKED)
 
 				Case Else
-					;ConsoleWrite($names[$i] & " True" & @CRLF)
-
 					GUICtrlSetState($vars[$i], $GUI_CHECKED)
 			EndSwitch
 		Else
 			Switch $allStyles[$i]
 				Case $WS_EX_LEFT, $WS_EX_LTRREADING, $WS_EX_RIGHTSCROLLBAR
-					;ConsoleWrite($names[$i] & " True" & @CRLF)
-
 					GUICtrlSetState($vars[$i], $GUI_CHECKED)
 
 				Case Else
-					;ConsoleWrite($names[$i] & " False" & @CRLF)
-
 					GUICtrlSetState($vars[$i], $GUI_UNCHECKED)
 			EndSwitch
 		EndIf
 	Next
 EndFunc   ;==>FormExStyles_Initialize
-
-; Native
-;~ WS_EX_ACCEPTFILES         False
-;~ WS_EX_APPWINDOW           False
-;~ WS_EX_CLIENTEDGE          False
-;~ WS_EX_COMPOSITED          False
-;~ WS_EX_CONTEXTHELP         False
-;~ WS_EX_CONTROLPARENT       False
-;~ WS_EX_DLGMODALFRAME       False
-;~ WS_EX_LAYERED             False
-;~ WS_EX_LAYOUTRTL           False
-;~ WS_EX_LEFT                True
-;~ WS_EX_LEFTSCROLLBAR       False
-;~ WS_EX_LTRREADING          True
-;~ WS_EX_MDICHILD            False
-;~ WS_EX_NOACTIVATE          False
-;~ WS_EX_NOINHERITLAYOUT     False
-;~ WS_EX_NOPARENTNOTIFY      False
-;~ WS_EX_NOREDIRECTIONBITMAP False
-;~ WS_EX_OVERLAPPEDWINDOW    False
-;~ WS_EX_PALETTEWINDOW       False
-;~ WS_EX_RIGHT               False
-;~ WS_EX_RIGHTSCROLLBAR      True
-;~ WS_EX_RTLREADING          False
-;~ WS_EX_STATICEDGE          False
-;~ WS_EX_TOOLWINDOW          False
-;~ WS_EX_TOPMOST             False
-;~ WS_EX_TRANSPARENT         False
-;~ WS_EX_WINDOWEDGE          True
-;~ GUI_WS_EX_PARENTDRAG      False
-
-;~ WS_EX_ACCEPTFILES         False
-;~ WS_EX_APPWINDOW           False
-;~ WS_EX_CLIENTEDGE          False
-;~ WS_EX_COMPOSITED          False
-;~ WS_EX_CONTEXTHELP         False
-;~ WS_EX_CONTROLPARENT       False
-;~ WS_EX_DLGMODALFRAME       False
-;~ WS_EX_LAYERED             False
-;~ WS_EX_LAYOUTRTL           False
-;~ WS_EX_LEFT                False
-;~ WS_EX_LEFTSCROLLBAR       False
-;~ WS_EX_LTRREADING          False
-;~ WS_EX_MDICHILD            False
-;~ WS_EX_NOACTIVATE          False
-;~ WS_EX_NOINHERITLAYOUT     False
-;~ WS_EX_NOPARENTNOTIFY      False
-;~ WS_EX_NOREDIRECTIONBITMAP False
-;~ WS_EX_OVERLAPPEDWINDOW    True
-;~ WS_EX_PALETTEWINDOW       True
-;~ WS_EX_RIGHT               False
-;~ WS_EX_RIGHTSCROLLBAR      False
-;~ WS_EX_RTLREADING          False
-;~ WS_EX_STATICEDGE          False
-;~ WS_EX_TOOLWINDOW          False
-;~ WS_EX_TOPMOST             False
-;~ WS_EX_TRANSPARENT         False
-;~ WS_EX_WINDOWEDGE          True
-;~ GUI_WS_EX_PARENTDRAG      False

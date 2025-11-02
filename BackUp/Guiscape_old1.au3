@@ -30,7 +30,7 @@ Func main()
 	$Guiscape.Properties.FormExStyles.Initialize($Guiscape.Canvas.FormObject.GetExStyle())
 
 	Do
-		Local $event = EventArrayToMap(GUIGetMsg($GUI_EVENT_ARRAY))
+		Local $event = $Guiscape.Model.EventArrayToMap(GUIGetMsg($GUI_EVENT_ARRAY))
 
 		Switch $event.ID
 			Case $GUI_EVENT_NONE
@@ -59,7 +59,7 @@ Func main()
 		Switch $Guiscape.Tab.Handler($event.ID)
 			Case "Canvas"
 				$Guiscape.Properties.Hide()
-
+				
 				$Guiscape.Canvas.Show
 
 				ContinueLoop
@@ -92,7 +92,7 @@ Func main()
 
 				ContinueLoop
 		EndSwitch
-
+		
 		; To-Do: Handle all menu bar items
 		Switch $Guiscape.Menubar.Handler($event.ID)
 			Case "Handled"
@@ -117,7 +117,7 @@ Func Guiscape()
 
 	$this.AddMethod("Create", "Guiscape_Create")
 
-	$this.AddProperty("Model", $ELSCOPE_READONLY, GUIScapeModel())
+	$this.AddProperty("Model", $ELSCOPE_READONLY, GuiscapeModel())
 	$this.AddProperty("View", $ELSCOPE_READONLY, GuiscapeView())
 	$this.AddProperty("Menubar", $ELSCOPE_READONLY)
 	$this.AddProperty("Toolbar", $ELSCOPE_READONLY)
@@ -154,7 +154,7 @@ Func Guiscape_Create(ByRef $this)
 	Return True
 EndFunc   ;==>Guiscape_Create
 
-Func EventArrayToMap(Const ByRef $eventArray)
+Func EventArrayToMap(Const ByRef $eventArray)	
 	Local $eventMap[]
 
 	$eventMap.ID = $eventArray[0]
@@ -164,9 +164,11 @@ Func EventArrayToMap(Const ByRef $eventArray)
 	$eventMap.Y = $eventArray[4]
 
 	Return $eventMap
-EndFunc   ;==>EventArrayToMap
+EndFunc
 
-Func CursorInfoToMap(Const ByRef $cursorInfo)
+Func CursorInfoToMap(Const ByRef $this, Const ByRef $cursorInfo)
+	#forceref $this
+
 	Local $map[]
 
 	$map.X = $cursorInfo[0]
@@ -176,19 +178,21 @@ Func CursorInfoToMap(Const ByRef $cursorInfo)
 	$map.ID = $cursorInfo[4]
 
 	Return $map
-EndFunc   ;==>CursorInfoToMap
+EndFunc   ;==>GUIScapeModel_CursorInfoToMap
 
-;~ Func HWndFromPoint()
-;~ 	Local Static $g_tStruct = DllStructCreate($tagPOINT)
+Func HWndFromPoint(Const ByRef $this)
+	#forceref $this
 
-;~ 	DllStructSetData($g_tStruct, "x", MouseGetPos(0))
+	Local Static $g_tStruct = DllStructCreate($tagPOINT)
 
-;~ 	DllStructSetData($g_tStruct, "y", MouseGetPos(1))
+	DllStructSetData($g_tStruct, "x", MouseGetPos(0))
 
-;~ 	ConsoleWrite(_WinAPI_WindowFromPoint($g_tStruct) & @CRLF)
+	DllStructSetData($g_tStruct, "y", MouseGetPos(1))
 
-;~ 	Local $hwnd = _WinAPI_WindowFromPoint($g_tStruct)
+	ConsoleWrite(_WinAPI_WindowFromPoint($g_tStruct) & @CRLF)
 
-;~ 	;Return _WinAPI_GetClassName($hwnd)
-;~ 	Return _WinAPI_GetAncestor($hwnd, $GA_PARENT)
-;~ EndFunc   ;==>HWndFromPoint
+	Local $hwnd = _WinAPI_WindowFromPoint($g_tStruct)
+
+	;Return _WinAPI_GetClassName($hwnd)
+	Return _WinAPI_GetAncestor($hwnd, $GA_PARENT)
+EndFunc   ;==>GUIScapeModel_HWndFromPoint

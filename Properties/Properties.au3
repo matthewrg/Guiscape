@@ -1,4 +1,5 @@
 #include-once
+
 #include "..\AutoItObject.au3"
 
 #include "Form Styles.au3"
@@ -13,10 +14,11 @@ Func Properties()
 	$this.AddMethod("Create", "Properties_Create")
 	$this.AddMethod("Show", "Properties_Show")
 	$this.AddMethod("Hide", "Properties_Hide")
-
-	$this.AddProperty("Hwnd", $ELSCOPE_PRIVATE)
+	
 	$this.AddProperty("FormStyles", $ELSCOPE_READONLY, FormStyles())
 	$this.AddProperty("FormExStyles", $ELSCOPE_READONLY, FormExStyles())
+
+	$this.AddProperty("Hwnd", $ELSCOPE_PRIVATE)
 
 	Return $this.Object
 EndFunc   ;==>Properties

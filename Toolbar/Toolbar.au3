@@ -1,8 +1,6 @@
 #include-once
+
 #include "..\AutoItObject.au3"
-
-#include "Model.au3"
-
 #include "View.au3"
 
 Func Toolbar(Const $resourcesDir)
