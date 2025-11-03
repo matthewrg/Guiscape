@@ -1,3 +1,10 @@
+
+; Roadmap: Currently working on laying out the GUI in it's entirety
+; once that's done then begin working on fleshing out the actual GUI designer code
+; which MattyD has made some contributions toward in the forum post.
+; A future plan is to allow an au3 to be dropped on Guiscape and then display
+; the GUI elements found within so that they can be edited and then written back to the au3.
+
 #AutoIt3Wrapper_UseX64=Y
 
 Opt("WinTitleMatchMode", 4)
@@ -10,6 +17,7 @@ Opt("MouseCoordMode", 2)
 #include "Menubar\Menubar.au3"
 #include "Toolbar\Toolbar.au3"
 #include "Properties\Properties.au3"
+#include "Script\Script.au3"
 #include "Tab\Tab.au3"
 #include "View.au3"
 #include "Model.au3"
@@ -24,7 +32,7 @@ Func main()
 	$Guiscape.Create()
 
 	$Guiscape.Canvas.FormObject.Create()
-
+	
 	$Guiscape.Properties.FormStyles.Initialize($Guiscape.Canvas.FormObject.GetStyle())
 
 	$Guiscape.Properties.FormExStyles.Initialize($Guiscape.Canvas.FormObject.GetExStyle())
@@ -37,9 +45,17 @@ Func main()
 				ContinueLoop
 
 			Case $GUI_EVENT_CLOSE
-				Exit
+				; Ask if the Designer would like to save their progress before closing the window.
+					
+				If $event.FormHwnd = $Guiscape.View.Hwnd Then 				
+					Exit
+				Else					
+					GUIDelete($event.FormHwnd)
+				EndIf
 		EndSwitch
-
+		
+		; creates forms and creates the controls for the currently active form; eventually
+		; I plan to Work in MattyD's contributions once I get to that point unless he wants to do it.
 		Switch $Guiscape.Toolbar.Handler($event.ID)
 			Case "Form"
 				$Guiscape.Canvas.FormObject.Create()
@@ -54,41 +70,50 @@ Func main()
 				$Guiscape.Canvas.FormObject.CreateButton()
 
 				ContinueLoop
+				
+			Case "Checkbox"
+				ContinueLoop
+				
+			; Case ....
 		EndSwitch
-
+		
+		; Shows and hides tabs
 		Switch $Guiscape.Tab.Handler($event.ID)
 			Case "Canvas"
-				$Guiscape.Properties.Hide()
-
 				$Guiscape.Canvas.Show
+				
+				$Guiscape.Properties.Hide()
+				
+				$Guiscape.Script.Hide()
 
 				ContinueLoop
 
 			Case "Properties"
-				$Guiscape.Canvas.Hide()
-
 				$Guiscape.Properties.Show()
+				
+				$Guiscape.Canvas.Hide()
+				
+				$Guiscape.Script.Hide()
 
 				ContinueLoop
 
-			Case "Script"
+			Case "Script"			
+				$Guiscape.Script.Show()
+	
 				$Guiscape.Canvas.Hide()
 
 				$Guiscape.Properties.Hide()
-
+				
 				ContinueLoop
 
 			Case "Object Explorer"
+				;$Guiscape.ObjectExplorer.Show()
+				
 				$Guiscape.Canvas.Hide()
 
 				$Guiscape.Properties.Hide()
-
-				ContinueLoop
-
-			Case "GUI Defaults"
-				$Guiscape.Canvas.Hide()
-
-				$Guiscape.Properties.Hide()
+				
+				$Guiscape.Script.Hide()
 
 				ContinueLoop
 		EndSwitch
@@ -121,6 +146,7 @@ Func Guiscape()
 	$this.AddProperty("View", $ELSCOPE_READONLY, GuiscapeView())
 	$this.AddProperty("Menubar", $ELSCOPE_READONLY)
 	$this.AddProperty("Toolbar", $ELSCOPE_READONLY)
+	$this.AddProperty("Script", $ELSCOPE_READONLY, Script())
 	$this.AddProperty("Tab", $ELSCOPE_READONLY, Tab())
 	$this.AddProperty("Canvas", $ELSCOPE_READONLY, Canvas())
 	$this.AddProperty("Properties", $ELSCOPE_READONLY, Properties())
@@ -146,6 +172,8 @@ Func Guiscape_Create(ByRef $this)
 	$this.Canvas.Create($this.View)
 
 	$this.Properties.Create($this.View)
+
+	$this.Script.Create($this.View)
 
 	$this.Canvas.Show()
 
