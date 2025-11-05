@@ -9,8 +9,7 @@ Func FormObject(Const $parent)
 
 	$this.Create()
 
-	$this.AddMethod("Handler", "FormObject_Handler")
-	
+	$this.AddMethod("Handler", "FormObject_Handler")	
 	$this.AddMethod("Create", "FormObject_Create")
 	
 	$this.AddMethod("GetTitle", "FormObject_GetTitle")
@@ -44,6 +43,12 @@ Func FormObject(Const $parent)
 	$this.AddMethod("SetExStyle", "FormObject_SetExStyle")
 
 	$this.AddProperty("Hwnd", $ELSCOPE_READONLY)
+	$this.AddProperty("ChildForm", $ELSCOPE_READONLY)
+	$this.AddProperty("Properties", $ELSCOPE_READONLY)
+	$this.AddProperty("Styles", $ELSCOPE_READONLY)
+	$this.AddProperty("ExStyles", $ELSCOPE_READONLY)
+	$this.AddProperty("ContextMenu", $ELSCOPE_READONLY)
+	$this.AddProperty("Menubar", $ELSCOPE_READONLY)
 
 	$this.AddProperty("Parent", $ELSCOPE_PRIVATE, $parent)
 	$this.AddProperty("Title", $ELSCOPE_PRIVATE)
@@ -71,22 +76,46 @@ EndFunc   ;==>FormObject
 
 Func FormObject_Handler(ByRef $this, Const ByRef $event)
 	If Not $event.FormHwnd <> HWnd($this.Hwnd) Then Return False
+	
+	Switch $event.ID
+		Case $this.ChildForm
+			Return "Child Form"
+			
+		Case $this.Properties
+			Return "Properties"
+			
+		Case $this.Styles
+			Return "Styles"
+			
+		Case $this.ExStyles
+			Return "Extended Styles"
+			
+		Case $this.ContextMenu
+			Return "Context Menu"
+			
+		Case $this.Menubar
+			Return "Menubar"			
+	EndSwitch
 
 	Return False
 EndFunc   ;==>FormObject_Handler
 
 Func FormObject_Create(ByRef $this, Const $title = "<new form>")
-	$this.Hwnd = GUICreate($title, 400, 600, 5, 5, BitOR($WS_CHILD, $WS_OVERLAPPEDWINDOW), -1, HWnd($this.Parent))
+	$this.Hwnd = GUICreate($title, 400 * $g_iDPI_ratio1, 600 * $g_iDPI_ratio1, 5 * $g_iDPI_ratio1, 5 * $g_iDPI_ratio1, BitOR($WS_CHILD, $WS_OVERLAPPEDWINDOW), -1, HWnd($this.Parent))
 
 	Local Const $contextMenu = GUICtrlCreateContextMenu()
 
-	GUICtrlCreateMenuItem("Child Form", $contextMenu)
+	$this.ChildForm = GUICtrlCreateMenuItem("Child Form", $contextMenu)
 
-	GUICtrlCreateMenuItem("Properties", $contextMenu)
+	$this.Properties = GUICtrlCreateMenuItem("Properties", $contextMenu)
 
-	GUICtrlCreateMenuItem("Styles", $contextMenu)
+	$this.Styles = GUICtrlCreateMenuItem("Styles", $contextMenu)
 
-	GUICtrlCreateMenuItem("ExStyles", $contextMenu)
+	$this.ExStyles = GUICtrlCreateMenuItem("Extended Styles", $contextMenu)
+	
+	$this.ContextMenu = GUICtrlCreateMenuItem("Context Menu", $contextMenu)
+	
+	$this.Menubar = GUICtrlCreateMenuItem("Menubar", $contextMenu)
 
 	$this.Ttitle = WinGetTitle(HWnd($this.Hwnd))
 
@@ -102,7 +131,7 @@ Func FormObject_Create(ByRef $this, Const $title = "<new form>")
 	$this.Style = $styles[0]
 	$this.ExStyle = $styles[1]
 
-	GUISetState(@SW_SHOWNORMAL, HWnd($this.Hwnd))
+	GUISetState(@SW_SHOW, HWnd($this.Hwnd))
 
 	Return True
 EndFunc   ;==>FormObject_Create
@@ -148,19 +177,19 @@ EndFunc   ;==>FormObject_GetExStyle
 Func FormObject_SetWidth(ByRef $this, Const $width)
 	$this.Width = $width
 
-	Return WinMove(HWnd($this.Hwnd), Default, Default, $width)
+	Return WinMove(HWnd($this.Hwnd), Default, Default, $width * $g_iDPI_ratio1)
 EndFunc   ;==>FormObject_SetWidth
 
 Func FormObject_SetHeight(ByRef $this, Const ByRef $height)
 	$this.Height = $height
 
-	Return WinMove(HWnd($this.Hwnd), Default, Default, Default, $height)
+	Return WinMove(HWnd($this.Hwnd), Default, Default, Default, $height * $g_iDPI_ratio1)
 EndFunc   ;==>FormObject_SetHeight
 
 Func FormObject_CreateButton(ByRef $this)
 	Local Const $prev = GUISwitch(HWnd($this.Hwnd))
 
-	$this.ButtonID = GUICtrlCreateButton("Click Me! }:)", 10, 10)
+	$this.ButtonID = GUICtrlCreateButton("<new button>", 10, 10)
 
 	GUISwitch($prev)
 EndFunc   ;==>FormObject_CreateButton

@@ -18,7 +18,9 @@ Func Tab()
 EndFunc   ;==>Tab
 
 Func Tab_Create(ByRef $this)
-	$this.Tab = GUICtrlCreateTab(92, 5, 390, 24)
+	$this.Tab = GUICtrlCreateTab(92 * $g_iDPI_ratio1, 5 * $g_iDPI_ratio1, 390 * $g_iDPI_ratio1, 24 * $g_iDPI_ratio1)
+
+	GUICtrlSetResizing($this.Tab, $GUI_DOCKLEFT + $GUI_DOCKSIZE + $GUI_DOCKTOP)
 
 	GUICtrlCreateTabItem("Canvas")
 
@@ -37,8 +39,8 @@ Func Tab_Create(ByRef $this)
 	GUICtrlCreateTabItem('')
 EndFunc   ;==>Tab_Create
 
-Func Tab_Handler(ByRef $this, Const $eventID)
-	Switch $eventID
+Func Tab_Handler(ByRef $this, Const ByRef $event)
+	Switch $event.ID
 		Case $GUI_EVENT_PRIMARYUP
 			Local Const $tabIndex = GUICtrlRead($this.Tab)
 

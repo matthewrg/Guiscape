@@ -33,9 +33,9 @@ Func Properties()
 EndFunc   ;==>Properties
 
 Func Properties_Create(ByRef $this, Const $parent)
-	$this.Hwnd = GUICreate("Properties", ($parent.Width - 100), ($parent.Height - 60), 90, 30, $WS_CHILD, $WS_EX_OVERLAPPEDWINDOW, HWnd($parent.Hwnd))
+	$this.Hwnd = GUICreate("Properties", ($parent.Width - 100) * $g_iDPI_ratio1, ($parent.Height - 60) * $g_iDPI_ratio1, 90 * $g_iDPI_ratio1, 30 * $g_iDPI_ratio1, $WS_CHILD, $WS_EX_OVERLAPPEDWINDOW, HWnd($parent.Hwnd))
 
-	GUICtrlCreateTab(5, 5, ($parent.Width - 110), ($parent.Height - 70))
+	GUICtrlCreateTab(5 * $g_iDPI_ratio1, 5 * $g_iDPI_ratio1, ($parent.Width - 110) * $g_iDPI_ratio1, ($parent.Height - 70) * $g_iDPI_ratio1)
 
 	GUICtrlCreateTabItem("Properties")
 
@@ -43,29 +43,29 @@ Func Properties_Create(ByRef $this, Const $parent)
 
 	$this.Title = CreateInputGroup("Title", 330, 30, 360)
 
-	GUICtrlCreateGroup("Size and Position", 15, 80, 200, 75)
+	GUICtrlCreateGroup("Size and Position", 15 * $g_iDPI_ratio1, 80 * $g_iDPI_ratio1, 200 * $g_iDPI_ratio1, 75 * $g_iDPI_ratio1)
 
-	GUICtrlCreateLabel("Width", 20, 100)
+	GUICtrlCreateLabel("Width", 20 * $g_iDPI_ratio1, 100 * $g_iDPI_ratio1)
 	
-	$this.Width = GUICtrlCreateInput("", 52, 97, 60, 20)
+	$this.Width = GUICtrlCreateInput("", 52 * $g_iDPI_ratio1, 97 * $g_iDPI_ratio1, 60 * $g_iDPI_ratio1, 20 * $g_iDPI_ratio1)
 
-	GUICtrlCreateLabel("Height", 20, 130)
+	GUICtrlCreateLabel("Height", 20 * $g_iDPI_ratio1, 130 * $g_iDPI_ratio1)
 	
-	$this.Height = GUICtrlCreateInput("", 52, 127, 60, 20)
+	$this.Height = GUICtrlCreateInput("", 52 * $g_iDPI_ratio1, 127 * $g_iDPI_ratio1, 60 * $g_iDPI_ratio1, 20 * $g_iDPI_ratio1)
 
-	GUICtrlCreateLabel("Left", 125, 100)
+	GUICtrlCreateLabel("Left", 125 * $g_iDPI_ratio1, 100 * $g_iDPI_ratio1)
 	
-	$this.Left = GUICtrlCreateInput("", 147, 97, 60, 20)
+	$this.Left = GUICtrlCreateInput("", 147 * $g_iDPI_ratio1, 97 * $g_iDPI_ratio1, 60 * $g_iDPI_ratio1, 20 * $g_iDPI_ratio1)
 
-	GUICtrlCreateLabel("Top", 125, 130)
+	GUICtrlCreateLabel("Top", 125 * $g_iDPI_ratio1, 130 * $g_iDPI_ratio1)
 	
-	$this.Top = GUICtrlCreateInput("", 147, 127, 60, 20)
+	$this.Top = GUICtrlCreateInput("", 147 * $g_iDPI_ratio1, 127 * $g_iDPI_ratio1, 60 * $g_iDPI_ratio1, 20 * $g_iDPI_ratio1)
 
 	GUICtrlCreateGroup('', -99, -99, 1, 1)
 
 	$this.FormBgColor = CreateButton("Background Color", 15, 165)
 
-	GUICtrlCreateGroup("Control Colors", 10, 200, 80, 80)
+	GUICtrlCreateGroup("Control Colors", 10 * $g_iDPI_ratio1, 200 * $g_iDPI_ratio1, 80 * $g_iDPI_ratio1, 80 * $g_iDPI_ratio1)
 
 	$this.CtrlBgColor = CreateButton("Background", 15, 220)
 
@@ -84,6 +84,18 @@ Func Properties_Create(ByRef $this, Const $parent)
 	$this.FormStyles.Create()
 
 	$this.FormExStyles.Create()
+
+	GUICtrlCreateTabItem("Context Menu")
+
+	GUICtrlCreateTabItem('')
+
+	GUICtrlCreateTabItem("Menubar")
+
+	GUICtrlCreateTabItem('')	
+
+	GUICtrlCreateTabItem("Accelerators")
+
+	GUICtrlCreateTabItem('')	
 EndFunc   ;==>Properties_Create
 
 Func Properties_Show(ByRef $this)
@@ -95,9 +107,9 @@ Func Properties_Hide(ByRef $this)
 EndFunc   ;==>Properties_Hide
 
 Func CreateInputGroup(Const $text, Const $left, Const $top, Const $width)
-	GUICtrlCreateGroup($text, $left, $top, $width, 45)
+	GUICtrlCreateGroup($text, $left * $g_iDPI_ratio1, $top * $g_iDPI_ratio1, $width * $g_iDPI_ratio1, 45 * $g_iDPI_ratio1)
 
-	Local Const $input = GUICtrlCreateInput('', $left + 10, $top + 15, $width - 20, 20)
+	Local Const $input = GUICtrlCreateInput('', ($left + 10) * $g_iDPI_ratio1, ($top + 15) * $g_iDPI_ratio1, ($width - 20) * $g_iDPI_ratio1, 20 * $g_iDPI_ratio1)
 
 	GUICtrlCreateGroup('', -99, -99, 1, 1)
 
@@ -105,5 +117,5 @@ Func CreateInputGroup(Const $text, Const $left, Const $top, Const $width)
 EndFunc   ;==>CreateInputGroup
 
 Func CreateButton(Const $text, Const $left, Const $top)
-	Return GUICtrlCreateButton($text, $left, $top)
+	Return GUICtrlCreateButton($text, $left * $g_iDPI_ratio1, $top * $g_iDPI_ratio1)
 EndFunc   ;==>CreateButton

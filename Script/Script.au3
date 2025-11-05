@@ -23,13 +23,15 @@ Func Script()
 EndFunc
 
 Func Script_Create(ByRef $this, Const ByRef $parent)
-	$this.Hwnd = GUICreate("Script", ($parent.Width - 100), ($parent.Height - 60), 90, 30, $WS_CHILD, $WS_EX_OVERLAPPEDWINDOW, HWnd($parent.Hwnd))
+	$this.Hwnd = GUICreate("Script", ($parent.Width - 100) * $g_iDPI_ratio1, ($parent.Height - 60) * $g_iDPI_ratio1, 90 * $g_iDPI_ratio1, 30 * $g_iDPI_ratio1, $WS_CHILD, $WS_EX_OVERLAPPEDWINDOW, HWnd($parent.Hwnd))
 	
-	GUICtrlCreateTab(5, 5, ($parent.Width - 110), ($parent.Height - 70))
+	GUICtrlCreateTab(5 * $g_iDPI_ratio1, 5 * $g_iDPI_ratio1, ($parent.Width - 110) * $g_iDPI_ratio1, ($parent.Height - 70) * $g_iDPI_ratio1)
 	
 	GUICtrlCreateTabItem("Script")
 	
 	GUICtrlCreateTabItem("Options")
+
+	GUICtrlCreateTabItem('')
 EndFunc
 
 Func Script_Show(ByRef $this)

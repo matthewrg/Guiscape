@@ -21,18 +21,18 @@ Func GuiscapeView()
 EndFunc   ;==>GuiscapeView
 
 Func GuiscapeView_Create(ByRef $this, Const $title)
-	$this.Width = 815
-	$this.Height = 860
-	$this.Left = (@DesktopWidth / 2) - ($this.Width / 2)
-	$this.Top = (@DesktopHeight / 2) - ($this.Height / 2)
+	$this.Width = 815 * $g_iDPI_ratio1
+	$this.Height = 860 * $g_iDPI_ratio1
+	$this.Left = (@DesktopWidth / 2) - ($this.Width / 2) 
+	$this.Top = (@DesktopHeight / 2) - ($this.Height / 2) 
 
-	$this.Hwnd = GUICreate($title, $this.Width, $this.Height, $this.Left, $this.Top)
+	$this.Hwnd = GUICreate($title, $this.Width, $this.Height, $this.Left, $this.Top, ($WS_SIZEBOX + $WS_SYSMENU))
 
-	GUISetFont(10 * _GDIPlus_GraphicsGetDPIRatio()[0], -1, -1, "Segoe UI", HWnd($this.Hwnd))
+	GUISetFont(10, -1, -1, "Segoe UI", HWnd($this.Hwnd))
 EndFunc   ;==>GuiscapeView_Create
 
 Func GuiscapeView_Show(Const ByRef $this)
-	GUISetState(@SW_SHOWNORMAL, HWnd($this.Hwnd))
+	GUISetState(@SW_SHOW, HWnd($this.Hwnd))
 EndFunc   ;==>GuiscapeView_Show
 
 ;######################################################################################################################################
@@ -50,18 +50,25 @@ EndFunc   ;==>GuiscapeView_Show
 ; Example .......: No
 ; ===============================================================================================================================
 Func _GDIPlus_GraphicsGetDPIRatio($iDPIDef = 96)
-    _GDIPlus_Startup()
-    Local $hGfx = _GDIPlus_GraphicsCreateFromHWND(0)
-    If @error Then Return SetError(1, @extended, 0)
-    Local $aResult
-    #forcedef $__g_hGDIPDll, $ghGDIPDll
+	_GDIPlus_Startup()
 
-    $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetDpiX", "handle", $hGfx, "float*", 0)
+	Local $hGfx = _GDIPlus_GraphicsCreateFromHWND(0)
 
-    If @error Then Return SetError(2, @extended, 0)
-    Local $iDPI = $aResult[2]
-    Local $aresults[2] = [$iDPIDef / $iDPI, $iDPI / $iDPIDef]
-    _GDIPlus_GraphicsDispose($hGfx)
-    _GDIPlus_Shutdown()
-    Return $aresults
+	If @error Then Return SetError(1, @extended, 0)
+
+	#forcedef $__g_hGDIPDll, $ghGDIPDll
+
+	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetDpiX", "handle", $hGfx, "float*", 0)
+
+	If @error Then Return SetError(2, @extended, 0)
+
+	Local $iDPI = $aResult[2]
+
+	Local $aresults[2] = [$iDPIDef / $iDPI, $iDPI / $iDPIDef]
+
+	_GDIPlus_GraphicsDispose($hGfx)
+
+	_GDIPlus_Shutdown()
+
+	Return $aresults[0]
 EndFunc   ;==>_GDIPlus_GraphicsGetDPIRatio

@@ -61,13 +61,13 @@ Func ToolbarView_Create(ByRef $this)
 	$this.Icon = $this.CreateTool("Icon", 45, $start + ($add * 14))
 	$this.Pic = $this.CreateTool("Pic", 5, $start + ($add * 16))
 	$this.Slider = $this.CreateTool("Slider", 45, $start + ($add * 16))
-	$this.Menu = $this.CreateTool("Menu", 5, $start + ($add * 18))
-	$this.ContextMenu = $this.CreateTool("Context Menu", 45, $start + ($add * 18))
-	$this.Tab = $this.CreateTool("Tab", 5, $start + ($add * 20))
+	$this.Tab = $this.CreateTool("Tab", 5, $start + ($add * 18))
 EndFunc   ;==>ToolbarView_Create
 
 Func ToolbarView_CreateTool(Const ByRef $this, Const $name, Const $left, Const $top)
-	Local Const $tool = GUICtrlCreateRadio($name, $left, $top, 40, 40, BitOR($BS_PUSHLIKE, $BS_ICON))
+	Local Const $tool = GUICtrlCreateButton($name, $left * $g_iDPI_ratio1, $top * $g_iDPI_ratio1, 40 * $g_iDPI_ratio1, 40 * $g_iDPI_ratio1, BitOR($GUI_SS_DEFAULT_BUTTON, $BS_ICON))
+
+	GUICtrlSetResizing($tool, $GUI_DOCKLEFT + $GUI_DOCKSIZE + $GUI_DOCKTOP)
 
 	GUICtrlSetImage($tool, $this.ResourcesDir & "\Icons\" & $name & ".ico")
 

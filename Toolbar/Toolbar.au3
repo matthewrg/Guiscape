@@ -1,6 +1,7 @@
 #include-once
 
 #include "..\AutoItObject.au3"
+
 #include "View.au3"
 
 Func Toolbar(Const $resourcesDir)
@@ -9,7 +10,6 @@ Func Toolbar(Const $resourcesDir)
 	$this.Create()
 
 	$this.AddMethod("Create", "Toolbar_Create")
-
 	$this.AddMethod("Handler", "Toolbar_Handler")
 
 	$this.AddProperty("View", $ELSCOPE_PRIVATE, ToolbarView($resourcesDir))
@@ -21,13 +21,18 @@ Func Toolbar_Create(ByRef $this)
 	$this.View.Create()
 EndFunc   ;==>Toolbar_Create
 
-Func Toolbar_Handler(ByRef $this, Const $eventID)
+Func Toolbar_Handler(Const ByRef $this, Const ByRef $eventID)
+	Local Const $view = $this.View
+	
 	Switch $eventID
-		Case $this.View.Form
+		Case $view.Form
 			Return "Form"
 
-		Case $this.View.Button
+		Case $view.Button
 			Return "Button"
+			
+		Case $view.Checkbox
+			Return "Checkbox"
 	EndSwitch
 
 	Return False

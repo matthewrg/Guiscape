@@ -2,15 +2,28 @@
 ; Roadmap: Currently working on laying out the GUI in it's entirety
 ; once that's done then begin working on fleshing out the actual GUI designer code
 ; which MattyD has made some contributions toward in the forum post.
+; I plan to Work in MattyD's contributions once I get to that point unless he wants to do it.
 ; A future plan is to allow an au3 to be dropped on Guiscape and then display
 ; the GUI elements found within so that they can be edited and then written back to the au3.
 
+; The "Canvas" maintains a list of Forms which are self contained objects that create their own controls,
+; and otherwise maintain their own state.  Currently, it's only a fraction of the intended behavior.
+
+#AutoIt3Wrapper_Res_HiDpi=Y
 #AutoIt3Wrapper_UseX64=Y
 
 Opt("WinTitleMatchMode", 4)
 Opt("MouseCoordMode", 2)
+Opt("GUICoordMode", 1)
+Opt("MustDeclareVars", 1)
 
 #include <ColorConstants.au3>
+
+#include "_WinAPI_DPI.au3"
+
+Global Const $g_iDPI_ratio1 = InitializeDPI()
+
+ConsoleWrite($g_iDPI_ratio1 & @CRLF)
 
 #include "AutoItObject.au3"
 #include "Canvas\Canvas.au3"
@@ -32,7 +45,7 @@ Func main()
 	$Guiscape.Create()
 
 	$Guiscape.Canvas.FormObject.Create()
-	
+
 	$Guiscape.Properties.FormStyles.Initialize($Guiscape.Canvas.FormObject.GetStyle())
 
 	$Guiscape.Properties.FormExStyles.Initialize($Guiscape.Canvas.FormObject.GetExStyle())
@@ -44,18 +57,34 @@ Func main()
 			Case $GUI_EVENT_NONE
 				ContinueLoop
 
+			Case $GUI_EVENT_RESIZED
+;~ 				Local $sizePos = WinGetPos($event.FormHwnd)
+;~
+;~ 				ConsoleWrite("Left:   " & $sizePos[0] & @CRLF & _
+;~ 							 "Top:    " & $sizePos[1] & @CRLF & _
+;~ 							 "Width:  " & $sizePos[2] & @CRLF & _
+;~ 							 "Height: " & $sizePos[3] & @CRLF)
+
 			Case $GUI_EVENT_CLOSE
-				; Ask if the Designer would like to save their progress before closing the window.
-					
-				If $event.FormHwnd = $Guiscape.View.Hwnd Then 				
-					Exit
-				Else					
+				If $event.FormHwnd = $Guiscape.View.Hwnd Then
+					_Exit($Guiscape, $event)
+				Else
 					GUIDelete($event.FormHwnd)
 				EndIf
 		EndSwitch
-		
-		; creates forms and creates the controls for the currently active form; eventually
-		; I plan to Work in MattyD's contributions once I get to that point unless he wants to do it.
+
+		Switch $Guiscape.Canvas.Handler($event)
+			Case "Erase Canvas"
+				ContinueLoop
+
+			Case True
+				ContinueLoop
+		EndSwitch
+
+		; Allows the Designer to select from a form or a control to create. If the Designer chooses "Form" then the Canvas is
+		; sent into "Create" mode at which point it will wait for the Designer to click on the canvas. At that point a form
+		;will be created. Otherwise, if the Designer wishes to place a control on a form then a control is selected in the
+		;toolbar and then the form is sent into Create mode and will wait for the designer to click on it.
 		Switch $Guiscape.Toolbar.Handler($event.ID)
 			Case "Form"
 				$Guiscape.Canvas.FormObject.Create()
@@ -70,49 +99,49 @@ Func main()
 				$Guiscape.Canvas.FormObject.CreateButton()
 
 				ContinueLoop
-				
+
 			Case "Checkbox"
 				ContinueLoop
-				
-			; Case ....
+
+				; Case ....
 		EndSwitch
-		
+
 		; Shows and hides tabs
-		Switch $Guiscape.Tab.Handler($event.ID)
+		Switch $Guiscape.Tab.Handler($event)
 			Case "Canvas"
 				$Guiscape.Canvas.Show
-				
+
 				$Guiscape.Properties.Hide()
-				
+
 				$Guiscape.Script.Hide()
 
 				ContinueLoop
 
 			Case "Properties"
 				$Guiscape.Properties.Show()
-				
+
 				$Guiscape.Canvas.Hide()
-				
+
 				$Guiscape.Script.Hide()
 
 				ContinueLoop
 
-			Case "Script"			
+			Case "Script"
 				$Guiscape.Script.Show()
-	
+
 				$Guiscape.Canvas.Hide()
 
 				$Guiscape.Properties.Hide()
-				
+
 				ContinueLoop
 
 			Case "Object Explorer"
 				;$Guiscape.ObjectExplorer.Show()
-				
+
 				$Guiscape.Canvas.Hide()
 
 				$Guiscape.Properties.Hide()
-				
+
 				$Guiscape.Script.Hide()
 
 				ContinueLoop
@@ -205,6 +234,32 @@ Func CursorInfoToMap(Const ByRef $cursorInfo)
 
 	Return $map
 EndFunc   ;==>CursorInfoToMap
+
+Func InitializeDPI()
+	Local $AWARENESS
+
+	Switch @OSBuild
+		Case 9200 To 13999
+			$AWARENESS = $DPI_AWARENESS_PER_MONITOR_AWARE
+
+		Case @OSBuild > 13999
+			$AWARENESS = $DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2
+	EndSwitch
+
+	Local Const $iDPI = _WinAPI_SetDPIAwareness($AWARENESS, 2)
+	
+	Local Const $iDPI_def = 96
+
+	If $iDPI = 0 Then Exit MsgBox($MB_ICONERROR, "ERROR", "Unable to set DPI awareness!!!", 10)
+
+	Return $iDPI / $iDPI_def
+EndFunc   ;==>InitializeDPI
+
+Func _Exit(ByRef $Guiscape, Const ByRef $event)
+	; Ask if the Designer would like to save their progress before closing the window.
+
+	Exit
+EndFunc   ;==>_Exit
 
 ;~ Func HWndFromPoint()
 ;~ 	Local Static $g_tStruct = DllStructCreate($tagPOINT)
