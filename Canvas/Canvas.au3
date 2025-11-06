@@ -48,12 +48,6 @@ Func Canvas_Handler(ByRef $this, Const ByRef $event)
 		Case $GUI_EVENT_RESIZED
 			Local Const $sizePos = WinGetPos($event.FormHwnd)
 
-;~ 			ConsoleWrite("Guiscape:" & @CRLF & _
-;~ 			             @TAB & "Left:   " & $sizePos[0] & @CRLF & _
-;~ 					     @TAB & "Top:    " & $sizePos[1] & @CRLF & _
-;~ 					     @TAB & "Width:  " & $sizePos[2] & @CRLF & _
-;~ 					     @TAB & "Height: " & $sizePos[3] & @CRLF)
-
 			WinMove(HWnd($this.View.Hwnd), '', 90 * $g_iDPI_ratio1, 30 * $g_iDPI_ratio1, ($sizePos[2] - (110 * $g_iDPI_ratio1)) * $g_iDPI_ratio1, ($sizePos[3] - (95 * $g_iDPI_ratio1)) * $g_iDPI_ratio1)
 
 			Return True

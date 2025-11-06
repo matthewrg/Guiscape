@@ -1,6 +1,8 @@
 
 #include-once
 
+#include <GDIPlus.au3>
+
 Func GuiscapeView()
 	Local $this = _AutoitObject_Class()
 
@@ -22,10 +24,10 @@ EndFunc   ;==>GuiscapeView
 Func GuiscapeView_Create(ByRef $this, Const $title)
 	$this.Width = 815
 	$this.Height = 860
-	$this.Left = (@DesktopWidth / 2) - ($this.Width / 2)
-	$this.Top = (@DesktopHeight / 2) - ($this.Height / 2)
+	$this.Left = (@DesktopWidth / 2) - ($this.Width / 2) 
+	$this.Top = (@DesktopHeight / 2) - ($this.Height / 2) 
 
-	$this.Hwnd = GUICreate($title, $this.Width * $g_iDPI_ratio1, $this.Height * $g_iDPI_ratio1, $this.Left, $this.Top, BitOR($WS_SIZEBOX, $WS_SYSMENU))
+	$this.Hwnd = GUICreate($title, $this.Width * $g_iDPI_ratio1, $this.Height * $g_iDPI_ratio1, $this.Left, $this.Top, BitOr($WS_SIZEBOX, $WS_SYSMENU))
 
 	GUISetFont(10, -1, -1, "Segoe UI", HWnd($this.Hwnd))
 EndFunc   ;==>GuiscapeView_Create
@@ -35,8 +37,8 @@ Func GuiscapeView_Show(Const ByRef $this)
 EndFunc   ;==>GuiscapeView_Show
 
 Func GuiscapeView_SetSizePos(ByRef $this, Const ByRef $sizePos)
-	$this.Left = $sizePos[0]
-	$this.Top = $sizePos[1]
-	$this.Width = $sizePos[2]
-	$this.Height = $sizePos[3]
-EndFunc   ;==>GuiscapeView_SetSizePos
+	$Guiscape.Left = $sizePos[0]
+	$Guiscape.Top = $sizePos[1]
+	$Guiscape.Width = $sizePos[2]
+	$Guiscape.Height = $sizePos[3]
+EndFunc

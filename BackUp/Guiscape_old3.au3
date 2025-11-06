@@ -60,13 +60,11 @@ Func main()
 				ContinueLoop
 
 			Case $GUI_EVENT_RESIZED
-				Switch $event.FormHwnd
-					Case $Guiscape.View.Hwnd
-						$Guiscape.View.SetSizePos(WinGetPos($event.FormHwnd))
-						
-					Case Else
-						ContinueLoop
-				EndSwitch
+				If $event.FormHwnd = $Guiscape.View.Hwnd Then
+					$Guiscape.View.SetSizePos(WinGetPos($event.FormHwnd))
+				EndIf			
+					
+					ContinueLoop	
 
 			Case $GUI_EVENT_CLOSE
 				; Ask if the Designer would like to save their progress before closing the window.
@@ -81,7 +79,7 @@ Func main()
 		Switch $Guiscape.Canvas.Handler($event)
 			Case "Erase Canvas"
 				; Ask if the Designer would like to save their progress before erasing the canvas.
-
+				
 				ContinueLoop
 
 			Case True

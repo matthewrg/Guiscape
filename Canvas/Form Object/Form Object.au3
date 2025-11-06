@@ -94,7 +94,10 @@ Func FormObject_Handler(ByRef $this, Const ByRef $event)
 			Return "Context Menu"
 			
 		Case $this.Menubar
-			Return "Menubar"			
+			Return "Menubar"		
+
+		Case $GUI_EVENT_RESIZED
+			Return "Form Resized"
 	EndSwitch
 
 	Return False
