@@ -4,43 +4,43 @@
 
 #include "..\..\AutoItObject.au3"
 
-Func FormObject(Const $parent)
+Func GUIObject(Const $parent)
 	Local $this = _AutoItObject_Class()
 
 	$this.Create()
 
-	$this.AddMethod("Handler", "FormObject_Handler")	
-	$this.AddMethod("Create", "FormObject_Create")
-	
-	$this.AddMethod("GetTitle", "FormObject_GetTitle")
-	$this.AddMethod("GetLeft", "FormObject_GetLeft")
-	$this.AddMethod("GetTop", "FormObject_GetTop")
-	$this.AddMethod("GetWidth", "FormObject_GetWidth")
-	$this.AddMethod("GetHeight", "FormObject_GetHeight")
-	$this.AddMethod("GetFormBgColor", "FormObject_GetFormBgColor")
-	$this.AddMethod("GetCtrlBgColor", "FormObject_GetCtrlBgColor")
-	$this.AddMethod("GetCtrlFgColor", "FormObject_GetCtrlFgColor")
-	$this.AddMethod("GetCursor", "FormObject_GetCursor")
-	$this.AddMethod("GetFont", "FormObject_GetFont")
-	$this.AddMethod("GetHelpfile", "FormObject_GetHelpfile")
-	$this.AddMethod("GetState", "FormObject_GetState")
-	$this.AddMethod("GetStyle", "FormObject_GetStyle")
-	$this.AddMethod("GetExStyle", "FormObject_GetExStyle")
-	
-	$this.AddMethod("Show", "FormObject_Show")
-	$this.AddMethod("Hide", "FormObject_Hide")
-	$this.AddMethod("SetTitle", "FormObject_SetTitle")
-	$this.AddMethod("SetWidth", "FormObject_SetWidth")
-	$this.AddMethod("SetHeight", "FormObject_SetHeight")
-	$this.AddMethod("SetFormBgColor", "FormObject_SetFormBgColor")
-	$this.AddMethod("SetCtrlBgColor", "FormObject_SetCtrlBgColor")
-	$this.AddMethod("SetCtrlFgColor", "FormObject_SetCtrlFgColor")
-	$this.AddMethod("SetCursor", "FormObject_SetCursor")
-	$this.AddMethod("SetFont", "FormObject_SetFont")
-	$this.AddMethod("SetHelpfile", "FormObject_SetHelpfile")
-	$this.AddMethod("SetState", "FormObject_SetState")
-	$this.AddMethod("SetStyle", "FormObject_SetStyle")
-	$this.AddMethod("SetExStyle", "FormObject_SetExStyle")
+	$this.AddMethod("Handler", "GUIObject_Handler")
+	$this.AddMethod("Create", "GUIObject_Create")
+
+	$this.AddMethod("GetTitle", "GUIObject_GetTitle")
+	$this.AddMethod("GetLeft", "GUIObject_GetLeft")
+	$this.AddMethod("GetTop", "GUIObject_GetTop")
+	$this.AddMethod("GetWidth", "GUIObject_GetWidth")
+	$this.AddMethod("GetHeight", "GUIObject_GetHeight")
+	$this.AddMethod("GetFormBgColor", "GUIObject_GetFormBgColor")
+	$this.AddMethod("GetCtrlBgColor", "GUIObject_GetCtrlBgColor")
+	$this.AddMethod("GetCtrlFgColor", "GUIObject_GetCtrlFgColor")
+	$this.AddMethod("GetCursor", "GUIObject_GetCursor")
+	$this.AddMethod("GetFont", "GUIObject_GetFont")
+	$this.AddMethod("GetHelpfile", "GUIObject_GetHelpfile")
+	$this.AddMethod("GetState", "GUIObject_GetState")
+	$this.AddMethod("GetStyle", "GUIObject_GetStyle")
+	$this.AddMethod("GetExStyle", "GUIObject_GetExStyle")
+
+	$this.AddMethod("Show", "GUIObject_Show")
+	$this.AddMethod("Hide", "GUIObject_Hide")
+	$this.AddMethod("SetTitle", "GUIObject_SetTitle")
+	$this.AddMethod("SetWidth", "GUIObject_SetWidth")
+	$this.AddMethod("SetHeight", "GUIObject_SetHeight")
+	$this.AddMethod("SetFormBgColor", "GUIObject_SetFormBgColor")
+	$this.AddMethod("SetCtrlBgColor", "GUIObject_SetCtrlBgColor")
+	$this.AddMethod("SetCtrlFgColor", "GUIObject_SetCtrlFgColor")
+	$this.AddMethod("SetCursor", "GUIObject_SetCursor")
+	$this.AddMethod("SetFont", "GUIObject_SetFont")
+	$this.AddMethod("SetHelpfile", "GUIObject_SetHelpfile")
+	$this.AddMethod("SetState", "GUIObject_SetState")
+	$this.AddMethod("SetStyle", "GUIObject_SetStyle")
+	$this.AddMethod("SetExStyle", "GUIObject_SetExStyle")
 
 	$this.AddProperty("Hwnd", $ELSCOPE_READONLY)
 	$this.AddProperty("ChildForm", $ELSCOPE_READONLY)
@@ -66,44 +66,44 @@ Func FormObject(Const $parent)
 	$this.AddProperty("State", $ELSCOPE_PRIVATE)
 	$this.AddProperty("Style", $ELSCOPE_PRIVATE)
 	$this.AddProperty("ExStyle", $ELSCOPE_PRIVATE)
-	
+
 	; To-Do: Move this into a seperate button object
-	$this.AddMethod("CreateButton", "FormObject_CreateButton")
+	$this.AddMethod("CreateButton", "GUIObject_CreateButton")
 	$this.AddProperty("ButtonID", $ELSCOPE_READONLY)
 
 	Return $this.Object
-EndFunc   ;==>FormObject
+EndFunc   ;==>GUIObject
 
-Func FormObject_Handler(ByRef $this, Const ByRef $event)
+Func GUIObject_Handler(ByRef $this, Const ByRef $event)
 	If Not $event.FormHwnd <> HWnd($this.Hwnd) Then Return False
-	
+
 	Switch $event.ID
 		Case $this.ChildForm
 			Return "Child Form"
-			
+
 		Case $this.Properties
 			Return "Properties"
-			
+
 		Case $this.Styles
 			Return "Styles"
-			
+
 		Case $this.ExStyles
 			Return "Extended Styles"
-			
+
 		Case $this.ContextMenu
 			Return "Context Menu"
-			
+
 		Case $this.Menubar
-			Return "Menubar"		
+			Return "Menubar"
 
 		Case $GUI_EVENT_RESIZED
 			Return "Form Resized"
 	EndSwitch
 
 	Return False
-EndFunc   ;==>FormObject_Handler
+EndFunc   ;==>GUIObject_Handler
 
-Func FormObject_Create(ByRef $this, Const $title = "<new form>")
+Func GUIObject_Create(ByRef $this, Const $title = "<new form>")
 	$this.Hwnd = GUICreate($title, 400 * $g_iDPI_ratio1, 600 * $g_iDPI_ratio1, 5 * $g_iDPI_ratio1, 5 * $g_iDPI_ratio1, BitOR($WS_CHILD, $WS_OVERLAPPEDWINDOW), -1, HWnd($this.Parent))
 
 	Local Const $contextMenu = GUICtrlCreateContextMenu()
@@ -115,9 +115,9 @@ Func FormObject_Create(ByRef $this, Const $title = "<new form>")
 	$this.Styles = GUICtrlCreateMenuItem("Styles", $contextMenu)
 
 	$this.ExStyles = GUICtrlCreateMenuItem("Extended Styles", $contextMenu)
-	
+
 	$this.ContextMenu = GUICtrlCreateMenuItem("Context Menu", $contextMenu)
-	
+
 	$this.Menubar = GUICtrlCreateMenuItem("Menubar", $contextMenu)
 
 	$this.Ttitle = WinGetTitle(HWnd($this.Hwnd))
@@ -137,62 +137,62 @@ Func FormObject_Create(ByRef $this, Const $title = "<new form>")
 	GUISetState(@SW_SHOW, HWnd($this.Hwnd))
 
 	Return True
-EndFunc   ;==>FormObject_Create
+EndFunc   ;==>GUIObject_Create
 
-Func FormObject_Show(Const ByRef $this)
+Func GUIObject_Show(Const ByRef $this)
 	GUISetState(@SW_SHOW, HWnd($this.Hwnd))
-EndFunc   ;==>FormObject_Show
+EndFunc   ;==>GUIObject_Show
 
-Func FormObject_Hide(Const ByRef $this)
+Func GUIObject_Hide(Const ByRef $this)
 	GUISetState(@SW_HIDE, HWnd($this.Hwnd))
-EndFunc   ;==>FormObject_Show
+EndFunc   ;==>GUIObject_Hide
 
-Func FormObject_GetStyle(Const ByRef $this)
+Func GUIObject_GetStyle(Const ByRef $this)
 	Return GUIGetStyle(HWnd($this.Hwnd))[0]
-EndFunc   ;==>FormObject_GetStyle
+EndFunc   ;==>GUIObject_GetStyle
 
-Func FormObject_SetTitle(ByRef $this, Const $newTitle)
+Func GUIObject_SetTitle(ByRef $this, Const $newTitle)
 	WinSetTitle(HWnd($this.Hwnd), '', $newTitle)
 
 	$this.Title = $newTitle
-EndFunc   ;==>FormObject_SetTitle
+EndFunc   ;==>GUIObject_SetTitle
 
-Func FormObject_GetLeft(Const ByRef $this)
+Func GUIObject_GetLeft(Const ByRef $this)
 	Return WinGetPos(HWnd($this.Hwnd))[0]
-EndFunc   ;==>FormObject_GetLeft
+EndFunc   ;==>GUIObject_GetLeft
 
-Func FormObject_GetTop(Const ByRef $this)
+Func GUIObject_GetTop(Const ByRef $this)
 	Return WinGetPos(HWnd($this.Hwnd))[1]
-EndFunc   ;==>FormObject_GetTop
+EndFunc   ;==>GUIObject_GetTop
 
-Func FormObject_GetWidth(Const ByRef $this)
+Func GUIObject_GetWidth(Const ByRef $this)
 	Return WinGetPos(HWnd($this.Hwnd))[2]
-EndFunc   ;==>FormObject_GetWidth
+EndFunc   ;==>GUIObject_GetWidth
 
-Func FormObject_GetHeight(Const ByRef $this)
+Func GUIObject_GetHeight(Const ByRef $this)
 	Return WinGetPos(HWnd($this.Hwnd))[3]
-EndFunc   ;==>FormObject_GetHeight
+EndFunc   ;==>GUIObject_GetHeight
 
-Func FormObject_GetExStyle(ByRef $this)
+Func GUIObject_GetExStyle(ByRef $this)
 	Return GUIGetStyle(HWnd($this.Hwnd))[1]
-EndFunc   ;==>FormObject_GetExStyle
+EndFunc   ;==>GUIObject_GetExStyle
 
-Func FormObject_SetWidth(ByRef $this, Const $width)
+Func GUIObject_SetWidth(ByRef $this, Const $width)
 	$this.Width = $width
 
 	Return WinMove(HWnd($this.Hwnd), Default, Default, $width * $g_iDPI_ratio1)
-EndFunc   ;==>FormObject_SetWidth
+EndFunc   ;==>GUIObject_SetWidth
 
-Func FormObject_SetHeight(ByRef $this, Const ByRef $height)
+Func GUIObject_SetHeight(ByRef $this, Const ByRef $height)
 	$this.Height = $height
 
 	Return WinMove(HWnd($this.Hwnd), Default, Default, Default, $height * $g_iDPI_ratio1)
-EndFunc   ;==>FormObject_SetHeight
+EndFunc   ;==>GUIObject_SetHeight
 
-Func FormObject_CreateButton(ByRef $this)
+Func GUIObject_CreateButton(ByRef $this)
 	Local Const $prev = GUISwitch(HWnd($this.Hwnd))
 
 	$this.ButtonID = GUICtrlCreateButton("<new button>", 10, 10)
 
 	GUISwitch($prev)
-EndFunc   ;==>FormObject_CreateButton
+EndFunc   ;==>GUIObject_CreateButton

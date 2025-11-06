@@ -1,4 +1,5 @@
 #include-once
+
 #include "..\AutoItObject.au3"
 
 Func CanvasModel()
@@ -20,6 +21,11 @@ Func CanvasModel()
 
 	Return $this.Object
 EndFunc   ;==>CanvasModel
+
+Func CanvasModel_AddForm(ByRef $this)
+	#forceref $this
+	
+EndFunc
 
 Func CanvasModel_IncrementFormCount(ByRef $this)
 	Local Const $formCount = $this.FormCount

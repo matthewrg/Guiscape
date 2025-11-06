@@ -23,14 +23,14 @@ EndFunc   ;==>Toolbar_Create
 
 Func Toolbar_Handler(Const ByRef $this, Const ByRef $eventID)
 	Local Const $view = $this.View
-
+	
 	Switch $eventID
 		Case $view.Form
 			Return "Form"
 
 		Case $view.Button
 			Return "Button"
-
+			
 		Case $view.Checkbox
 			Return "Checkbox"
 	EndSwitch

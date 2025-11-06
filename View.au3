@@ -25,7 +25,7 @@ Func GuiscapeView_Create(ByRef $this, Const $title)
 	$this.Left = (@DesktopWidth / 2) - ($this.Width / 2)
 	$this.Top = (@DesktopHeight / 2) - ($this.Height / 2)
 
-	$this.Hwnd = GUICreate($title, $this.Width * $g_iDPI_ratio1, $this.Height * $g_iDPI_ratio1, $this.Left, $this.Top, BitOR($WS_SIZEBOX, $WS_SYSMENU))
+	$this.Hwnd = GUICreate($title, $this.Width * $g_iDPI_ratio1, $this.Height * $g_iDPI_ratio1, $this.Left * $g_iDPI_ratio1, $this.Top * $g_iDPI_ratio1, BitOR($GUI_SS_DEFAULT_GUI, $WS_SIZEBOX, $WS_SYSMENU))
 
 	GUISetFont(10, -1, -1, "Segoe UI", HWnd($this.Hwnd))
 EndFunc   ;==>GuiscapeView_Create

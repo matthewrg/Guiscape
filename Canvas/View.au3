@@ -25,7 +25,7 @@ Func CanvasView()
 EndFunc   ;==>CanvasView
 
 Func CanvasView_Create(ByRef $this, Const ByRef $parent)
-	$this.Hwnd = GUICreate("Canvas", ($parent.Width - 100) * $g_iDPI_ratio1, ($parent.Height - 85) * $g_iDPI_ratio1, 90 * $g_iDPI_ratio1, 30 * $g_iDPI_ratio1, $WS_CHILD, $WS_EX_OVERLAPPEDWINDOW, HWnd($parent.Hwnd))
+	$this.Hwnd = GUICreate("Canvas", ($parent.Width - 100) * $g_iDPI_ratio1, ($parent.Height - 60) * $g_iDPI_ratio1, 90 * $g_iDPI_ratio1, 30 * $g_iDPI_ratio1, $WS_CHILD, $WS_EX_OVERLAPPEDWINDOW, HWnd($parent.Hwnd))
 
 	Local Const $contextMenu = GUICtrlCreateContextMenu()
 

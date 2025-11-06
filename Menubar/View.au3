@@ -11,6 +11,7 @@ Func MenubarView()
 
 	$this.AddMethod("Create", "MenubarView_Create")
 	$this.AddMethod("Toggle", "MenubarView_Toggle")
+	$this.AddMethod("Initialize", "MenubarView_Initialize")
 
 	$this.AddProperty("Save", $ELSCOPE_READONLY)
 	$this.AddProperty("Load", $ELSCOPE_READONLY)
@@ -49,6 +50,7 @@ EndFunc   ;==>MenubarView_Create
 
 Func MenubarView_Toggle(Const ByRef $this, Const $menuItem)
 	#forceref $this
+	
 	Local Const $state = GUICtrlRead($menuItem)
 
 	Select
@@ -63,3 +65,17 @@ Func MenubarView_Toggle(Const ByRef $this, Const $menuItem)
 			Return $GUI_CHECKED
 	EndSelect
 EndFunc   ;==>MenubarView_Toggle
+
+Func MenubarView_Initialize(ByRef $this, Const $settings)
+	Local Const $menuItems[] = [$this.ShowGrid, $this.GridSnap, $this.PastePos, $this.ShowControl, $this.ShowHidden]
+
+	Local Const $itemCount = UBound($menuItems)
+
+	For $i = 1 To $itemCount
+		If $settings[$i][1] = 1 Then
+			GUICtrlSetState($menuItems[$i - 1], $GUI_CHECKED)
+		Else
+			GUICtrlSetState($menuItems[$i - 1], $GUI_UNCHECKED)
+		EndIf
+	Next
+EndFunc   ;==>GuiscapeModel_Initialize

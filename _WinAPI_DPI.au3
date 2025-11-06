@@ -27,6 +27,28 @@ Global Const $MDT_DEFAULT = $MDT_EFFECTIVE_DPI
 Global Const $WM_DPICHANGED = 0x02E0, $WM_DPICHANGED_BEFOREPARENT = 0x02E2, $WM_DPICHANGED_AFTERPARENT = 0x02E3, $WM_GETDPISCALEDSIZE = 0x02E4
 #EndRegion DPI Constants
 
+Global Const $g_iDPI_ratio1 = InitializeDPI()
+
+Func InitializeDPI()
+	Local $AWARENESS
+
+	Switch @OSBuild
+		Case 9200 To 13999
+			$AWARENESS = $DPI_AWARENESS_PER_MONITOR_AWARE
+
+		Case @OSBuild > 13999
+			$AWARENESS = $DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2
+	EndSwitch
+
+	Local Const $iDPI = _WinAPI_SetDPIAwareness($AWARENESS, 2)
+
+	If $iDPI = 0 Then Exit MsgBox($MB_ICONERROR, "ERROR", "Unable to set DPI awareness!", 10)
+
+	Local Const $iDPI_def = 96
+
+	Return $iDPI / $iDPI_def
+EndFunc   ;==>InitializeDPI
+
 #Region WinAPI DPI
 ;https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-adjustwindowrectexfordpi
 Func _WinAPI_AdjustWindowRectExForDpi($dpi, $dwStyle, $dwExStyle, $bMenu = False)

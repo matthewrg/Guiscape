@@ -5,6 +5,7 @@
 ; I plan to Work in MattyD's contributions once I get to that point unless he wants to do it.
 ; A future plan is to allow an au3 to be dropped on Guiscape and then display
 ; the GUI elements found within so that they can be edited and then written back to the au3.
+; Another future plan is to generate GUI code for other languages
 
 ; The "Canvas" maintains a list of Forms which are self contained objects that create their own controls,
 ; and otherwise maintain their own state.  Currently, it's only a fraction of the intended behavior.
@@ -13,26 +14,26 @@
 #AutoIt3Wrapper_Run_Au3Stripper=y
 #Au3Stripper_Parameters=/so
 #AutoIt3Wrapper_Res_HiDpi=n  ;must be n otherwise _WinAPI_SetDPIAwareness() function will fail!
-#AutoIt3Wrapper_UseX64=n
+#AutoIt3Wrapper_UseX64=y
+#AutoIt3Wrapper_AU3Check_Parameters=-w 1 -w 2 -w 3 -w 4 -w 5 -w 6 -w 7 -d
 
 Opt("WinTitleMatchMode", 4)
 Opt("MouseCoordMode", 2)
 Opt("GUICoordMode", 1)
 Opt("MustDeclareVars", 1)
 
+#include <EditConstants.au3>
 #include <GUIConstantsEx.au3>
 #include <ColorConstants.au3>
 
-#include "_WinAPI_DPI.au3"
-
-Global Const $g_iDPI_ratio1 = InitializeDPI()
-
 #include "AutoItObject.au3"
+#include "_WinAPI_DPI.au3"
 #include "Canvas\Canvas.au3"
 #include "Menubar\Menubar.au3"
 #include "Toolbar\Toolbar.au3"
 #include "Properties\Properties.au3"
 #include "Script\Script.au3"
+#include "Object Explorer\Object Explorer.au3"
 #include "Tab\Tab.au3"
 #include "View.au3"
 #include "Model.au3"
@@ -46,23 +47,23 @@ Func main()
 
 	$Guiscape.Create()
 
-	$Guiscape.Canvas.FormObject.Create()
+	$Guiscape.Canvas.GUIObject.Create()
 
-	$Guiscape.Properties.FormStyles.Initialize($Guiscape.Canvas.FormObject.GetStyle())
+	$Guiscape.Properties.FormStyles.Initialize($Guiscape.Canvas.GUIObject.GetStyle())
 
-	$Guiscape.Properties.FormExStyles.Initialize($Guiscape.Canvas.FormObject.GetExStyle())
+	$Guiscape.Properties.FormExStyles.Initialize($Guiscape.Canvas.GUIObject.GetExStyle())
 
 	Do
-		Local $event = EventArrayToMap(GUIGetMsg($GUI_EVENT_ARRAY))
+		Local $event = $Guiscape.Model.GUIEvent()
 
 		Switch $event.ID
 			Case $GUI_EVENT_NONE
 				ContinueLoop
 
 			Case $GUI_EVENT_RESIZED
-				Switch $event.FormHwnd
+				Switch $event.Form
 					Case $Guiscape.View.Hwnd
-						$Guiscape.View.SetSizePos(WinGetPos($event.FormHwnd))
+						$Guiscape.View.SetSizePos(WinGetPos($event.Form))
 						
 					Case Else
 						ContinueLoop
@@ -71,10 +72,12 @@ Func main()
 			Case $GUI_EVENT_CLOSE
 				; Ask if the Designer would like to save their progress before closing the window.
 
-				If $event.FormHwnd = $Guiscape.View.Hwnd Then
+				If $event.Form = $Guiscape.View.Hwnd Then
 					_Exit($Guiscape, $event)
 				Else
-					GUIDelete($event.FormHwnd)
+					; To-Do: Send this event to the Canvas for processing
+					
+					GUIDelete($event.Form)
 				EndIf
 		EndSwitch
 
@@ -94,16 +97,16 @@ Func main()
 		; toolbar and then the form is sent into Create mode and will wait for the designer to click on it.
 		Switch $Guiscape.Toolbar.Handler($event.ID)
 			Case "Form"
-				$Guiscape.Canvas.FormObject.Create()
+				$Guiscape.Canvas.GUIObject.Create()
 
-				$Guiscape.Properties.FormStyles.Initialize($Guiscape.Canvas.FormObject.GetStyle())
+				$Guiscape.Properties.FormStyles.Initialize($Guiscape.Canvas.GUIObject.GetStyle())
 
-				$Guiscape.Properties.FormExStyles.Initialize($Guiscape.Canvas.FormObject.GetExStyle())
+				$Guiscape.Properties.FormExStyles.Initialize($Guiscape.Canvas.GUIObject.GetExStyle())
 
 				ContinueLoop
 
 			Case "Button"
-				$Guiscape.Canvas.FormObject.CreateButton()
+				$Guiscape.Canvas.GUIObject.CreateButton()
 
 				ContinueLoop
 
@@ -119,6 +122,8 @@ Func main()
 				$Guiscape.Properties.Hide()
 
 				$Guiscape.Script.Hide()
+				
+				$Guiscape.ObjectExplorer.Hide()
 
 				ContinueLoop
 
@@ -128,6 +133,8 @@ Func main()
 				$Guiscape.Canvas.Hide()
 
 				$Guiscape.Script.Hide()
+				
+				$Guiscape.ObjectExplorer.Hide()
 
 				ContinueLoop
 
@@ -137,11 +144,13 @@ Func main()
 				$Guiscape.Canvas.Hide()
 
 				$Guiscape.Properties.Hide()
+				
+				$Guiscape.ObjectExplorer.Hide()
 
 				ContinueLoop
 
 			Case "Object Explorer"
-				;$Guiscape.ObjectExplorer.Show()
+				$Guiscape.ObjectExplorer.Show()
 
 				$Guiscape.Canvas.Hide()
 
@@ -179,9 +188,10 @@ Func Guiscape()
 
 	$this.AddProperty("Model", $ELSCOPE_READONLY, GUIScapeModel())
 	$this.AddProperty("View", $ELSCOPE_READONLY, GuiscapeView())
-	$this.AddProperty("Menubar", $ELSCOPE_READONLY)
-	$this.AddProperty("Toolbar", $ELSCOPE_READONLY)
+	$this.AddProperty("Menubar", $ELSCOPE_READONLY, Menubar())
+	$this.AddProperty("Toolbar", $ELSCOPE_READONLY, Toolbar())
 	$this.AddProperty("Script", $ELSCOPE_READONLY, Script())
+	$this.AddProperty("ObjectExplorer", $ELSCOPE_READONLY, ObjectExplorer())
 	$this.AddProperty("Tab", $ELSCOPE_READONLY, Tab())
 	$this.AddProperty("Canvas", $ELSCOPE_READONLY, Canvas())
 	$this.AddProperty("Properties", $ELSCOPE_READONLY, Properties())
@@ -192,15 +202,11 @@ EndFunc   ;==>Guiscape
 Func Guiscape_Create(ByRef $this)
 	$this.View.Create($this.Model.Title)
 
-	$this.Menubar = Menubar($this.Model.ResourcesDir)
-
 	$this.Menubar.Create()
+	
+	$this.Menubar.View.Initialize($this.Model.GetSettings())
 
-	$this.Menubar.Initialize()
-
-	$this.Toolbar = Toolbar($this.Model.ResourcesDir)
-
-	$this.Toolbar.Create()
+	$this.Toolbar.Create($this.Model.ResourcesDir)
 
 	$this.Tab.Create()
 
@@ -209,6 +215,10 @@ Func Guiscape_Create(ByRef $this)
 	$this.Properties.Create($this.View)
 
 	$this.Script.Create($this.View)
+	
+	$this.ObjectExplorer.Create($this.View)
+	
+	$this.ObjectExplorer.Show()
 
 	$this.Canvas.Show()
 
@@ -217,51 +227,9 @@ Func Guiscape_Create(ByRef $this)
 	Return True
 EndFunc   ;==>Guiscape_Create
 
-Func EventArrayToMap(Const ByRef $eventArray)
-	Local $eventMap[]
-
-	$eventMap.ID = $eventArray[0]
-	$eventMap.FormHwnd = HWnd($eventArray[1])
-	$eventMap.ControlHwnd = HWnd($eventArray[2])
-	$eventMap.X = $eventArray[3]
-	$eventMap.Y = $eventArray[4]
-
-	Return $eventMap
-EndFunc   ;==>EventArrayToMap
-
-Func CursorInfoToMap(Const ByRef $cursorInfo)
-	Local $map[]
-
-	$map.X = $cursorInfo[0]
-	$map.Y = $cursorInfo[1]
-	$map.Primary = $cursorInfo[2]
-	$map.Secondary = $cursorInfo[3]
-	$map.ID = $cursorInfo[4]
-
-	Return $map
-EndFunc   ;==>CursorInfoToMap
-
-Func InitializeDPI()
-	Local $AWARENESS
-
-	Switch @OSBuild
-		Case 9200 To 13999
-			$AWARENESS = $DPI_AWARENESS_PER_MONITOR_AWARE
-
-		Case @OSBuild > 13999
-			$AWARENESS = $DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2
-	EndSwitch
-
-	Local Const $iDPI = _WinAPI_SetDPIAwareness($AWARENESS, 2)
-
-	If $iDPI = 0 Then Exit MsgBox($MB_ICONERROR, "ERROR", "Unable to set DPI awareness!", 10)
-
-	Local Const $iDPI_def = 96
-
-	Return $iDPI / $iDPI_def
-EndFunc   ;==>InitializeDPI
-
 Func _Exit(ByRef $Guiscape, Const ByRef $event)
+	#forceref $Guiscape, $event
+	
 	Exit
 EndFunc   ;==>_Exit
 

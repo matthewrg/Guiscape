@@ -1,7 +1,7 @@
 #include-once
 
 #include "..\AutoItObject.au3"
-#include "Form Object\Form Object.au3"
+#include "GUI Object\GUI Object.au3"
 #include "Model.au3"
 #include "View.au3"
 
@@ -15,7 +15,7 @@ Func Canvas()
 	$this.AddMethod("Show", "Canvas_Show")
 	$this.AddMethod("Hide", "Canvas_Hide")
 
-	$this.AddProperty("FormObject", $ELSCOPE_READONLY)
+	$this.AddProperty("GUIObject", $ELSCOPE_READONLY)
 
 	$this.AddProperty("View", $ELSCOPE_PRIVATE, CanvasView())
 	$this.AddProperty("Model", $ELSCOPE_PRIVATE, CanvasModel())
@@ -28,17 +28,17 @@ Func Canvas_Handler(ByRef $this, Const ByRef $event)
 
 	Switch $event.ID
 		Case "Form"
-			$this.FormObject.Create()
+			$this.GUIObject.Create()
 
 			Return True
 
 		Case "Button"
-			$this.FormObject.CreateButton()
+			$this.GUIObject.CreateButton()
 
 			Return True
 
 		Case $this.View.ContextNewForm
-			$this.FormObject.Create()
+			$this.GUIObject.Create()
 
 			Return True
 			
@@ -59,7 +59,7 @@ EndFunc   ;==>Canvas_Handler
 Func Canvas_Create(ByRef $this, Const ByRef $parent)
 	$this.View.Create($parent)
 
-	$this.FormObject = FormObject($this.View.Hwnd)
+	$this.GUIObject = GUIObject($this.View.Hwnd)
 EndFunc   ;==>Canvas_Create
 
 Func Canvas_Show(ByRef $this)
