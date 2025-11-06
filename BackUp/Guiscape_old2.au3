@@ -56,22 +56,12 @@ Func main()
 				ContinueLoop
 
 			Case $GUI_EVENT_RESIZED
-				Local $sizePos = WinGetPos($event.FormHwnd)
-
-				ConsoleWrite("Left:   " & $Guiscape.View.Left & @CRLF & _
-							 "Top:    " & $Guiscape.View.Top & @CRLF & _
-							 "Width:  " & $Guiscape.View.Width & @CRLF & _
-							 "Height: " & $Guiscape.View.Height & @CRLF)
-
-				$Guiscape.View.Left = $sizePos[0]
-				$Guiscape.View.Top = $sizePos[1]
-				$Guiscape.View.Width = $sizePos[2]
-				$Guiscape.View.Height = $sizePos[3]
-
-				ConsoleWrite("Left:   " & $Guiscape.View.Left & @CRLF & _
-							 "Top:    " & $Guiscape.View.Top & @CRLF & _
-							 "Width:  " & $Guiscape.View.Width & @CRLF & _
-							 "Height: " & $Guiscape.View.Height & @CRLF)
+;~ 				Local $sizePos = WinGetPos($event.FormHwnd)
+;~
+;~ 				ConsoleWrite("Left:   " & $sizePos[0] & @CRLF & _
+;~ 							 "Top:    " & $sizePos[1] & @CRLF & _
+;~ 							 "Width:  " & $sizePos[2] & @CRLF & _
+;~ 							 "Height: " & $sizePos[3] & @CRLF)
 
 			Case $GUI_EVENT_CLOSE
 				; Ask if the Designer would like to save their progress before closing the window.
@@ -84,8 +74,8 @@ Func main()
 		EndSwitch
 
 		Switch $Guiscape.Canvas.Handler($event)
-			; Ask if the Designer would like to save their progress before erasing the canvas.
-
+				; Ask if the Designer would like to save their progress before erasing the canvas.
+				
 			Case "Erase Canvas"
 				ContinueLoop
 
@@ -114,6 +104,8 @@ Func main()
 
 			Case "Checkbox"
 				ContinueLoop
+
+				; Case ....
 		EndSwitch
 
 		; Shows and hides tabs
@@ -169,8 +161,7 @@ Func main()
 				ContinueLoop
 
 			Case "Exit"
-				; Ask if the Designer would like to save their progress before closing the window.
-				_Exit($Guiscape, $event)
+				Exit
 		EndSwitch
 	Until False
 EndFunc   ;==>main
@@ -261,7 +252,7 @@ Func InitializeDPI()
 
 	Local Const $iDPI_def = 96
 
-	If $iDPI = 0 Then Exit MsgBox($MB_ICONERROR, "ERROR", "Unable to set DPI awareness!", 10)
+	If $iDPI = 0 Then Exit MsgBox($MB_ICONERROR, "ERROR", "Unable to set DPI awareness!!!", 10)
 
 	Return $iDPI / $iDPI_def
 EndFunc   ;==>InitializeDPI
