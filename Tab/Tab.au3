@@ -12,6 +12,11 @@ Func Tab()
 	$this.AddMethod("Create", "Tab_Create")
 	$this.AddMethod("Handler", "Tab_Handler")
 
+	$this.AddProperty("Canvas", $ELSCOPE_READONLY)
+	$this.AddProperty("Properties", $ELSCOPE_READONLY)
+	$this.AddProperty("Script", $ELSCOPE_READONLY)
+	$this.AddProperty("ObjectExplorer", $ELSCOPE_READONLY)
+	
 	$this.AddProperty("Tab", $ELSCOPE_PRIVATE)
 
 	Return $this.Object
@@ -22,41 +27,27 @@ Func Tab_Create(ByRef $this)
 
 	GUICtrlSetResizing($this.Tab, $GUI_DOCKLEFT + $GUI_DOCKSIZE + $GUI_DOCKTOP)
 
-	GUICtrlCreateTabItem("Canvas")
+	$this.Canvas = GUICtrlCreateTabItem("Canvas")
 
 	GUICtrlCreateTabItem('')
 
-	GUICtrlCreateTabItem("Properties")
+	$this.Properties = GUICtrlCreateTabItem("Properties")
 
 	GUICtrlCreateTabItem('')
 
-	GUICtrlCreateTabItem("Script")
+	$this.Script = GUICtrlCreateTabItem("Script")
 
 	GUICtrlCreateTabItem('')
 
-	GUICtrlCreateTabItem("Object Explorer")
+	$this.ObjectExplorer = GUICtrlCreateTabItem("Object Explorer")
 
 	GUICtrlCreateTabItem('')
 EndFunc   ;==>Tab_Create
 
-Func Tab_Handler(ByRef $this, Const ByRef $event)
+Func Tab_Handler(Const ByRef $this, Const ByRef $event)
 	Switch $event.ID
 		Case $GUI_EVENT_PRIMARYUP
-			Local Const $tabIndex = GUICtrlRead($this.Tab)
-
-			Switch $tabIndex
-				Case 0
-					Return "Canvas"
-
-				Case 1
-					Return "Properties"
-
-				Case 2
-					Return "Script"
-
-				Case 3
-					Return "Object Explorer"
-			EndSwitch
+			Return GUICtrlRead($this.Tab, $GUI_READ_EXTENDED)
 	EndSwitch
 
 	Return False

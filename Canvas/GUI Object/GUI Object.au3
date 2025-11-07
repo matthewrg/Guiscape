@@ -30,6 +30,7 @@ Func GUIObject(Const $parent)
 	$this.AddMethod("Show", "GUIObject_Show")
 	$this.AddMethod("Hide", "GUIObject_Hide")
 	$this.AddMethod("SetTitle", "GUIObject_SetTitle")
+	$this.AddMethod("SetName", "GUIObject_SetName")
 	$this.AddMethod("SetWidth", "GUIObject_SetWidth")
 	$this.AddMethod("SetHeight", "GUIObject_SetHeight")
 	$this.AddMethod("SetFormBgColor", "GUIObject_SetFormBgColor")
@@ -43,6 +44,7 @@ Func GUIObject(Const $parent)
 	$this.AddMethod("SetExStyle", "GUIObject_SetExStyle")
 
 	$this.AddProperty("Hwnd", $ELSCOPE_READONLY)
+	
 	$this.AddProperty("ChildForm", $ELSCOPE_READONLY)
 	$this.AddProperty("Properties", $ELSCOPE_READONLY)
 	$this.AddProperty("Styles", $ELSCOPE_READONLY)
@@ -50,9 +52,9 @@ Func GUIObject(Const $parent)
 	$this.AddProperty("ContextMenu", $ELSCOPE_READONLY)
 	$this.AddProperty("Menubar", $ELSCOPE_READONLY)
 
-	$this.AddProperty("Parent", $ELSCOPE_PRIVATE, $parent)
-	$this.AddProperty("Title", $ELSCOPE_PRIVATE)
-	$this.AddProperty("Name", $ELSCOPE_PRIVATE)
+	$this.AddProperty("Parent", $ELSCOPE_PRIVATE, HWnd($parent))
+	$this.AddProperty("Title", $ELSCOPE_PRIVATE, '')
+	$this.AddProperty("Name", $ELSCOPE_PRIVATE, '')
 	$this.AddProperty("Left", $ELSCOPE_PRIVATE)
 	$this.AddProperty("Top", $ELSCOPE_PRIVATE)
 	$this.AddProperty("Width", $ELSCOPE_PRIVATE)
@@ -103,24 +105,17 @@ Func GUIObject_Handler(ByRef $this, Const ByRef $event)
 	Return False
 EndFunc   ;==>GUIObject_Handler
 
-Func GUIObject_Create(ByRef $this, Const $title = "<new form>")
-	$this.Hwnd = GUICreate($title, 400 * $g_iDPI_ratio1, 600 * $g_iDPI_ratio1, 5 * $g_iDPI_ratio1, 5 * $g_iDPI_ratio1, BitOR($WS_CHILD, $WS_OVERLAPPEDWINDOW), -1, HWnd($this.Parent))
-
+Func GUIObject_Create(ByRef $this)
+	$this.Hwnd = GUICreate('', 400 * $g_iDPI_ratio1, 600 * $g_iDPI_ratio1, 5 * $g_iDPI_ratio1, 5 * $g_iDPI_ratio1, BitOR($WS_CHILD, $WS_OVERLAPPEDWINDOW), -1, HWnd($this.Parent))
+		
 	Local Const $contextMenu = GUICtrlCreateContextMenu()
 
 	$this.ChildForm = GUICtrlCreateMenuItem("Child Form", $contextMenu)
-
 	$this.Properties = GUICtrlCreateMenuItem("Properties", $contextMenu)
-
 	$this.Styles = GUICtrlCreateMenuItem("Styles", $contextMenu)
-
 	$this.ExStyles = GUICtrlCreateMenuItem("Extended Styles", $contextMenu)
-
 	$this.ContextMenu = GUICtrlCreateMenuItem("Context Menu", $contextMenu)
-
 	$this.Menubar = GUICtrlCreateMenuItem("Menubar", $contextMenu)
-
-	$this.Ttitle = WinGetTitle(HWnd($this.Hwnd))
 
 	Local Const $pos = WinGetPos(HWnd($this.Hwnd))
 
@@ -151,11 +146,21 @@ Func GUIObject_GetStyle(Const ByRef $this)
 	Return GUIGetStyle(HWnd($this.Hwnd))[0]
 EndFunc   ;==>GUIObject_GetStyle
 
+Func GUIObject_GetTitle(Const ByRef $this)
+	Return WinGetTitle(HWnd($this.Hwnd))
+EndFunc
+
 Func GUIObject_SetTitle(ByRef $this, Const $newTitle)
 	WinSetTitle(HWnd($this.Hwnd), '', $newTitle)
 
 	$this.Title = $newTitle
 EndFunc   ;==>GUIObject_SetTitle
+
+Func GUIObject_SetName(ByRef $this, Const $name)
+	$this.Name = $name
+	
+	Return True
+EndFunc
 
 Func GUIObject_GetLeft(Const ByRef $this)
 	Return WinGetPos(HWnd($this.Hwnd))[0]

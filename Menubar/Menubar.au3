@@ -17,64 +17,58 @@ Func Menubar()
 	Return $this.Object
 EndFunc   ;==>Menubar
 
-Func Menubar_Handler(ByRef $this, Const $eventID)
-	#forceref $this, $eventID
-;~ 	Local $setting
-;~ 	
-;~ 	Switch $eventID
-;~ 		Case $this.View.ShowGrid
-;~ 			$setting = $this.View.Toggle($this.View.ShowGrid)
+Func Menubar_Handler(ByRef $this, Const $eventID)	
+	Local $setting
+	
+	Switch $eventID
+		Case $this.View.Save
+			Return "Save"
 
-;~ 			$this.Model.WriteSetting("ShowGrid", $setting)
+		Case $this.View.Load
+			Return "Load"
 
-;~ 			Return "ShowGrid"
+		Case $this.View.Exit
+			Return "Exit"
+			
+		Case $this.View.ShowGrid
+			$setting = $this.View.Toggle($eventID)
 
-;~ 		Case $this.View.GridSnap
-;~ 			$setting = $this.View.Toggle($this.View.GridSnap)
+			Return "ShowGrid"
 
-;~ 			$this.Model.WriteSetting("SnapToGrid", $setting)
+		Case $this.View.GridSnap
+			$setting = $this.View.Toggle($eventID)
 
-;~ 			Return "SnapToGrid"
+			$this.Model.WriteSetting("SnapToGrid", $setting)
 
-;~ 		Case $this.View.PastePos
-;~ 			$setting = $this.View.Toggle($this.View.PastePos)
+			Return "SnapToGrid"
 
-;~ 			$this.Model.WriteSetting("PasteAtMousePosition", $setting)
+		Case $this.View.PastePos
+			$setting = $this.View.Toggle($eventID)
 
-;~ 			Return "PasteAtMousePosition"
+			$this.Model.WriteSetting("PasteAtMousePosition", $setting)
 
-;~ 		Case $this.View.ShowControl
-;~ 			$setting = $this.View.Toggle($this.View.ShowControl)
+			Return "PasteAtMousePosition"
 
-;~ 			$this.Model.WriteSetting("ShowControlWhenMoving", $setting)
+		Case $this.View.ShowControl
+			$setting = $this.View.Toggle($eventID)
 
-;~ 			Return "ShowControlWhenMoving"
+			$this.Model.WriteSetting("ShowControlWhenMoving", $setting)
 
-;~ 		Case $this.View.ShowHidden
-;~ 			$setting = $this.View.Toggle($this.View.ShowHidden)
+			Return "ShowControlWhenMoving"
 
-;~ 			$this.Model.WriteSetting("ShowHiddenControls", $setting)
+		Case $this.View.ShowHidden
+			$setting = $this.View.Toggle($eventID)
 
-;~ 			Return "ShowHiddenControls"
+			$this.Model.WriteSetting("ShowHiddenControls", $setting)
 
-;~ 		Case $this.View.ObjectExplorer
-;~ 			Return "ObjectExplorer"
+			Return "ShowHiddenControls"
+		
+		Case $this.View.Canvas, $this.View.Properties, $this.View.Script, $this.View.ObjectExplorer
+			Return $eventID
 
-;~ 		Case $this.View.ClearAllControls
-;~ 			Return "ClearAllControls"
-
-;~ 		Case $this.View.About
-;~ 			Return "About"
-
-;~ 		Case $this.View.Save
-;~ 			Return "Save"
-
-;~ 		Case $this.View.Load
-;~ 			Return "Load"
-
-;~ 		Case $this.View.Exit
-;~ 			Return "Exit"
-;~ 	EndSwitch
+		Case $this.View.About
+			Return "About"
+	EndSwitch
 
 	Return False
 EndFunc   ;==>Menubar_Handler

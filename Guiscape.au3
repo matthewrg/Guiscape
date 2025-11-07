@@ -47,135 +47,10 @@ Func main()
 
 	$Guiscape.Create()
 
-	$Guiscape.Canvas.GUIObject.Create()
-
-	$Guiscape.Properties.FormStyles.Initialize($Guiscape.Canvas.GUIObject.GetStyle())
-
-	$Guiscape.Properties.FormExStyles.Initialize($Guiscape.Canvas.GUIObject.GetExStyle())
+	$Guiscape.CreateForm()
 
 	Do
-		Local $event = $Guiscape.Model.GUIEvent()
-
-		Switch $event.ID
-			Case $GUI_EVENT_NONE
-				ContinueLoop
-
-			Case $GUI_EVENT_RESIZED
-				Switch $event.Form
-					Case $Guiscape.View.Hwnd
-						$Guiscape.View.SetSizePos(WinGetPos($event.Form))
-						
-					Case Else
-						ContinueLoop
-				EndSwitch
-
-			Case $GUI_EVENT_CLOSE
-				; Ask if the Designer would like to save their progress before closing the window.
-
-				If $event.Form = $Guiscape.View.Hwnd Then
-					_Exit($Guiscape, $event)
-				Else
-					; To-Do: Send this event to the Canvas for processing
-					
-					GUIDelete($event.Form)
-				EndIf
-		EndSwitch
-
-		Switch $Guiscape.Canvas.Handler($event)
-			Case "Erase Canvas"
-				; Ask if the Designer would like to save their progress before erasing the canvas.
-
-				ContinueLoop
-
-			Case True
-				ContinueLoop
-		EndSwitch
-
-		; Allows the Designer to select from a form or a control to create. If the Designer chooses "Form" then the Canvas is
-		; sent into "Create" mode at which point it will wait for the Designer to click on the canvas. At that point a form
-		; will be created. Otherwise, if the Designer wishes to place a control on a form then a control is selected in the
-		; toolbar and then the form is sent into Create mode and will wait for the designer to click on it.
-		Switch $Guiscape.Toolbar.Handler($event.ID)
-			Case "Form"
-				$Guiscape.Canvas.GUIObject.Create()
-
-				$Guiscape.Properties.FormStyles.Initialize($Guiscape.Canvas.GUIObject.GetStyle())
-
-				$Guiscape.Properties.FormExStyles.Initialize($Guiscape.Canvas.GUIObject.GetExStyle())
-
-				ContinueLoop
-
-			Case "Button"
-				$Guiscape.Canvas.GUIObject.CreateButton()
-
-				ContinueLoop
-
-			Case "Checkbox"
-				ContinueLoop
-		EndSwitch
-
-		; Shows and hides tabs
-		Switch $Guiscape.Tab.Handler($event)
-			Case "Canvas"
-				$Guiscape.Canvas.Show
-
-				$Guiscape.Properties.Hide()
-
-				$Guiscape.Script.Hide()
-				
-				$Guiscape.ObjectExplorer.Hide()
-
-				ContinueLoop
-
-			Case "Properties"
-				$Guiscape.Properties.Show()
-
-				$Guiscape.Canvas.Hide()
-
-				$Guiscape.Script.Hide()
-				
-				$Guiscape.ObjectExplorer.Hide()
-
-				ContinueLoop
-
-			Case "Script"
-				$Guiscape.Script.Show()
-
-				$Guiscape.Canvas.Hide()
-
-				$Guiscape.Properties.Hide()
-				
-				$Guiscape.ObjectExplorer.Hide()
-
-				ContinueLoop
-
-			Case "Object Explorer"
-				$Guiscape.ObjectExplorer.Show()
-
-				$Guiscape.Canvas.Hide()
-
-				$Guiscape.Properties.Hide()
-
-				$Guiscape.Script.Hide()
-
-				ContinueLoop
-		EndSwitch
-
-		; To-Do: Handle all menu bar items
-		Switch $Guiscape.Menubar.Handler($event.ID)
-			Case "Handled"
-				ContinueLoop
-
-			Case "Save"
-				ContinueLoop
-
-			Case "Load"
-				ContinueLoop
-
-			Case "Exit"
-				; Ask if the Designer would like to save their progress before closing the window.
-				_Exit($Guiscape, $event)
-		EndSwitch
+		$Guiscape.Handler()
 	Until False
 EndFunc   ;==>main
 
@@ -185,6 +60,12 @@ Func Guiscape()
 	$this.Create()
 
 	$this.AddMethod("Create", "Guiscape_Create")
+	$this.AddMethod("Handler", "Guiscape_Handler")
+	$this.AddMethod("CanvasHandler", "Guiscape_Canvas_Handler")
+	$this.AddMethod("ToolbarHandler", "Guiscape_Toolbar_Handler")
+	$this.AddMethod("TabHandler", "Guiscape_Tab_Handler")
+	$this.AddMethod("MenubarHandler", "Guiscape_Menubar_Handler")
+	$this.AddMethod("CreateForm", "Guiscape_CreateForm")
 
 	$this.AddProperty("Model", $ELSCOPE_READONLY, GUIScapeModel())
 	$this.AddProperty("View", $ELSCOPE_READONLY, GuiscapeView())
@@ -203,7 +84,7 @@ Func Guiscape_Create(ByRef $this)
 	$this.View.Create($this.Model.Title)
 
 	$this.Menubar.Create()
-	
+
 	$this.Menubar.View.Initialize($this.Model.GetSettings())
 
 	$this.Toolbar.Create($this.Model.ResourcesDir)
@@ -215,9 +96,9 @@ Func Guiscape_Create(ByRef $this)
 	$this.Properties.Create($this.View)
 
 	$this.Script.Create($this.View)
-	
+
 	$this.ObjectExplorer.Create($this.View)
-	
+
 	$this.ObjectExplorer.Show()
 
 	$this.Canvas.Show()
@@ -227,9 +108,183 @@ Func Guiscape_Create(ByRef $this)
 	Return True
 EndFunc   ;==>Guiscape_Create
 
+Func Guiscape_Handler(ByRef $this)
+	Local Const $event = $this.Model.GUIEvent()
+
+	Switch $event.ID
+		Case $GUI_EVENT_NONE
+			Return True
+
+		Case $GUI_EVENT_RESIZED
+			Switch $event.Form
+				Case $this.View.Hwnd
+					$this.View.SetSizePos(WinGetPos($event.Form))
+
+				Case Else
+					Return True
+			EndSwitch
+
+		Case $GUI_EVENT_CLOSE
+			; Ask if the Designer would like to save their progress before closing the window.
+
+			If $event.Form = $this.View.Hwnd Then
+				_Exit($this, $event)
+			Else
+				; To-Do: Send this event to the Canvas for processing
+
+				GUIDelete($event.Form)
+
+				Return True
+			EndIf
+	EndSwitch
+
+	If $this.CanvasHandler($event) Then Return True
+
+	If $this.ToolbarHandler($event) Then Return True
+
+	If $this.TabHandler($event) Then Return True
+
+	If $this.MenubarHandler($event) Then Return True
+EndFunc   ;==>Guiscape_Handler
+
+Func Guiscape_Canvas_Handler(ByRef $this, Const ByRef $event)
+	Switch $this.Canvas.Handler($event)
+		Case "Erase Canvas"
+			; Ask if the Designer would like to save their progress before erasing the canvas.
+
+			Return True
+
+		Case True
+			Return True
+	EndSwitch
+
+	Return False
+EndFunc   ;==>Guiscape_Canvas_Handler
+
+Func Guiscape_Toolbar_Handler(ByRef $this, Const ByRef $event)
+	; Allows the Designer to select from a form or a control to create. If the Designer chooses "Form" then the Canvas is
+	; sent into "Create" mode at which point it will wait for the Designer to click on the canvas. At that point a form
+	; will be created. Otherwise, if the Designer wishes to place a control on a form then a control is selected in the
+	; toolbar and then the form is sent into Create mode and will wait for the designer to click on it.
+	Switch $this.Toolbar.Handler($event.ID)
+		Case "Form"
+			$this.CreateForm()
+
+			Return True
+
+		Case "Button"
+			$this.Canvas.GUIObject.CreateButton()
+
+			Return True
+
+		Case "Checkbox"
+			Return True
+	EndSwitch
+
+	Return False
+EndFunc   ;==>Guiscape_Toolbar_Handler
+
+Func Guiscape_Tab_Handler(ByRef $this, Const ByRef $event)
+	; Shows and hides tabs
+	Switch $this.Tab.Handler($event)
+		Case $this.Tab.Canvas
+			$this.Canvas.Show
+
+			$this.Properties.Hide()
+
+			$this.Script.Hide()
+
+			$this.ObjectExplorer.Hide()
+
+			Return True
+
+		Case $this.Tab.Properties
+			$this.Properties.Show()
+
+			$this.Canvas.Hide()
+
+			$this.Script.Hide()
+
+			$this.ObjectExplorer.Hide()
+
+			Return True
+
+		Case $this.Tab.Script
+			$this.Script.Show()
+
+			$this.Canvas.Hide()
+
+			$this.Properties.Hide()
+
+			$this.ObjectExplorer.Hide()
+
+			Return True
+
+		Case $this.Tab.ObjectExplorer
+			$this.ObjectExplorer.Show()
+
+			$this.Canvas.Hide()
+
+			$this.Properties.Hide()
+
+			$this.Script.Hide()
+
+			Return True
+	EndSwitch
+
+	Return False
+EndFunc   ;==>Guiscape_Tab_Handler
+
+Func Guiscape_Menubar_Handler(ByRef $this, Const ByRef $event)
+	; To-Do: Handle all menu bar items
+	Local Const $message = $this.Menubar.Handler($event.ID)
+
+	Switch $message
+		Case "Save"
+			Return True
+
+		Case "Load"
+			Return True
+
+		Case "Exit"
+			; Ask if the Designer would like to save their progress before closing the window.
+			_Exit($this, $event)
+
+		Case $this.Menubar.View.Canvas
+			GUICtrlSetState($this.Tab.Canvas, $GUI_SHOW + $GUI_FOCUS)
+
+			Return True
+
+		Case $this.Menubar.View.Properties
+			GUICtrlSetState($this.Tab.Properties, $GUI_SHOW + $GUI_FOCUS)
+
+			Return True
+
+		Case $this.Menubar.View.Script
+			GUICtrlSetState($this.Tab.Script, $GUI_SHOW + $GUI_FOCUS)
+
+			Return True
+
+		Case $this.Menubar.View.ObjectExplorer
+			GUICtrlSetState($this.Tab.ObjectExplorer, $GUI_SHOW + $GUI_FOCUS)
+
+			Return True
+	EndSwitch
+
+	Return False
+EndFunc   ;==>Guiscape_Menubar_Handler
+
+Func Guiscape_CreateForm(ByRef $this)
+	$this.Canvas.Form()
+
+;~ 	$this.Properties.FormStyles.Initialize($this.Canvas.GUIObject.GetStyle())
+
+;~ 	$this.Properties.FormExStyles.Initialize($this.Canvas.GUIObject.GetExStyle())
+EndFunc   ;==>Guiscape_CreateForm
+
 Func _Exit(ByRef $Guiscape, Const ByRef $event)
 	#forceref $Guiscape, $event
-	
+
 	Exit
 EndFunc   ;==>_Exit
 

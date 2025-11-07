@@ -2,29 +2,35 @@
 
 #include "..\AutoItObject.au3"
 
+#include <Array.au3>
+
 Func CanvasModel()
-	Local $formList[]
+	Local $formList[] = []
 
 	Local $this = _AutoItObject_Class()
 
 	$this.AddMethod("AddForm", "CanvasModel_AddForm")
-
-	$this.AddProperty("FormList", $ELSCOPE_PRIVATE, $formList)
-
-	$this.AddProperty("FormCount", $ELSCOPE_PRIVATE, 0)
+	
+	$this.AddProperty("FormCount", $ELSCOPE_READONLY, 0)
 
 	$this.AddMethod("IncrementFormCount", "CanvasModel_IncrementFormCount", True)
 	$this.AddMethod("DecrementFormCount", "CanvasModel_DecrementFormCount", True)
 
 	$this.AddProperty("FormList", $ELSCOPE_PRIVATE, $formList)
-	$this.AddProperty("FormCount", $ELSCOPE_PRIVATE, 0)
 
 	Return $this.Object
 EndFunc   ;==>CanvasModel
 
-Func CanvasModel_AddForm(ByRef $this)
-	#forceref $this
+Func CanvasModel_AddForm(ByRef $this, $form)
+	$this.IncrementFormCount()	
 	
+	Local $formList = $this.FormList
+	
+	_ArrayAdd($formList, $form)
+	
+	ConsoleWrite("GUI Object: " & $form.GetTitle() & @CRLF)
+	
+	$this.FormList = $formList
 EndFunc
 
 Func CanvasModel_IncrementFormCount(ByRef $this)

@@ -1,7 +1,6 @@
 #include-once
 
 #include <GUIConstantsEx.au3>
-
 #include <WindowsStylesConstants.au3>
 
 #include "..\AutoItObject.au3"
@@ -14,10 +13,11 @@ Func CanvasView()
 	$this.AddMethod("Create", "CanvasView_Create")
 	$this.AddMethod("Show", "CanvasView_Show")
 	$this.AddMethod("Hide", "CanvasView_Hide")
+	$this.AddMethod("Move", "CanvasView_Move")
 
 	$this.AddProperty("Hwnd", $ELSCOPE_READONLY)
-	$this.AddProperty("ContextNewForm", $ELSCOPE_READONLY)
-	$this.AddProperty("ContextErase", $ELSCOPE_READONLY)
+	$this.AddProperty("NewForm", $ELSCOPE_READONLY)
+	$this.AddProperty("Erase", $ELSCOPE_READONLY)
 
 	$this.AddProperty("Visible", $ELSCOPE_PRIVATE, False)
 
@@ -29,9 +29,8 @@ Func CanvasView_Create(ByRef $this, Const ByRef $parent)
 
 	Local Const $contextMenu = GUICtrlCreateContextMenu()
 
-	$this.ContextNewForm = GUICtrlCreateMenuItem("New Form", $contextMenu)
-	
-	$this.ContextErase = GUICtrlCreateMenuItem("Erase Canvas", $contextMenu)
+	$this.NewForm = GUICtrlCreateMenuItem("New Form", $contextMenu)	
+	$this.Erase = GUICtrlCreateMenuItem("Erase Canvas", $contextMenu)
 EndFunc   ;==>CanvasView_Create
 
 Func CanvasView_Show(ByRef $this)
@@ -49,3 +48,10 @@ Func CanvasView_Hide(ByRef $this)
 		$this.Visible = False
 	EndIf
 EndFunc   ;==>CanvasView_Hide
+
+Func CanvasView_Move(ByRef $this, Const ByRef $sizePos)
+	WinMove(HWnd($this.Hwnd), '', 90 * $g_iDPI_ratio1, _ 
+	                              30 * $g_iDPI_ratio1, _ 
+								  ($sizePos[2] - (110 * $g_iDPI_ratio1)) * $g_iDPI_ratio1, _ 
+								  ($sizePos[3] - (95 * $g_iDPI_ratio1)) * $g_iDPI_ratio1)
+EndFunc

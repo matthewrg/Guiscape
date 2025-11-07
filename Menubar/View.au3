@@ -16,8 +16,10 @@ Func MenubarView()
 	$this.AddProperty("Save", $ELSCOPE_READONLY)
 	$this.AddProperty("Load", $ELSCOPE_READONLY)
 	$this.AddProperty("Exit", $ELSCOPE_READONLY)
+	$this.AddProperty("Canvas", $ELSCOPE_READONLY)
+	$this.AddProperty("Properties", $ELSCOPE_READONLY)
+	$this.AddProperty("Script", $ELSCOPE_READONLY)
 	$this.AddProperty("ObjectExplorer", $ELSCOPE_READONLY)
-	$this.AddProperty("ClearAllControls", $ELSCOPE_READONLY)
 	$this.AddProperty("About", $ELSCOPE_READONLY)
 	$this.AddProperty("ShowGrid", $ELSCOPE_READONLY)
 	$this.AddProperty("GridSnap", $ELSCOPE_READONLY)
@@ -29,15 +31,17 @@ Func MenubarView()
 EndFunc   ;==>MenubarView
 
 Func MenubarView_Create(ByRef $this)
-	Local Const $menu_file = GUICtrlCreateMenu("File")
-	$this.Save = GUICtrlCreateMenuItem("Save", $menu_file)           ; Roy add-on
-	$this.Load = GUICtrlCreateMenuItem("Load", $menu_file)           ; Roy add-on
+	Local Const $menu_file = GUICtrlCreateMenu("&File")
+	$this.Save = GUICtrlCreateMenuItem("&Save", $menu_file)           ; Roy add-on
+	$this.Load = GUICtrlCreateMenuItem("&Load", $menu_file)           ; Roy add-on
 	GUICtrlCreateMenuItem('', $menu_file)                            ; Roy add-on
-	$this.Exit = GUICtrlCreateMenuItem("Exit", $menu_file)
+	$this.Exit = GUICtrlCreateMenuItem("E&xit", $menu_file)
 
-	Local Const $menu_edit = GUICtrlCreateMenu("Edit")
-	$this.ObjectExplorer = GUICtrlCreateMenuItem("Object Explorer", $menu_edit)    ; added by: TheSaint
-	$this.ClearAllControls = GUICtrlCreateMenuItem("Clear all controls", $menu_edit)
+	Local Const $menu_edit = GUICtrlCreateMenu("&Edit")
+	$this.Canvas = GUICtrlCreateMenuItem("&Canvas", $menu_edit)
+	$this.Properties = GUICtrlCreateMenuItem("&Properties", $menu_edit)
+	$this.Script = GUICtrlCreateMenuItem("&Script", $menu_edit)
+	$this.ObjectExplorer = GUICtrlCreateMenuItem("&Object Explorer", $menu_edit)    ; added by: TheSaint
 	$this.About = GUICtrlCreateMenuItem("About", $menu_edit)                       ; added by: TheSaint
 
 	Local Const $menu_settings = GUICtrlCreateMenu("Settings")
