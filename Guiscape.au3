@@ -127,15 +127,13 @@ Func Guiscape_Handler(ByRef $this)
 		Case $GUI_EVENT_CLOSE
 			; Ask if the Designer would like to save their progress before closing the window.
 
-			If $event.Form = $this.View.Hwnd Then
-				_Exit($this, $event)
-			Else
-				; To-Do: Send this event to the Canvas for processing
+			Switch $event.Form
+				Case HWnd($this.View.Hwnd)
+					_Exit($this, $event)
 
-				GUIDelete($event.Form)
-
-				Return True
-			EndIf
+				Case HWnd($this.Canvas.Model.GetForm(Int($event.Form)).GetHwnd())		
+					$this.Canvas.Model.RemoveForm(Int($event.Form)) 
+			EndSwitch
 	EndSwitch
 
 	If $this.CanvasHandler($event) Then Return True
@@ -287,6 +285,10 @@ Func _Exit(ByRef $Guiscape, Const ByRef $event)
 
 	Exit
 EndFunc   ;==>_Exit
+
+Func Print(Const ByRef $message)
+	ConsoleWrite($message & @CRLF)
+EndFunc
 
 ;~ Func HWndFromPoint()
 ;~ 	Local Static $g_tStruct = DllStructCreate($tagPOINT)

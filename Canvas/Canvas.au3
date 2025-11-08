@@ -19,7 +19,7 @@ Func Canvas()
 	$this.AddProperty("ActiveObject", $ELSCOPE_READONLY)
 
 	$this.AddProperty("View", $ELSCOPE_PRIVATE, CanvasView())
-	$this.AddProperty("Model", $ELSCOPE_PRIVATE, CanvasModel())
+	$this.AddProperty("Model", $ELSCOPE_READONLY, CanvasModel())
 
 	Return $this.Object
 EndFunc   ;==>Canvas
@@ -28,20 +28,15 @@ Func Canvas_Handler(Const ByRef $this, Const ByRef $event)
 	Switch $event.Form
 		Case HWnd($this.View.Hwnd)
 			Switch $event.ID
-				Case "Form"
-					$this.Create()
+				Case "Form", $this.View.NewForm
+					$this.Form()
 
 					Return True
 
 				Case "Button"
 					Return True
 
-				Case $this.View.ContextNewForm
-					$this.GUIObject.Create()
-
-					Return True
-
-				Case $this.View.ContextErase
+				Case $this.View.EraseCanvas
 					Return "Erase Canvas"
 			EndSwitch
 	EndSwitch
@@ -61,17 +56,13 @@ Func Canvas_Create(Const ByRef $this, Const ByRef $parent)
 EndFunc   ;==>Canvas_Create
 
 Func Canvas_Form(ByRef $this)
-	Local Const $guiObject = GUIObject($this.View.Hwnd)
+	Local $guiObject = GUIObject($this.View.Hwnd)
+	
+	$guiObject.Create("Form" & $this.Model.GetFormCount())
 	
 	$this.Model.AddForm($guiObject)
 	
 	$this.ActiveObject = $guiObject
-	
-	$guiObject.Create()
-	
-	$guiObject.SetName("Form" & $this.Model.FormCount)
-	
-	$guiObject.SetTitle("Form" & $this.Model.FormCount)
 	
 	Return True
 EndFunc

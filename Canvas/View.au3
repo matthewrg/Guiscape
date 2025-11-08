@@ -17,7 +17,7 @@ Func CanvasView()
 
 	$this.AddProperty("Hwnd", $ELSCOPE_READONLY)
 	$this.AddProperty("NewForm", $ELSCOPE_READONLY)
-	$this.AddProperty("Erase", $ELSCOPE_READONLY)
+	$this.AddProperty("EraseCanvas", $ELSCOPE_READONLY)
 
 	$this.AddProperty("Visible", $ELSCOPE_PRIVATE, False)
 
@@ -30,7 +30,7 @@ Func CanvasView_Create(ByRef $this, Const ByRef $parent)
 	Local Const $contextMenu = GUICtrlCreateContextMenu()
 
 	$this.NewForm = GUICtrlCreateMenuItem("New Form", $contextMenu)	
-	$this.Erase = GUICtrlCreateMenuItem("Erase Canvas", $contextMenu)
+	$this.EraseCanvas = GUICtrlCreateMenuItem("Erase Canvas", $contextMenu)
 EndFunc   ;==>CanvasView_Create
 
 Func CanvasView_Show(ByRef $this)
