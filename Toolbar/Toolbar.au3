@@ -17,21 +17,19 @@ Func Toolbar()
 	Return $this.Object
 EndFunc   ;==>Toolbar
 
-Func Toolbar_Create(ByRef $this, Const $resourcesDir)
+Func Toolbar_Create(Const ByRef $this, Const ByRef $resourcesDir)
 	$this.View.Create($resourcesDir)
 EndFunc   ;==>Toolbar_Create
 
 Func Toolbar_Handler(Const ByRef $this, Const ByRef $eventID)
-	Local Const $view = $this.View
-
 	Switch $eventID
-		Case $view.Form
+		Case $this.View.Form
 			Return "Form"
 
-		Case $view.Button
+		Case $this.View.Button
 			Return "Button"
 
-		Case $view.Checkbox
+		Case $this.View.Checkbox
 			Return "Checkbox"
 	EndSwitch
 

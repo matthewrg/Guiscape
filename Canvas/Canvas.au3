@@ -1,10 +1,5 @@
 #include-once
 
-#include "..\AutoItObject.au3"
-#include "GUI Object\GUI Object.au3"
-#include "Model.au3"
-#include "View.au3"
-
 Func Canvas()
 	Local $this = _AutoItObject_Class()
 
@@ -12,40 +7,24 @@ Func Canvas()
 
 	$this.AddMethod("Handler", "Canvas_Handler")
 	$this.AddMethod("Create", "Canvas_Create")
-	$this.AddMethod("Form", "Canvas_Form")
+	$this.AddMethod("GetHwnd", "Canvas_GetHwnd")
 	$this.AddMethod("Show", "Canvas_Show")
 	$this.AddMethod("Hide", "Canvas_Hide")
-	
-	$this.AddProperty("ActiveObject", $ELSCOPE_READONLY)
-
-	$this.AddProperty("View", $ELSCOPE_PRIVATE, CanvasView())
-	$this.AddProperty("Model", $ELSCOPE_READONLY, CanvasModel())
+	$this.AddMethod("Move", "Canvas_Move")
 
 	Return $this.Object
 EndFunc   ;==>Canvas
 
 Func Canvas_Handler(Const ByRef $this, Const ByRef $event)
 	Switch $event.Form
-		Case HWnd($this.View.Hwnd)
+		Case $this.View.Hwnd
 			Switch $event.ID
-				Case "Form", $this.View.NewForm
-					$this.Form()
-
-					Return True
-
-				Case "Button"
-					Return True
+				Case $this.View.NewForm
+					Return "New Form"
 
 				Case $this.View.EraseCanvas
 					Return "Erase Canvas"
 			EndSwitch
-	EndSwitch
-
-	Switch $event.ID
-		Case $GUI_EVENT_RESIZED
-			$this.View.Move(WinGetPos($event.Form))	
-
-			Return True
 	EndSwitch
 
 	Return False
@@ -55,16 +34,8 @@ Func Canvas_Create(Const ByRef $this, Const ByRef $parent)
 	$this.View.Create($parent)
 EndFunc   ;==>Canvas_Create
 
-Func Canvas_Form(ByRef $this)
-	Local $guiObject = GUIObject($this.View.Hwnd)
-	
-	$guiObject.Create("Form" & $this.Model.GetFormCount())
-	
-	$this.Model.AddForm($guiObject)
-	
-	$this.ActiveObject = $guiObject
-	
-	Return True
+Func Canvas_GetHwnd(Const ByRef $this)
+	Return $this.View.Hwnd
 EndFunc
 
 Func Canvas_Show(Const ByRef $this)
@@ -74,3 +45,7 @@ EndFunc   ;==>Canvas_Show
 Func Canvas_Hide(Const ByRef $this)
 	$this.View.Hide()
 EndFunc   ;==>Canvas_Hide
+
+Func Canvas_Move(Const ByRef $this, Const ByRef $sizePos)
+	$this.View.Move($sizePos)
+EndFunc   ;==>Canvas_Move

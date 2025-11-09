@@ -17,7 +17,7 @@ Func MenubarView()
 	$this.AddProperty("Load", $ELSCOPE_READONLY)
 	$this.AddProperty("Exit", $ELSCOPE_READONLY)
 	$this.AddProperty("Canvas", $ELSCOPE_READONLY)
-	$this.AddProperty("Properties", $ELSCOPE_READONLY)
+	$this.AddProperty("Parameters", $ELSCOPE_READONLY)
 	$this.AddProperty("Script", $ELSCOPE_READONLY)
 	$this.AddProperty("ObjectExplorer", $ELSCOPE_READONLY)
 	$this.AddProperty("About", $ELSCOPE_READONLY)
@@ -32,17 +32,17 @@ EndFunc   ;==>MenubarView
 
 Func MenubarView_Create(ByRef $this)
 	Local Const $menu_file = GUICtrlCreateMenu("&File")
-	$this.Save = GUICtrlCreateMenuItem("&Save", $menu_file)           ; Roy add-on
-	$this.Load = GUICtrlCreateMenuItem("&Load", $menu_file)           ; Roy add-on
-	GUICtrlCreateMenuItem('', $menu_file)                            ; Roy add-on
+	$this.Save = GUICtrlCreateMenuItem("&Save", $menu_file) ; Roy add-on
+	$this.Load = GUICtrlCreateMenuItem("&Load", $menu_file) ; Roy add-on
+	GUICtrlCreateMenuItem('', $menu_file)                   ; Roy add-on
 	$this.Exit = GUICtrlCreateMenuItem("E&xit", $menu_file)
 
 	Local Const $menu_edit = GUICtrlCreateMenu("&Edit")
 	$this.Canvas = GUICtrlCreateMenuItem("&Canvas", $menu_edit)
-	$this.Properties = GUICtrlCreateMenuItem("&Properties", $menu_edit)
+	$this.Parameters = GUICtrlCreateMenuItem("&Parameters", $menu_edit)
 	$this.Script = GUICtrlCreateMenuItem("&Script", $menu_edit)
-	$this.ObjectExplorer = GUICtrlCreateMenuItem("&Object Explorer", $menu_edit)    ; added by: TheSaint
-	$this.About = GUICtrlCreateMenuItem("About", $menu_edit)                       ; added by: TheSaint
+	$this.ObjectExplorer = GUICtrlCreateMenuItem("&Object Explorer", $menu_edit) ; added by: TheSaint
+	$this.About = GUICtrlCreateMenuItem("About", $menu_edit)                     ; added by: TheSaint
 
 	Local Const $menu_settings = GUICtrlCreateMenu("Settings")
 	$this.ShowGrid = GUICtrlCreateMenuItem("Show grid", $menu_settings)
@@ -70,7 +70,7 @@ Func MenubarView_Toggle(Const ByRef $this, Const $menuItem)
 	EndSelect
 EndFunc   ;==>MenubarView_Toggle
 
-Func MenubarView_Initialize(ByRef $this, Const $settings)
+Func MenubarView_Initialize(Const ByRef $this, Const $settings)
 	Local Const $menuItems[] = [$this.ShowGrid, $this.GridSnap, $this.PastePos, $this.ShowControl, $this.ShowHidden]
 
 	Local Const $itemCount = UBound($menuItems)

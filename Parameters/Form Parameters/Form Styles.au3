@@ -1,55 +1,48 @@
 #include-once
 
-#include <GuiConstantsEx.au3>
-#include <WindowsStylesConstants.au3>
+Func Styles()
+	Local $this = _AutoItObject_Create(ExStyles())
 
-#include "..\AutoItObject.au3"
+	_AutoItObject_AddMethod($this, "Create", "Styles_Create")
+	_AutoItObject_AddMethod($this, "Handler", "Styles_Handler")
+	_AutoItObject_AddMethod($this, "Initialize", "Styles_Initialize")
+	_AutoItObject_AddMethod($this, "Show", "Styles_Show")
+	_AutoItObject_AddMethod($this, "Hide", "Styles_Hide")
+	
+	_AutoItObject_AddProperty($this, "SS_DEFAULT_GUI", $ELSCOPE_READONLY)
+	_AutoItObject_AddProperty($this, "WS_BORDER", $ELSCOPE_READONLY)
+	_AutoItObject_AddProperty($this, "WS_POPUP", $ELSCOPE_READONLY)
+	_AutoItObject_AddProperty($this, "WS_CAPTION", $ELSCOPE_READONLY)
+	_AutoItObject_AddProperty($this, "WS_CLIPCHILDREN", $ELSCOPE_READONLY)
+	_AutoItObject_AddProperty($this, "WS_CLIPSIBLINGS", $ELSCOPE_READONLY)
+	_AutoItObject_AddProperty($this, "WS_DISABLED", $ELSCOPE_READONLY)
+	_AutoItObject_AddProperty($this, "WS_DLGFRAME", $ELSCOPE_READONLY)
+	_AutoItObject_AddProperty($this, "WS_HSCROLL", $ELSCOPE_READONLY)
+	_AutoItObject_AddProperty($this, "WS_MAXIMIZE", $ELSCOPE_READONLY)
+	_AutoItObject_AddProperty($this, "WS_MAXIMIZEBOX", $ELSCOPE_READONLY)
+	_AutoItObject_AddProperty($this, "WS_OVERLAPPED", $ELSCOPE_READONLY)
+	_AutoItObject_AddProperty($this, "WS_OVERLAPPEDWINDOW", $ELSCOPE_READONLY)
+	_AutoItObject_AddProperty($this, "WS_POPUPWINDOW", $ELSCOPE_READONLY)
+	_AutoItObject_AddProperty($this, "WS_SIZEBOX", $ELSCOPE_READONLY)
+	_AutoItObject_AddProperty($this, "WS_SYSMENU", $ELSCOPE_READONLY)
+	_AutoItObject_AddProperty($this, "WS_THICKFRAME", $ELSCOPE_READONLY)
+	_AutoItObject_AddProperty($this, "WS_VSCROLL", $ELSCOPE_READONLY)
+	_AutoItObject_AddProperty($this, "WS_VISIBLE", $ELSCOPE_READONLY)
+	_AutoItObject_AddProperty($this, "WS_CHILD", $ELSCOPE_READONLY)
+	_AutoItObject_AddProperty($this, "WS_GROUP", $ELSCOPE_READONLY)
+	_AutoItObject_AddProperty($this, "WS_TABSTOP", $ELSCOPE_READONLY)
+	_AutoItObject_AddProperty($this, "DS_MODALFRAME", $ELSCOPE_READONLY)
+	_AutoItObject_AddProperty($this, "DS_SETFOREGROUND", $ELSCOPE_READONLY)
+	_AutoItObject_AddProperty($this, "DS_CONTEXTHELP", $ELSCOPE_READONLY)
+	
+	_AutoItObject_AddProperty($this, "Styles", $ELSCOPE_READONLY)
+	
+	_AutoItObject_AddMethod($this, "CreateCheckbox", "Styles_CreateCheckbox", True)
 
-Func FormStyles()
-	Local $this = _AutoItObject_Class()
+	Return $this
+EndFunc   ;==>Styles
 
-	$this.Create()
-
-	$this.AddMethod("Create", "FormStyles_Create")
-	$this.AddMethod("Handler", "FormStyles_Handler")
-	$this.AddMethod("Initialize", "FormStyles_Initialize")
-	$this.AddMethod("Show", "FormStyles_Show")
-	$this.AddMethod("Hide", "FormStyles_Hide")
-
-	$this.AddProperty("SS_DEFAULT_GUI", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_BORDER", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_POPUP", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_CAPTION", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_CLIPCHILDREN", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_CLIPSIBLINGS", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_DISABLED", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_DLGFRAME", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_HSCROLL", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_MAXIMIZE", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_MAXIMIZEBOX", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_OVERLAPPED", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_OVERLAPPEDWINDOW", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_POPUPWINDOW", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_SIZEBOX", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_SYSMENU", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_THICKFRAME", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_VSCROLL", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_VISIBLE", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_CHILD", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_GROUP", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_TABSTOP", $ELSCOPE_READONLY)
-	$this.AddProperty("DS_MODALFRAME", $ELSCOPE_READONLY)
-	$this.AddProperty("DS_SETFOREGROUND", $ELSCOPE_READONLY)
-	$this.AddProperty("DS_CONTEXTHELP", $ELSCOPE_READONLY)
-
-	$this.AddMethod("CreateCheckbox", "FormStyles_CreateCheckbox", True)
-
-	Return $this.Object
-EndFunc   ;==>FormStyles
-
-Func FormStyles_Create(ByRef $this)
-	GUICtrlCreateTabItem("Styles")
-
+Func Styles_Create(ByRef $this)
 	$this.SS_DEFAULT_GUI = $this.CreateCheckbox("SS_DEFAULT_GUI", 10, 30)
 	$this.WS_BORDER = $this.CreateCheckbox("WS_BORDER", 10, 50)
 	$this.WS_POPUP = $this.CreateCheckbox("WS_POPUP", 10, 70)
@@ -75,25 +68,23 @@ Func FormStyles_Create(ByRef $this)
 	$this.DS_MODALFRAME = $this.CreateCheckbox("DS_MODALFRAME", 10, 470)
 	$this.DS_SETFOREGROUND = $this.CreateCheckbox("DS_SETFOREGROUND", 10, 490)
 	$this.DS_CONTEXTHELP = $this.CreateCheckbox("DS_CONTEXTHELP", 10, 510)
+EndFunc   ;==>Styles_Create
 
-	GUICtrlCreateTabItem('')
-EndFunc   ;==>FormStyles_Create
-
-Func FormStyles_CreateCheckbox(ByRef $this, Const $text, Const $left, Const $top)
+Func Styles_CreateCheckbox(ByRef $this, Const $text, Const $left, Const $top)
 	#forceref $this
 	
 	Return GUICtrlCreateCheckbox($text, $left * $g_iDPI_ratio1, $top * $g_iDPI_ratio1)
 EndFunc
 
-Func FormStyles_Handler(ByRef $this, Const $eventID)
+Func Styles_Handler(ByRef $this, Const $eventID)
 	#forceref $this, $eventID
 		
 	; When the GUI designer wants to enable or disable styles then this function will 
 	; report back to the main loop. At that point Guiscape will communicate with the
 	; form to have the form change it's styles to suit.
-EndFunc   ;==>FormStyles_Handler
+EndFunc   ;==>Styles_Handler
 
-Func FormStyles_Initialize(ByRef $this, Const $styles)
+Func Styles_Initialize(ByRef $this, Const $styles)
 	Local Const $allStyles[] = [$WS_BORDER, _
 			$WS_POPUP, _
 			$WS_CAPTION, _
@@ -171,15 +162,15 @@ Func FormStyles_Initialize(ByRef $this, Const $styles)
 			EndSwitch
 		EndIf
 	Next
-EndFunc   ;==>FormStyles_Initialize
+EndFunc   ;==>Styles_Initialize
 
-Func FormStyles_Show(ByRef $this)
+Func Styles_Show(ByRef $this)
 	#forceref $this
 	
 	; Show the styles checkboxes when a form is active and the designer clicks the Styles tab.
 EndFunc
 
-Func FormStyles_Hide(ByRef $this)
+Func Styles_Hide(ByRef $this)
 	#forceref $this
 	
 	; Hide the styles checkboxes for when a control is active.

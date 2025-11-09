@@ -39,7 +39,7 @@ Func ToolbarView()
 EndFunc   ;==>ToolbarView
 
 Func ToolbarView_Create(ByRef $this, Const $resourcesDir)	
-	Local Const $start = 20, $add = 20
+	Local Const $start = 5, $add = 20
 
 	$this.Form = $this.CreateTool("Form", 5, $start, $resourcesDir)
 	$this.Group = $this.CreateTool("Group", 45, $start, $resourcesDir)

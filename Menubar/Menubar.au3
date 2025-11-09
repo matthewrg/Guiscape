@@ -11,68 +11,100 @@ Func Menubar()
 
 	$this.AddMethod("Handler", "Menubar_Handler")
 	$this.AddMethod("Create", "Menubar_Create")
+	$this.AddMethod("Initialize", "Menubar_Initialize")
 
-	$this.AddProperty("View", $ELSCOPE_READONLY, MenubarView())
+	$this.AddProperty("View", $ELSCOPE_PRIVATE, MenubarView())
 
 	Return $this.Object
 EndFunc   ;==>Menubar
 
-Func Menubar_Handler(ByRef $this, Const $eventID)	
-	Local $setting
-	
+Func Menubar_Handler(Const ByRef $this, Const ByRef $eventID)
+	Local $menubar[]
+
 	Switch $eventID
 		Case $this.View.Save
-			Return "Save"
+			$menubar.Message = "Save"
+
+			Return $menubar
 
 		Case $this.View.Load
-			Return "Load"
+			$menubar.Message = "Load"
+
+			Return $menubar
 
 		Case $this.View.Exit
-			Return "Exit"
-			
-		Case $this.View.ShowGrid
-			$setting = $this.View.Toggle($eventID)
+			$menubar.Message = "Exit"
 
-			Return "ShowGrid"
+			Return $menubar
+
+		Case $this.View.ShowGrid
+			$menubar.Message = "ShowGrid"
+
+			$menubar.Setting = $this.View.Toggle($eventID)
+
+			Return $menubar
 
 		Case $this.View.GridSnap
-			$setting = $this.View.Toggle($eventID)
+			$menubar.Message = "SnapToGrid"
 
-			$this.Model.WriteSetting("SnapToGrid", $setting)
+			$menubar.Setting = $this.View.Toggle($eventID)
 
-			Return "SnapToGrid"
+			Return $menubar
 
 		Case $this.View.PastePos
-			$setting = $this.View.Toggle($eventID)
+			$menubar.Message = "PasteAtMousePosition"
 
-			$this.Model.WriteSetting("PasteAtMousePosition", $setting)
+			$menubar.Setting = $this.View.Toggle($eventID)
 
-			Return "PasteAtMousePosition"
+			Return $menubar
 
 		Case $this.View.ShowControl
-			$setting = $this.View.Toggle($eventID)
+			$menubar.Message = "ShowControlWhenMoving"
 
-			$this.Model.WriteSetting("ShowControlWhenMoving", $setting)
+			$menubar.Setting = $this.View.Toggle($eventID)
 
-			Return "ShowControlWhenMoving"
+			Return $menubar
 
 		Case $this.View.ShowHidden
-			$setting = $this.View.Toggle($eventID)
+			$menubar.Message = "ShowHiddenControls"
 
-			$this.Model.WriteSetting("ShowHiddenControls", $setting)
+			$menubar.Setting = $this.View.Toggle($eventID)
 
-			Return "ShowHiddenControls"
-		
-		Case $this.View.Canvas, $this.View.Properties, $this.View.Script, $this.View.ObjectExplorer
-			Return $eventID
+			Return $menubar
+
+		Case $this.View.Canvas
+			$menubar.Message = "Canvas"
+
+			Return $menubar
+
+		Case $this.View.Parameters
+			$menubar.Message = "Parameters"
+
+			Return $menubar
+
+		Case $this.View.Script
+			$menubar.Message = "Script"
+
+			Return $menubar
+
+		Case $this.View.ObjectExplorer
+			$menubar.Message = "Object Explorer"
+
+			Return $menubar
 
 		Case $this.View.About
-			Return "About"
+			$menubar.Message = "About"
+
+			Return $menubar
 	EndSwitch
 
 	Return False
 EndFunc   ;==>Menubar_Handler
 
-Func Menubar_Create(ByRef $this)
+Func Menubar_Create(Const ByRef $this)
 	$this.View.Create()
 EndFunc   ;==>Menubar_Create
+
+Func Menubar_Initialize(Const ByRef $this, Const ByRef $settings)
+	$this.View.Initialize($settings)
+EndFunc   ;==>Menubar_Initialize

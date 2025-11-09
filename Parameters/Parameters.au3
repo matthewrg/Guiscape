@@ -1,7 +1,7 @@
 
 #include-once
 
-Func ObjectExplorer()
+Func Parameters()
 	Local $this = _AutoItObject_Class()
 	
 	$this.Create()
