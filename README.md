@@ -11,7 +11,7 @@ and otherwise maintain their own state.  Currently, it's only a fraction of the 
 
 To-Do:
 
-	--Currently working on laying out the GUI. Specifically the Properties, Syles, etc tabs.
+	-- Currently working on laying out the GUI. Specifically the Properties, Syles, etc tabs.
 	
 	-- Work in MattyD's contributions once I get to that point.
 	
