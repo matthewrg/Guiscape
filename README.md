@@ -11,6 +11,8 @@ and otherwise maintain their own state.  Currently, it's only a fraction of the 
 
 To-Do:
 
+	--Currently working on laying out the GUI. Specifically the Properties, Syles, etc tabs.
+	
 	-- Work in MattyD's contributions once I get to that point.
 	
 	-- Interpret dropped .Au3s for GUI editing and saving
