@@ -2,8 +2,6 @@
 
 #include <ButtonConstants.au3>
 
-#include "..\AutoItObject.au3"
-
 Func ToolbarView()
 	Local $this = _AutoItObject_Class()
 
@@ -65,7 +63,7 @@ EndFunc   ;==>ToolbarView_Create
 Func ToolbarView_CreateTool(Const ByRef $this, Const $name, Const $left, Const $top, Const $resourcesDir)
 	#forceref $this
 	
-	Local Const $tool = GUICtrlCreateButton($name, $left * $g_iDPI_ratio1, $top * $g_iDPI_ratio1, 40 * $g_iDPI_ratio1, 40 * $g_iDPI_ratio1, BitOR($GUI_SS_DEFAULT_BUTTON, $BS_ICON))
+	Local Const $tool = GUICtrlCreateButton($name, $left * $DPIRatio, $top * $DPIRatio, 40 * $DPIRatio, 40 * $DPIRatio, BitOR($GUI_SS_DEFAULT_BUTTON, $BS_ICON))
 
 	GUICtrlSetResizing($tool, $GUI_DOCKLEFT + $GUI_DOCKSIZE + $GUI_DOCKTOP)
 

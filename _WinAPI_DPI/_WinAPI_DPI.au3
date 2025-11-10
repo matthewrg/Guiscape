@@ -27,7 +27,7 @@ Global Const $MDT_DEFAULT = $MDT_EFFECTIVE_DPI
 Global Const $WM_DPICHANGED = 0x02E0, $WM_DPICHANGED_BEFOREPARENT = 0x02E2, $WM_DPICHANGED_AFTERPARENT = 0x02E3, $WM_GETDPISCALEDSIZE = 0x02E4
 #EndRegion DPI Constants
 
-Global Const $g_iDPI_ratio1 = InitializeDPI()
+Global Const $DPIRatio = InitializeDPI()
 
 Func InitializeDPI()
 	Local $AWARENESS

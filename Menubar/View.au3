@@ -2,8 +2,6 @@
 
 #include <GuiConstantsEx.au3>
 
-#include "..\AutoItObject.au3"
-
 Func MenubarView()
 	Local $this = _AutoItObject_Class()
 

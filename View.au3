@@ -28,13 +28,13 @@ Func GuiscapeView_Create(ByRef $this, Const $title)
 
 	$this.Hwnd = GUICreate( _
 			$title, _
-			$this.Width * $g_iDPI_ratio1, _
-			$this.Height * $g_iDPI_ratio1, _
-			$this.Left * $g_iDPI_ratio1, _
-			$this.Top * $g_iDPI_ratio1, _
+			$this.Width * $DPIRatio, _
+			$this.Height * $DPIRatio, _
+			$this.Left * $DPIRatio, _
+			$this.Top * $DPIRatio, _
 			BitOR($GUI_SS_DEFAULT_GUI, $WS_SIZEBOX, $WS_SYSMENU))
 
-	GUISetFont(10 * $g_iDPI_ratio1, -1, -1, "Segoe UI", HWnd($this.Hwnd))
+	GUISetFont(10 * $DPIRatio, -1, -1, "Segoe UI", HWnd($this.Hwnd))
 EndFunc   ;==>GuiscapeView_Create
 
 Func GuiscapeView_Show(Const ByRef $this)

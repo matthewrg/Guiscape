@@ -1,9 +1,13 @@
+
 #include-once
 
-#include "Canvas Tab.au3"
-#include "Parameters Tab.au3"
-#include "Script Tab.au3"
-#include "Object Explorer Tab.au3"
+#include <GUIConstantsEx.au3>
+#include <WinApiGdi.au3>
+
+#include "Canvas.au3"
+#include "Parameters.au3"
+#include "Script.au3"
+#include "Object Explorer.au3"
 
 Func MainTab(Const $parent)
 	Local $this = _AutoItObject_Class()
@@ -12,31 +16,31 @@ Func MainTab(Const $parent)
 
 	$this.AddMethod("Create", "MainTab_Create")
 	$this.AddMethod("Handler", "MainTab_Handler")
-	$this.AddMethod("ShowCanvas", "MainTab_ShowCanvas")
-	$this.AddMethod("ShowParameters", "MainTab_ShowParameters")
-	$this.AddMethod("ShowScript", "MainTab_ShowScript")
-	$this.AddMethod("ShowObjectExplorer", "MainTab_ShowObjectExplorer")
+	$this.AddMethod("ActivateCanvasTab", "MainTab_ActivateCanvasTab")
+	$this.AddMethod("ActivateParametersTab", "MainTab_ActivateParametersTab")
+	$this.AddMethod("ActivateScriptTab", "MainTab_ActivateScriptTab")
+	$this.AddMethod("ActivateObjectExplorerTab", "MainTab_ActivateObjectExplorerTab")
 
-	$this.AddProperty("Tab", $ELSCOPE_READONLY)
 	$this.AddProperty("CanvasTab", $ELSCOPE_READONLY)
 	$this.AddProperty("ParametersTab", $ELSCOPE_READONLY)
 	$this.AddProperty("ScriptTab", $ELSCOPE_READONLY)
 	$this.AddProperty("ObjectExplorerTab", $ELSCOPE_READONLY)
 
-	$this.AddProperty("Parent", $ELSCOPE_READONLY, $parent)
+	$this.AddProperty("Canvas", $ELSCOPE_READONLY, Canvas())
+	$this.AddProperty("Parameters", $ELSCOPE_READONLY, Parameters())
+	$this.AddProperty("Script", $ELSCOPE_READONLY, Script())
+	$this.AddProperty("ObjectExplorer", $ELSCOPE_READONLY, ObjectExplorer())
 
-	$this.AddProperty("Canvas", $ELSCOPE_READONLY, CanvasTab())
-	$this.AddProperty("Parameters", $ELSCOPE_READONLY, ParametersTab())
-	$this.AddProperty("Script", $ELSCOPE_READONLY, ScriptTab())
-	$this.AddProperty("ObjectExplorer", $ELSCOPE_READONLY, ObjectExplorerTab())
+	$this.AddProperty("Tab", $ELSCOPE_PRIVATE)
+	$this.AddProperty("Parent", $ELSCOPE_PRIVATE, $parent)
 
 	Return $this.Object
 EndFunc   ;==>MainTab
 
 Func MainTab_Create(ByRef $this)
-	$this.Tab = GUICtrlCreateTab(92 * $g_iDPI_ratio1, 5 * $g_iDPI_ratio1, 390 * $g_iDPI_ratio1, 24 * $g_iDPI_ratio1)
+	$this.Tab = GUICtrlCreateTab(92 * $DPIRatio, 5 * $DPIRatio, 390 * $DPIRatio, 24 * $DPIRatio)
 
-	GUICtrlSetResizing($this.Tab, $GUI_DOCKLEFT + $GUI_DOCKSIZE + $GUI_DOCKTOP)
+	GUICtrlSetResizing(HWnd($this.Tab), $GUI_DOCKLEFT + $GUI_DOCKSIZE + $GUI_DOCKTOP)
 
 	$this.CanvasTab = GUICtrlCreateTabItem("Canvas")
 
@@ -61,6 +65,8 @@ Func MainTab_Create(ByRef $this)
 	$this.Script.Create($this.Parent)
 
 	$this.ObjectExplorer.Create($this.Parent)
+
+	$this.ActivateCanvasTab()
 EndFunc   ;==>MainTab_Create
 
 Func MainTab_Handler(Const ByRef $this, Const ByRef $event)
@@ -74,11 +80,16 @@ Func MainTab_Handler(Const ByRef $this, Const ByRef $event)
 
 	Switch $event.ID
 		Case $GUI_EVENT_PRIMARYUP
+			Switch WinGetTitle($event.Form)
+				Case "Canvas"
+					Return "Canvas Clicked"
+			EndSwitch
+
 			Switch GUICtrlRead($this.Tab, $GUI_READ_EXTENDED)
 				Case $this.CanvasTab
 					$this.Canvas.Show()
 
-					$this.Parameters.Hide()
+					$this.Parameters.Active.Hide()
 
 					$this.Script.Hide()
 
@@ -87,7 +98,7 @@ Func MainTab_Handler(Const ByRef $this, Const ByRef $event)
 					Return True
 
 				Case $this.ParametersTab
-					$this.Parameters.Show()
+					$this.Parameters.Active.Show()
 
 					$this.Canvas.Hide()
 
@@ -102,7 +113,7 @@ Func MainTab_Handler(Const ByRef $this, Const ByRef $event)
 
 					$this.Canvas.Hide()
 
-					$this.Parameters.Hide()
+					$this.Parameters.Active.Hide()
 
 					$this.ObjectExplorer.Hide()
 
@@ -113,7 +124,7 @@ Func MainTab_Handler(Const ByRef $this, Const ByRef $event)
 
 					$this.Canvas.Hide()
 
-					$this.Parameters.Hide()
+					$this.Parameters.Active.Hide()
 
 					$this.Script.Hide()
 
@@ -121,21 +132,25 @@ Func MainTab_Handler(Const ByRef $this, Const ByRef $event)
 			EndSwitch
 	EndSwitch
 
+	If $this.Parameters.Form.Handler($event) Then
+		Return True
+	EndIf
+
 	Return False
 EndFunc   ;==>MainTab_Handler
 
-Func MainTab_ShowCanvas(Const ByRef $this)
-	GUICtrlSetState($this.Canvas, $GUI_SHOW + $GUI_FOCUS)
-EndFunc   ;==>MainTab_ShowCanvas
+Func MainTab_ActivateCanvasTab(Const ByRef $this)
+	GUICtrlSetState($this.CanvasTab, $GUI_SHOW + $GUI_FOCUS)
+EndFunc   ;==>MainTab_ActivateCanvasTab
 
-Func MainTab_ShowParameters(Const ByRef $this)
-	GUICtrlSetState($this.Parameters, $GUI_SHOW + $GUI_FOCUS)
-EndFunc   ;==>MainTab_ShowParameters
+Func MainTab_ActivateParametersTab(Const ByRef $this)
+	GUICtrlSetState($this.ParametersTab, $GUI_SHOW + $GUI_FOCUS)
+EndFunc   ;==>MainTab_ActivateParametersTab
 
-Func MainTab_ShowScript(Const ByRef $this)
-	GUICtrlSetState($this.Script, $GUI_SHOW + $GUI_FOCUS)
-EndFunc   ;==>MainTab_ShowScript
+Func MainTab_ActivateScriptTab(Const ByRef $this)
+	GUICtrlSetState($this.ScriptTab, $GUI_SHOW + $GUI_FOCUS)
+EndFunc   ;==>MainTab_ActivateScriptTab
 
-Func MainTab_ShowObjectExplorer(Const ByRef $this)
-	GUICtrlSetState($this.ObjectExplorer, $GUI_SHOW + $GUI_FOCUS)
-EndFunc   ;==>MainTab_ShowObjectExplorer
+Func MainTab_ActivateObjectExplorerTab(Const ByRef $this)
+	GUICtrlSetState($this.ObjectExplorerTab, $GUI_SHOW + $GUI_FOCUS)
+EndFunc   ;==>MainTab_ActivateObjectExplorerTab

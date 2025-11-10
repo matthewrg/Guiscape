@@ -1,10 +1,11 @@
 #include-once
+#AutoIt3Wrapper_Add_Constants=n
 
 #include <GuiConstantsEx.au3>
 
 #include <WinAPISysWin.au3>
 
-#include "AutoItObject.au3"
+#include "AutoItObject\AutoItObject.au3"
 
 Func GuiscapeModel()
 	Local Const $resourcesDir = @ScriptDir & "\Resources\"

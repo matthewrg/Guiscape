@@ -7,10 +7,10 @@
 Func Form(Const $parent, Const $title, Const $left = 5, Const $top = 5, Const $width = 400, Const $height = 600)
 	Local Const $hwnd = GUICreate( _
 			$title, _
-			$width * $g_iDPI_ratio1, _
-			$height * $g_iDPI_ratio1, _
-			$left * $g_iDPI_ratio1, _
-			$top * $g_iDPI_ratio1, _
+			$width * $DPIRatio, _
+			$height * $DPIRatio, _
+			$left * $DPIRatio, _
+			$top * $DPIRatio, _
 			BitOR($WS_CHILD, $WS_OVERLAPPEDWINDOW), _
 			 -1, _
 			HWnd($parent))
@@ -18,7 +18,7 @@ Func Form(Const $parent, Const $title, Const $left = 5, Const $top = 5, Const $w
 	Local Const $formContextMenu = GUICtrlCreateContextMenu()
 
 	Local Const $childForm = GUICtrlCreateMenuItem("Child Form", $formContextMenu)
-	Local Const $properties = GUICtrlCreateMenuItem("Properties", $formContextMenu)
+	Local Const $parameters = GUICtrlCreateMenuItem("Parameters", $formContextMenu)
 	Local Const $styles = GUICtrlCreateMenuItem("Styles", $formContextMenu)
 	Local Const $exStyles = GUICtrlCreateMenuItem("Extended Styles", $formContextMenu)
 	Local Const $contextMenu = GUICtrlCreateMenuItem("Context Menu", $formContextMenu)
@@ -34,6 +34,9 @@ Func Form(Const $parent, Const $title, Const $left = 5, Const $top = 5, Const $w
 	$this.AddMethod("Show", "Form_Show")
 	$this.AddMethod("Hide", "Form_Hide")
 	$this.AddMethod("Delete", "Form_Delete")
+	$this.AddMethod("GetProperties", "Form_GetProperties")
+	$this.AddMethod("GetStyles", "Form_GetStyles")
+	$this.AddMethod("GetExStyles", "Form_GetExStyles")
 
 	$this.AddMethod("GetHwnd", "Form_GetHwnd")
 	$this.AddMethod("GetTitle", "Form_GetTitle")
@@ -55,9 +58,9 @@ Func Form(Const $parent, Const $title, Const $left = 5, Const $top = 5, Const $w
 	$this.AddMethod("SetName", "Form_SetName")
 	$this.AddMethod("SetWidth", "Form_SetWidth")
 	$this.AddMethod("SetHeight", "Form_SetHeight")
-	$this.AddMethod("SetFormBgColor", "Form_SetFormBgColor")
-	$this.AddMethod("SetCtrlBgColor", "Form_SetCtrlBgColor")
-	$this.AddMethod("SetCtrlFgColor", "Form_SetCtrlFgColor")
+	$this.AddMethod("SetBgColor", "Form_SetBgColor")
+	$this.AddMethod("SetDefBgColor", "Form_SetDefBgColor")
+	$this.AddMethod("SetDefFgColor", "Form_SetDefFgColor")
 	$this.AddMethod("SetCursor", "Form_SetCursor")
 	$this.AddMethod("SetFont", "Form_SetFont")
 	$this.AddMethod("SetHelpfile", "Form_SetHelpfile")
@@ -66,7 +69,7 @@ Func Form(Const $parent, Const $title, Const $left = 5, Const $top = 5, Const $w
 	$this.AddMethod("SetExStyle", "Form_SetExStyle")
 
 	$this.AddProperty("ChildForm", $ELSCOPE_READONLY, $childForm)
-	$this.AddProperty("Properties", $ELSCOPE_READONLY, $properties)
+	$this.AddProperty("Parameters", $ELSCOPE_READONLY, $parameters)
 	$this.AddProperty("Styles", $ELSCOPE_READONLY, $styles)
 	$this.AddProperty("ExStyles", $ELSCOPE_READONLY, $exStyles)
 	$this.AddProperty("ContextMenu", $ELSCOPE_READONLY, $contextMenu)
@@ -80,8 +83,8 @@ Func Form(Const $parent, Const $title, Const $left = 5, Const $top = 5, Const $w
 	$this.AddProperty("Width", $ELSCOPE_PRIVATE, $width)
 	$this.AddProperty("Height", $ELSCOPE_PRIVATE, $height)
 	$this.AddProperty("FormBgColor", $ELSCOPE_PRIVATE)
-	$this.AddProperty("CtrlBgColor", $ELSCOPE_PRIVATE)
-	$this.AddProperty("CtrlFgColor", $ELSCOPE_PRIVATE)
+	$this.AddProperty("DefBgColor", $ELSCOPE_PRIVATE)
+	$this.AddProperty("DefFgColor", $ELSCOPE_PRIVATE)
 	$this.AddProperty("Cursor", $ELSCOPE_PRIVATE, "ARROW")
 	$this.AddProperty("Font", $ELSCOPE_PRIVATE, '')
 	$this.AddProperty("Helpfile", $ELSCOPE_PRIVATE, '')
@@ -100,8 +103,8 @@ Func Form_Handler(ByRef $this, Const ByRef $event)
 		Case $this.ChildForm
 			Return "Child Form"
 
-		Case $this.Properties
-			Return "Properties"
+		Case $this.Parameters
+			Return "Parameters"
 
 		Case $this.Styles
 			Return "Styles"
@@ -117,6 +120,7 @@ Func Form_Handler(ByRef $this, Const ByRef $event)
 
 		Case $GUI_EVENT_PRIMARYUP
 ;~ 			Print("Clicked on: " & $this.Title)
+			Return "Primary Up"
 
 		Case $GUI_EVENT_RESIZED
 ;~ 			Print("Form Resized: " & $this.Title)
@@ -137,6 +141,41 @@ EndFunc   ;==>Form_Hide
 Func Form_Delete(Const ByRef $this)
 	GUIDelete(($this.Hwnd))
 EndFunc   ;==>Form_Delete
+
+Func Form_GetProperties(ByRef $this)
+	Local $properties[]
+
+	$properties.Title = $this.Title
+	$properties.Name = $this.Name
+	$properties.Left = $this.Left
+	$properties.Top = $this.Top
+	$properties.Width = $this.Width
+	$properties.Height = $this.Height
+	$properties.FormBgColor = $this.FormBgColor
+	$properties.DefBgColor = $this.DefBgColor
+	$properties.DefFgColor = $this.DefFgColor
+	$properties.Cursor = $this.Cursor
+	$properties.Font = $this.Font
+	$properties.Helpfile = $this.Helpfile
+
+	Return $properties
+EndFunc   ;==>Form_GetProperties
+
+Func Form_GetStyles(ByRef $this)
+	Local $styles[]
+
+	$styles.Style = $this.Style
+
+	Return $styles
+EndFunc   ;==>Form_GetStyles
+
+Func Form_GetExStyles(ByRef $this)
+	Local $exStyles[]
+
+	$exStyles.ExStyle = $this.ExStyle
+
+	Return $exStyles
+EndFunc   ;==>Form_GetExStyles
 
 Func Form_GetStyle(Const ByRef $this)
 	Return GUIGetStyle(HWnd($this.Hwnd))[0]
@@ -185,13 +224,17 @@ EndFunc   ;==>Form_GetExStyle
 Func Form_SetWidth(ByRef $this, Const $width)
 	$this.Width = $width
 
-	Return WinMove(HWnd($this.Hwnd), Default, Default, $width * $g_iDPI_ratio1)
+	Return WinMove(HWnd($this.Hwnd), Default, Default, $width * $DPIRatio)
 EndFunc   ;==>Form_SetWidth
 
 Func Form_SetHeight(ByRef $this, Const ByRef $height)
 	$this.Height = $height
 
-	Return WinMove(HWnd($this.Hwnd), Default, Default, Default, $height * $g_iDPI_ratio1)
+	Return WinMove(HWnd($this.Hwnd), Default, Default, Default, $height * $DPIRatio)
 EndFunc   ;==>Form_SetHeight
 
-#EndRegion ; form
+Func Form_SetBGColor(ByRef $this, Const ByRef $bgColor)
+	$this.BGColor = $bgColor
+
+	GUISetBkColor($bgColor, HWnd($this.Hwnd))
+EndFunc   ;==>FormSetBGColor
