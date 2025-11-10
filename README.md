@@ -10,8 +10,13 @@ The "Canvas" maintains a list of Forms which are self contained objects that cre
 and otherwise maintain their own state.  Currently, it's only a fraction of the intended behavior.
 
 To-Do:
+
 	-- Work in MattyD's contributions once I get to that point.
+	
 	-- Interpret dropped .Au3s for GUI editing and saving
+	
 	-- Interpret dropped other language files for GUI editing and saving (paid upgrade?)
+	
 	-- Generate GUI code for other languages (paid upgrade?)
+	
 	-- Undo/Redo
