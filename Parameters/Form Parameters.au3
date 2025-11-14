@@ -1,27 +1,23 @@
 
 #include-once
 
-#Region ; FormProperties
+#Region ; FormParameters
 
-Func FormProperties(Const $parent)
+Func FormParameters()
 	Local $this = _AutoItObject_Class()
 
 	$this.Create()
 
-	$this.AddMethod("Handler", "FormProperties_Handler")
-	$this.AddMethod("Create", "FormProperties_Create")
-	$this.AddMethod("Init", "FormProperties_Init")
-	$this.AddMethod("PropertiesInit", "FormProperties_PropertiesInit")
-	$this.AddMethod("StylesInit", "FormProperties_StylesInit")
-	$this.AddMethod("ExStylesInit", "FormProperties_ExStylesInit")
-	$this.AddMethod("Show", "FormProperties_Show")
-	$this.AddMethod("Hide", "FormProperties_Hide")
+	$this.AddMethod("Handler", "FormParameters_Handler")
+	$this.AddMethod("Create", "FormParameters_Create")
+	$this.AddMethod("Init", "FormParameters_Init")
+	$this.AddMethod("PropertiesInit", "FormParameters_PropertiesInit")
+	$this.AddMethod("StylesInit", "FormParameters_StylesInit")
+	$this.AddMethod("ExStylesInit", "FormParameters_ExStylesInit")
+	$this.AddMethod("Show", "FormParameters_Show")
+	$this.AddMethod("Hide", "FormParameters_Hide")
 
-	$this.AddProperty("Form", $ELSCOPE_READONLY)
-	$this.AddProperty("Tab", $ELSCOPE_READONLY)
-	
-	#region - Properties
-
+	#Region - Properties
 	$this.AddProperty("Name", $ELSCOPE_READONLY)
 	$this.AddProperty("Title", $ELSCOPE_READONLY)
 	$this.AddProperty("Width", $ELSCOPE_READONLY)
@@ -34,11 +30,10 @@ Func FormProperties(Const $parent)
 	$this.AddProperty("Cursor", $ELSCOPE_READONLY)
 	$this.AddProperty("Font", $ELSCOPE_READONLY)
 	$this.AddProperty("Helpfile", $ELSCOPE_READONLY)
-	
-	#endregion - Properties
-	
-	#region - Styles
-	
+	$this.AddProperty("Icon", $ELSCOPE_READONLY)
+	#EndRegion - Properties
+
+	#Region - Styles
 	$this.AddProperty("SS_DEFAULT_GUI", $ELSCOPE_READONLY)
 	$this.AddProperty("WS_BORDER", $ELSCOPE_READONLY)
 	$this.AddProperty("WS_POPUP", $ELSCOPE_READONLY)
@@ -64,11 +59,9 @@ Func FormProperties(Const $parent)
 	$this.AddProperty("DS_MODALFRAME", $ELSCOPE_READONLY)
 	$this.AddProperty("DS_SETFOREGROUND", $ELSCOPE_READONLY)
 	$this.AddProperty("DS_CONTEXTHELP", $ELSCOPE_READONLY)
-	
-	#endregion - Styles
-	
-	#region - Extended Styles
-	
+	#EndRegion - Styles
+
+	#Region - Extended Styles
 	$this.AddProperty("WS_EX_ACCEPTFILES", $ELSCOPE_READONLY)
 	$this.AddProperty("WS_EX_APPWINDOW", $ELSCOPE_READONLY)
 	$this.AddProperty("WS_EX_CLIENTEDGE", $ELSCOPE_READONLY)
@@ -97,51 +90,106 @@ Func FormProperties(Const $parent)
 	$this.AddProperty("WS_EX_TRANSPARENT", $ELSCOPE_READONLY)
 	$this.AddProperty("WS_EX_WINDOWEDGE", $ELSCOPE_READONLY)
 	$this.AddProperty("GUI_WS_EX_PARENTDRAG", $ELSCOPE_READONLY)
-	
-	#endregion - Extended Styles
+	#EndRegion - Extended Styles
 
 	$this.AddProperty("Hwnd", $ELSCOPE_PRIVATE)
-	$this.AddProperty("Parent", $ELSCOPE_PRIVATE, $parent)
+	$this.AddProperty("Visible", $ELSCOPE_PRIVATE, False)
 
 	Return $this.Object
-EndFunc   ;==>FormProperties
+EndFunc   ;==>FormParameters
 
-Func FormProperties_Handler(ByRef $this, Const ByRef $event)
+Func FormParameters_Handler(ByRef $this, Const ByRef $event)
 	Switch $event.ID
-		Case $this.BgColor
-			Print("Background Color: " & Hex(_WinAPI_GetBkColor(_WinAPI_GetDC($this.Form.GetHwnd()))))
+		Case $this.Name
+			$event.Form.SetName(GUICtrlRead($event.ID))
 
-			Local Const $bgColor = _ChooseColor(2, _WinAPI_GetBkColor(_WinAPI_GetDC($this.Form.GetHwnd())), 2, HWnd($this.Hwnd))
+			Return True
 
-			$this.Form.SetBGColor($bgColor)
+		Case $this.Title
+			$event.Form.SetTitle(GUICtrlRead($event.ID))
+
+			Return True
+
+		Case $this.Left
+			$event.Form.SetLeft(GUICtrlRead($event.ID))
+
+			Return True
+
+		Case $this.Top
+			$event.Form.SetTop(GUICtrlRead($event.ID))
+
+			Return True
+
+		Case $this.Width
+			$event.Form.SetWidth(GUICtrlRead($event.ID))
+
+			Return True
+
+		Case $this.Height
+			$event.Form.SetHeight(GUICtrlRead($event.ID))
+
+			Return True
+
+		Case $this.BGColor
+			Local Const $bgColor = _ChooseColor(2, $event.Form.GetBgColor(), 2, HWnd($this.View.Hwnd))
+
+			$event.Form.SetBGColor($bgColor)
+
+			Return True
+
+		Case $this.DefBgColor
+			Local Const $DefBgColor = _ChooseColor(2, $event.Form.GetDefBgColor(), 2, HWnd($this.View.Hwnd))
+
+			$event.Form.SetDefBgColor($DefBgColor)
+
+			Return True
+
+		Case $this.DefFgColor
+			Local Const $DefFgColor = _ChooseColor(2, $event.Form.GetDefFgColor(), 2, HWnd($this.View.Hwnd))
+
+			$event.Form.SetDefFGColor($DefFgColor)
+
+			Return True
+
+		Case $this.Cursor
+			$event.Form.SetCursor(Eval("MCID_" & GUICtrlRead($event.ID)))
+
+			Return True
+
+		Case $this.Font
+			Local Const $font = _ChooseFont(Default, Default, Default, Default, Default, Default, Default, HWnd($this.View.Hwnd))
+
+			$event.Form.SetFont($font)
+
+			Return True
+
+		Case $this.Helpfile
+			Local Const $helpfile = FileOpenDialog("Choose a helpfile.", @ScriptDir, "Help (*.chm)", 0, HWnd($this.View.Hwnd))
+
+			$event.Form.SetHelpfile($helpfile)
+
+			Return True
+
+		Case $this.Icon
+			Local Const $icon = FileOpenDialog("Choose an icon.", @ScriptDir, "Icon (*.ico)", 0, HWnd($this.View.Hwnd))
+
+			$event.Form.SetIcon($icon)
 
 			Return True
 	EndSwitch
 
 	Return False
-EndFunc   ;==>FormProperties_Handler
+EndFunc   ;==>FormParameters_Handler
 
-Func FormProperties_Create(ByRef $this)
-	Local Const $left = 90
-	Local Const $top = 30
-	Local Const $width = ($this.Parent.Width - 100)
-	Local Const $height = ($this.Parent.Height - 60)
+Func FormParameters_Create(ByRef $this, Const $parent)
+	$this.Hwnd = $parent.CreateImbeddedWindow("Form Properties")
 
-	$this.Hwnd = GUICreate( _
-			"Form Properties", _
-			$width * $DPIRatio, _
-			$height * $DPIRatio, _
-			$left * $DPIRatio, _
-			$top * $DPIRatio, _
-			$WS_CHILD, _
-			$WS_EX_OVERLAPPEDWINDOW, _
-			HWnd($this.Parent.Hwnd))
+	GUISetBkColor($COLOR_PURPLE, HWnd($this.Hwnd))
 
-	GUICtrlCreateTab(5 * $DPIRatio, 5 * $DPIRatio, ($width - 110) * $DPIRatio, ($height - 70) * $DPIRatio)
-	
-	#region - Properties
+	GUICtrlCreateTab(5 * $DPIRatio, 5 * $DPIRatio, ($parent.Width - 110) * $DPIRatio, ($parent.Height - 70) * $DPIRatio)
 
-	$this.Tab = GUICtrlCreateTabItem("Properties")
+	#Region - Properties
+	GUICtrlCreateTabItem("Properties")
 
 	CreateGroup("Name", 15, 30, 300, 45)
 
@@ -185,19 +233,24 @@ Func FormProperties_Create(ByRef $this)
 
 	EndGroup()
 
-	$this.Cursor = CreateButton("Cursor", 15, 335)
+	$this.Cursor = GUICtrlCreateCombo("Cursor", 15, 335, 150)
+
+	GUICtrlSetData($this.Cursor, _
+			"HAND|APPSTARTING|ARROW|CROSS|HELP|IBEAM|" & _
+			"ICON|NO|SIZE|SIZEALL|SIZENESW|SIZENS|" & _
+			"SIZENWSE|SIZEWE|UPARROW|WAIT|NONE")
 
 	$this.Font = CreateButton("Font", 15, 365)
 
 	$this.Helpfile = CreateButton("Helpfile", 15, 395)
 
-	GUICtrlCreateTabItem('')
-	
-	#endregion - Properties
-	
-	#region - Styles
+	$this.Icon = CreateButton("Icon", 15, 425)
 
-	$this.StylesTab = GUICtrlCreateTabItem("Styles")
+	GUICtrlCreateTabItem('')
+	#EndRegion - Properties
+
+	#Region - Styles
+	GUICtrlCreateTabItem("Styles")
 
 	$this.SS_DEFAULT_GUI = CreateCheckbox("SS_DEFAULT_GUI", 10, 30)
 	$this.WS_BORDER = CreateCheckbox("WS_BORDER", 10, 50)
@@ -228,12 +281,10 @@ Func FormProperties_Create(ByRef $this)
 	GUICtrlSetState($this.SS_DEFAULT_GUI, $GUI_CHECKED + $GUI_DISABLE)
 
 	GUICtrlCreateTabItem('')
-	
-	#endregion - Styles
-	
-	#region - Extended Styles
+	#EndRegion - Styles
 
-	$this.ExStylesTab = GUICtrlCreateTabItem("Extended Styles")
+	#Region - Extended Styles
+	GUICtrlCreateTabItem("Extended Styles")
 
 	$this.WS_EX_ACCEPTFILES = CreateCheckbox("WS_EX_ACCEPTFILES", 10, 30)
 	$this.WS_EX_APPWINDOW = CreateCheckbox("WS_EX_APPWINDOW", 10, 50)
@@ -254,7 +305,7 @@ Func FormProperties_Create(ByRef $this)
 	$this.WS_EX_NOREDIRECTIONBITMAP = CreateCheckbox("WS_EX_NOREDIRECTIONBITMAP", 10, 350)
 	$this.WS_EX_OVERLAPPEDWINDOW = CreateCheckbox("WS_EX_OVERLAPPEDWINDOW", 10, 370)
 	$this.WS_EX_PALETTEWINDOW = CreateCheckbox("WS_EX_PALETTEWINDOW", 10, 390)
-	$this.WS_EX_EX_RIGHT = CreateCheckbox("WS_EX_RIGHT", 10, 410)
+	$this.WS_EX_RIGHT = CreateCheckbox("WS_EX_RIGHT", 10, 410)
 	$this.WS_EX_RIGHTSCROLLBAR = CreateCheckbox("WS_EX_RIGHTSCROLLBAR", 10, 430)
 	$this.WS_EX_RTLREADING = CreateCheckbox("WS_EX_RTLREADING", 10, 450)
 	$this.WS_EX_STATICEDGE = CreateCheckbox("WS_EX_STATICEDGE", 10, 470)
@@ -265,14 +316,12 @@ Func FormProperties_Create(ByRef $this)
 	$this.GUI_WS_EX_PARENTDRAG = CreateCheckbox("GUI_WS_EX_PARENTDRAG", 10, 570)
 
 	GUICtrlCreateTabItem('')
-	
-	#endregion - Extended Styles
-	
-	#region - Menubar
+	#EndRegion - Extended Styles
 
-	$this.MenuTab = GUICtrlCreateTabItem("Menubar")
+	#Region - Menubar
+	GUICtrlCreateTabItem("Menubar")
 
-	Local $test1 = GUICtrlCreateTreeView(20 * $DPIRatio, 40 * $DPIRatio, ($width - 205) * $DPIRatio, ($height - 125) * $DPIRatio)
+	Local $test1 = GUICtrlCreateTreeView(20 * $DPIRatio, 40 * $DPIRatio, ($parent.Width - 205) * $DPIRatio, ($parent.Height - 125) * $DPIRatio)
 
 	GUICtrlCreateTreeViewItem("Menu Item 1", $test1)
 	Local $test1a = GUICtrlCreateTreeViewItem("Menu Item 2", $test1)
@@ -280,16 +329,14 @@ Func FormProperties_Create(ByRef $this)
 	GUICtrlCreateTreeViewItem("Menu Item 3", $test1)
 	GUICtrlCreateTreeViewItem('', $test1)
 	GUICtrlCreateTreeViewItem("Menu Item 4", $test1)
-	
+
 	GUICtrlCreateTabItem('')
-	
-	#endregion - Menubar
-	
-	#region - Context Menu
+	#EndRegion - Menubar
 
-	$this.ContextMenuTab = GUICtrlCreateTabItem("Context Menu")
+	#Region - Context Menu
+	GUICtrlCreateTabItem("Context Menu")
 
-	Local $test2 = GUICtrlCreateTreeView(20 * $DPIRatio, 40 * $DPIRatio, ($width - 205) * $DPIRatio, ($height - 125) * $DPIRatio)
+	Local $test2 = GUICtrlCreateTreeView(20 * $DPIRatio, 40 * $DPIRatio, ($parent.Width - 205) * $DPIRatio, ($parent.Height - 125) * $DPIRatio)
 
 	GUICtrlCreateTreeViewItem("Menu Item 1", $test2)
 	Local $test2a = GUICtrlCreateTreeViewItem("Menu Item 2", $test2)
@@ -299,12 +346,10 @@ Func FormProperties_Create(ByRef $this)
 	GUICtrlCreateTreeViewItem("Menu Item 4", $test2)
 
 	GUICtrlCreateTabItem('')
-	
-	#endregion - Context Menu
+	#EndRegion - Context Menu
 	
 	#region - Accelerators
-
-	$this.AcceleratorsTab = GUICtrlCreateTabItem("Accelerators")
+	GUICtrlCreateTabItem("Accelerators")
 	
 	GUICtrlCreateInput('Hotkey', 320, 50, 200, 25)
 	
@@ -318,18 +363,17 @@ Func FormProperties_Create(ByRef $this)
 	
 	GUICtrlCreateListViewItem("MyHotkey1|MyFunction1", $test3)
 	
-	GUICtrlCreateTabItem('')
-	
-	#endregion - Accelerators
-EndFunc   ;==>FormProperties_Create
+	GUICtrlCreateTabItem('')	
+	#endregion - Accelerators	
+EndFunc   ;==>FormParameters_Create
 
-Func FormProperties_Init(ByRef $this, Const ByRef $form)
+Func FormParameters_Init(ByRef $this, Const ByRef $form)
 	$this.PropertiesInit($form)
 	$this.StylesInit($form)
 	$this.ExStylesInit($form)
-EndFunc
+EndFunc   ;==>FormParameters_Init
 
-Func FormProperties_PropertiesInit(ByRef $this, Const ByRef $form)
+Func FormParameters_PropertiesInit(ByRef $this, $form)	
 	Local Const $properties = $form.GetProperties()
 	
 	GUICtrlSetData($this.Name, $properties.Name)
@@ -338,9 +382,9 @@ Func FormProperties_PropertiesInit(ByRef $this, Const ByRef $form)
 	GUICtrlSetData($this.Top, $properties.Top)
 	GUICtrlSetData($this.Width, $properties.Width)
 	GUICtrlSetData($this.Height, $properties.Height)
-EndFunc
+EndFunc   ;==>FormParameters_PropertiesInit
 
-Func FormProperties_StylesInit(ByRef $this, Const ByRef $form)
+Func FormParameters_StylesInit(ByRef $this, Const ByRef $form)
 	Local Const $allStyles[] = [ _
 			$WS_BORDER, _
 			$WS_POPUP, _
@@ -394,9 +438,9 @@ Func FormProperties_StylesInit(ByRef $this, Const ByRef $form)
 			$this.DS_CONTEXTHELP]
 
 	Local Const $upBound = UBound($allStyles)
-	
+
 	Local Const $styles = $form.GetStyles()
-	
+
 	; This loop just makes the windows that Guiscape creates look like a regular window when
 	; looking at the Styles tab under the Properties tab. Not sure yet if this will cause
 	; problems down the road!
@@ -420,9 +464,9 @@ Func FormProperties_StylesInit(ByRef $this, Const ByRef $form)
 			EndSwitch
 		EndIf
 	Next
-EndFunc   ;==>Styles_Initialize
+EndFunc   ;==>FormParameters_StylesInit
 
-Func FormProperties_ExStylesInit(ByRef $this, Const ByRef $form)
+Func FormParameters_ExStylesInit(ByRef $this, Const ByRef $form)
 	Local Const $allStyles[] = [$WS_EX_ACCEPTFILES, _
 			$WS_EX_APPWINDOW, _
 			$WS_EX_CLIENTEDGE, _
@@ -482,11 +526,11 @@ Func FormProperties_ExStylesInit(ByRef $this, Const ByRef $form)
 			$this.GUI_WS_EX_PARENTDRAG]
 
 	Local Const $upBound = UBound($allStyles)
-	
+
 	Local Const $exStyles = $form.GetExStyles()
 
 	; This loop just makes the windows that Guiscape creates look like a regular window when
-	; looking at the Styles tab under the Properties tab. Not sure yet if this will cause 
+	; looking at the Styles tab under the Properties tab. Not sure yet if this will cause
 	; problems down the road!
 	For $i = 0 To $upBound - 1
 		If BitAND($exStyles, $allStyles[$i]) = $allStyles[$i] Then
@@ -507,12 +551,16 @@ Func FormProperties_ExStylesInit(ByRef $this, Const ByRef $form)
 			EndSwitch
 		EndIf
 	Next
-EndFunc   ;==>ExStyles_Initialize
+EndFunc   ;==>FormParameters_ExStylesInit
 
-Func FormProperties_Show(ByRef $this)
+Func FormParameters_Show(ByRef $this)
 	GUISetState(@SW_SHOW, HWnd($this.Hwnd))
-EndFunc
+EndFunc   ;==>FormParameters_Show
 
-Func FormProperties_Hide(ByRef $this)
+Func FormParameters_Hide(ByRef $this)
 	GUISetState(@SW_HIDE, HWnd($this.Hwnd))
-EndFunc
+EndFunc   ;==>FormParameters_Hide
+
+#EndRegion - Accelerators
+
+#endregion - Form Parameters

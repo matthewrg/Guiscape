@@ -50,16 +50,28 @@ Func GuiscapeModel_GUIEvent(Const ByRef $this)
 	#forceref $this
 	
 	Local Const $eventArray = GUIGetMsg($GUI_EVENT_ARRAY)
+	  
+	If $eventArray[0] <> 0 Then
+		Local $event[]
+			
+		Local Const $sizePos = WinGetPos(HWnd($eventArray[1]))
+		
+		If $eventArray[0] = -9999 Then
+			Print("GUIEvent: $TITLE_CLICKED")
+		EndIf
+		
+		$event.ID = $eventArray[0]
+		$event.Form = HWnd($eventArray[1])
+		$event.Control = HWnd($eventArray[2])
+		$event.X = $eventArray[3]
+		$event.Y = $eventArray[4]
+		$event.Width = $sizePos[2]
+		$event.Height = $sizePos[3]
+		
+		Return $event
+	EndIf
 	
-	Local $eventMap[]
-
-	$eventMap.ID = $eventArray[0]
-	$eventMap.Form = HWnd($eventArray[1])
-	$eventMap.Control = HWnd($eventArray[2])
-	$eventMap.X = $eventArray[3]
-	$eventMap.Y = $eventArray[4]
-
-	Return $eventMap
+	Return False
 EndFunc   ;==>GuiscapeModel_EventArrayToMap
 
 Func GuiscapeModel_CursorInfoToMap(Const ByRef $this, Const ByRef $cursorInfo)

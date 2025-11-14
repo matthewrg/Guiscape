@@ -18,6 +18,7 @@ Func MenubarView()
 	$this.AddProperty("Parameters", $ELSCOPE_READONLY)
 	$this.AddProperty("Script", $ELSCOPE_READONLY)
 	$this.AddProperty("ObjectExplorer", $ELSCOPE_READONLY)
+	$this.AddProperty("Settings", $ELSCOPE_READONLY)
 	$this.AddProperty("About", $ELSCOPE_READONLY)
 	$this.AddProperty("ShowGrid", $ELSCOPE_READONLY)
 	$this.AddProperty("GridSnap", $ELSCOPE_READONLY)
@@ -40,6 +41,7 @@ Func MenubarView_Create(ByRef $this)
 	$this.Parameters = GUICtrlCreateMenuItem("&Parameters", $menu_edit)
 	$this.Script = GUICtrlCreateMenuItem("&Script", $menu_edit)
 	$this.ObjectExplorer = GUICtrlCreateMenuItem("&Object Explorer", $menu_edit) ; added by: TheSaint
+	$this.Settings = GUICtrlCreateMenuItem("Settings", $menu_edit)
 	$this.About = GUICtrlCreateMenuItem("About", $menu_edit)                     ; added by: TheSaint
 
 	Local Const $menu_settings = GUICtrlCreateMenu("Settings")
@@ -50,7 +52,7 @@ Func MenubarView_Create(ByRef $this)
 	$this.ShowHidden = GUICtrlCreateMenuItem("Show hidden controls", $menu_settings)
 EndFunc   ;==>MenubarView_Create
 
-Func MenubarView_Toggle(Const ByRef $this, Const $menuItem)
+Func MenubarView_Toggle(Const ByRef $this, Const ByRef $menuItem)
 	#forceref $this
 	
 	Local Const $state = GUICtrlRead($menuItem)
@@ -68,7 +70,7 @@ Func MenubarView_Toggle(Const ByRef $this, Const $menuItem)
 	EndSelect
 EndFunc   ;==>MenubarView_Toggle
 
-Func MenubarView_Initialize(Const ByRef $this, Const $settings)
+Func MenubarView_Initialize(Const ByRef $this, Const ByRef $settings)
 	Local Const $menuItems[] = [$this.ShowGrid, $this.GridSnap, $this.PastePos, $this.ShowControl, $this.ShowHidden]
 
 	Local Const $itemCount = UBound($menuItems)

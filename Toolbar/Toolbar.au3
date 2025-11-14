@@ -2,6 +2,8 @@
 
 #include "View.au3"
 
+#region - Toolbar
+
 Func Toolbar()
 	Local $this = _AutoItObject_Class()
 
@@ -19,8 +21,8 @@ Func Toolbar_Create(Const ByRef $this, Const ByRef $resourcesDir)
 	$this.View.Create($resourcesDir)
 EndFunc   ;==>Toolbar_Create
 
-Func Toolbar_Handler(Const ByRef $this, Const ByRef $eventID)
-	Switch $eventID
+Func Toolbar_Handler(Const ByRef $this, Const ByRef $event)
+	Switch $event.ID
 		Case $this.View.Form
 			Return "Form"
 
@@ -33,3 +35,5 @@ Func Toolbar_Handler(Const ByRef $this, Const ByRef $eventID)
 
 	Return False
 EndFunc   ;==>Toolbar_Handler
+
+#endregion - Toolbar

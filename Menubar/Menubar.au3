@@ -9,7 +9,6 @@ Func Menubar()
 
 	$this.AddMethod("Handler", "Menubar_Handler")
 	$this.AddMethod("Create", "Menubar_Create")
-	$this.AddMethod("Initialize", "Menubar_Initialize")
 
 	$this.AddProperty("View", $ELSCOPE_PRIVATE, MenubarView())
 
@@ -90,6 +89,11 @@ Func Menubar_Handler(Const ByRef $this, Const ByRef $eventID)
 
 			Return $menubar
 
+		Case $this.View.Settings
+			$menubar.Message = "Settings"
+
+			Return $menubar
+
 		Case $this.View.About
 			$menubar.Message = "About"
 
@@ -99,10 +103,8 @@ Func Menubar_Handler(Const ByRef $this, Const ByRef $eventID)
 	Return False
 EndFunc   ;==>Menubar_Handler
 
-Func Menubar_Create(Const ByRef $this)
+Func Menubar_Create(Const ByRef $this, Const ByRef $settings)
 	$this.View.Create()
-EndFunc   ;==>Menubar_Create
 
-Func Menubar_Initialize(Const ByRef $this, Const ByRef $settings)
 	$this.View.Initialize($settings)
-EndFunc   ;==>Menubar_Initialize
+EndFunc   ;==>Menubar_Create
