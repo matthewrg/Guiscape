@@ -40,7 +40,7 @@ Func GUIObjects_Handler(ByRef $this, Const ByRef $event)
 			
 			If IsObj($form) Then
 				Switch $form.Handler($event)
-					Case "Form Selected"
+					Case "Form Selected", $NC_CLICKED
 						Return "Form Selected"
 
 					Case "Form Closed"

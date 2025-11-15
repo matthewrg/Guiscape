@@ -2,6 +2,8 @@
 
 #include "View.au3"
 
+Global $clickedTool
+
 #region - Toolbar
 
 Func Toolbar()
@@ -24,12 +26,18 @@ EndFunc   ;==>Toolbar_Create
 Func Toolbar_Handler(Const ByRef $this, Const ByRef $event)
 	Switch $event.ID
 		Case $this.View.Form
+			$clickedTool = "Form"
+			
 			Return "Form"
 
 		Case $this.View.Button
+			$clickedTool = $clickedTool
+			
 			Return "Button"
 
 		Case $this.View.Checkbox
+			$clickedTool = $clickedTool
+			
 			Return "Checkbox"
 	EndSwitch
 

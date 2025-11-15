@@ -62,16 +62,18 @@ Func GuiscapeView_Handler(ByRef $this, Const ByRef $event)
 	Return False
 EndFunc   ;==>GuiscapeView_Handler
 
-Func GuiscapeView_Create(ByRef $this, Const $title)
-	$this.Hwnd = GUICreate( _
+Func GuiscapeView_Create(ByRef $this, Const $title)	
+	Local Const $hwnd = GUICreate( _
 			$title, _
 			$this.Width * $DPIRatio, _
 			$this.Height * $DPIRatio, _
 			$this.Left * $DPIRatio, _
 			$this.Top * $DPIRatio, _
 			BitOR($GUI_SS_DEFAULT_GUI, $WS_SIZEBOX, $WS_SYSMENU))
+			
+	$this.Hwnd = $hwnd
 	
-	$this.Tab = GUICtrlCreateTab($this.TabLeft * $DPIRatio, $this.TabTop * $DPIRatio, 390 * $DPIRatio, 25 * $DPIRatio)
+	$this.Tab = GUICtrlCreateTab($this.TabLeft * $DPIRatio, $this.TabTop * $DPIRatio, 390 * $DPIRatio, 20 * $DPIRatio)
 
 	GUICtrlSetResizing($this.Tab, $GUI_DOCKLEFT + $GUI_DOCKSIZE + $GUI_DOCKTOP)
 
