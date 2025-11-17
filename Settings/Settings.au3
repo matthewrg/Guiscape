@@ -35,8 +35,6 @@ Func Settings_Create(ByRef $this, Const ByRef $parent)
 	$this.Parent = $parent 
 	
 	$this.Hwnd = $parent.CreateImbeddedWindow("Settings")
-
-	GUISetBkColor($COLOR_GREEN, HWnd($this.Hwnd))
 EndFunc   ;==>Settings_Create
 
 Func Settings_Show(ByRef $this)	

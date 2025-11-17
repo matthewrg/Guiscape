@@ -37,19 +37,17 @@ Func GUIObjects_Handler(ByRef $this, Const ByRef $event)
 	Local $form = $this.GetForm($event.Form)
 
 	If IsObj($form) Then
-		Local Const $hwnd = HWnd($form.GetHwnd())
-
 		Switch $form.Handler($event)
-			Case "Form Selected"
-				_WinAPI_SetWindowSubclass($hwnd, $pWndProc, 1000)
-
+			Case "Form Selected", $NC_CLICKED
 				Return "Form Selected"
+
+			Case "Form Closed"
+				$this.RemoveForm($event.Form)
+
+				Return "Form Closed"
 
 			Case "Form Resized"
 				Return "Form Resized"
-
-			Case "Form Close"
-				Return "Form Close"
 
 			Case "Child Form"
 				Return "Child Form"
@@ -85,21 +83,24 @@ Func GUIObjects_CreateForm(ByRef $this)
 	$this.AddForm($formObject)
 
 	Return $formObject
-EndFunc   ;==>GUIObjects_CreateForm
+EndFunc   ;==>GUIObjects_Create
 
 Func GUIObjects_RemoveForm(ByRef $this, Const ByRef $hwnd)
 	Local $formList = $this.FormList
 
 	Switch IsObj($formList[$hwnd])
 		Case True
+			$formList[$hwnd].Delete()
+
 			MapRemove($formList, $hwnd)
 
 			$this.FormList = $formList
 
 			Return True
-	EndSwitch
 
-	Return False
+		Case False
+			Return False
+	EndSwitch
 EndFunc   ;==>GUIObjects_RemoveForm
 
 Func GUIObjects_GetForm(Const ByRef $this, Const ByRef $hwnd)
@@ -130,7 +131,7 @@ EndFunc   ;==>GUIObjects_AddForm
 Func GUIObjects_IncrementFormCount(ByRef $this)
 	Local Const $formCount = $this.FormCount
 
-	$this.FormCount = $formCount + 1
+	$this.FormCount = ($formCount + 1)
 EndFunc   ;==>GUIObjects_IncrementFormCount
 
 Func GUIObjects_DecrementFormCount(ByRef $this)

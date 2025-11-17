@@ -434,11 +434,11 @@ Func Guiscape_GUIObjectsHandler(ByRef $this, Const ByRef $event)
 
 		Case "Form Close"
 			Print("Form Close")
-
+			
 			; Ask the designer if they are sure ...
-
+			
 			_WinAPI_RemoveWindowSubclass($event.Form, $pWndProc, 1000)
-
+			
 ;~ 			$this.GUIObjects.GetForm($event.Form).Delete()
 
 			$this.GUIObjects.RemoveForm($event.Form)
@@ -447,7 +447,7 @@ Func Guiscape_GUIObjectsHandler(ByRef $this, Const ByRef $event)
 
 		Case "Form Resized"
 			; do nothing so that the canvas doesn't stupidly resize itself
-
+			
 			Return True
 	EndSwitch
 

@@ -38,16 +38,16 @@ Func GUIObjects_Handler(ByRef $this, Const ByRef $event)
 
 	If IsObj($form) Then
 		Local Const $hwnd = HWnd($form.GetHwnd())
-
-		Switch $form.Handler($event)
+		
+		Switch $form.Handler($event)				
 			Case "Form Selected"
 				_WinAPI_SetWindowSubclass($hwnd, $pWndProc, 1000)
-
+				
 				Return "Form Selected"
 
 			Case "Form Resized"
 				Return "Form Resized"
-
+				
 			Case "Form Close"
 				Return "Form Close"
 
@@ -98,7 +98,7 @@ Func GUIObjects_RemoveForm(ByRef $this, Const ByRef $hwnd)
 
 			Return True
 	EndSwitch
-
+	
 	Return False
 EndFunc   ;==>GUIObjects_RemoveForm
 

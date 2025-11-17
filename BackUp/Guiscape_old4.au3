@@ -54,12 +54,12 @@ Opt("MustDeclareVars", 1)
 _AutoItObject_Startup()
 
 #Region ; Guiscape
-
+	
 main()
 
 Func main()
 	$Guiscape = Guiscape()
-
+	
 	$Guiscape.InitView()
 
 	$NC_CLICKED = GUICtrlCreateDummy()
@@ -76,7 +76,7 @@ Func Guiscape()
 
 	$this.Create()
 
-	#Region - Public
+	#region - Public
 	$this.AddMethod("InitView", "Guiscape_InitView")
 	$this.AddMethod("Handler", "Guiscape_Handler")
 	$this.AddMethod("GUIObjectsHandler", "Guiscape_GUIObjectsHandler")
@@ -91,9 +91,9 @@ Func Guiscape()
 	$this.AddProperty("Script", $ELSCOPE_READONLY, Script())
 	$this.AddProperty("ObjectExplorer", $ELSCOPE_READONLY, ObjectExplorer())
 	$this.AddProperty("Settings", $ELSCOPE_READONLY, Settings())
-	#EndRegion - Public
+	#endregion - Public
 
-	#Region - Private
+	#region - Private
 	$this.AddMethod("ViewHandler", "Guiscape_View_Handler", True)
 	$this.AddMethod("MenubarHandler", "Guiscape_Menubar_Handler", True)
 	$this.AddMethod("ToolbarHandler", "Guiscape_Toolbar_Handler", True)
@@ -102,7 +102,7 @@ Func Guiscape()
 	$this.AddMethod("ScriptHandler", "Guiscape_Script_Handler", True)
 	$this.AddMethod("ObjectExplorerHandler", "Guiscape_ObjectExplorer_Handler", True)
 	$this.AddMethod("SettingsHandler", "Guiscape_Settings_Handler", True)
-	#EndRegion - Private
+	#endregion - Private
 
 	Return $this.Object
 EndFunc   ;==>Guiscape
@@ -143,7 +143,7 @@ Func Guiscape_Handler(ByRef $this)
 	Switch $event.ID
 		Case $GUI_EVENT_RESIZED
 			Switch $event.Form
-				Case $this.View.Hwnd
+				Case $this.View.Hwnd					
 					$this.View.SetSizePos()
 
 					$this.Canvas.Resize($event)
@@ -426,28 +426,20 @@ Func Guiscape_GUIObjectsHandler(ByRef $this, Const ByRef $event)
 			$this.ParametersHandler(CreateMessage("Initialize Form", $this.GUIObjects.CreateForm()))
 
 			Return True
-
+			
 		Case "Form Selected"
 			$this.ParametersHandler(CreateMessage("Initialize Form", $this.GUIObjects.GetForm($clickedForm)))
 
 			Return True
-
-		Case "Form Close"
-			Print("Form Close")
-
-			; Ask the designer if they are sure ...
-
-			_WinAPI_RemoveWindowSubclass($event.Form, $pWndProc, 1000)
-
-;~ 			$this.GUIObjects.GetForm($event.Form).Delete()
-
-			$this.GUIObjects.RemoveForm($event.Form)
-
+			
+		Case "Form Closed"	
+				_WinAPI_RemoveWindowSubclass($hwnd, $pWndProc, 1000)
+				
+				$this.RemoveForm($hwnd)
+				
 			Return True
-
-		Case "Form Resized"
-			; do nothing so that the canvas doesn't stupidly resize itself
-
+			
+		Case "Form Resized"			
 			Return True
 	EndSwitch
 

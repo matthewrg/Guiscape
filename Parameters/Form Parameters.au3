@@ -184,8 +184,6 @@ EndFunc   ;==>FormParameters_Handler
 Func FormParameters_Create(ByRef $this, Const $parent)
 	$this.Hwnd = $parent.CreateImbeddedWindow("Form Properties")
 
-	GUISetBkColor($COLOR_PURPLE, HWnd($this.Hwnd))
-
 	GUICtrlCreateTab(5 * $DPIRatio, 5 * $DPIRatio, ($parent.Width - 110) * $DPIRatio, ($parent.Height - 70) * $DPIRatio)
 
 	#Region - Properties

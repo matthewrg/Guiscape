@@ -2,7 +2,7 @@
 
 #include "View.au3"
 
-#Region - Toolbar
+#region - Toolbar
 
 Func Toolbar()
 	Local $this = _AutoItObject_Class()
@@ -25,36 +25,36 @@ Func Toolbar_Handler(Const ByRef $this, Const ByRef $event)
 	Switch $event.ID
 		Case $this.View.Form
 			$clickedTool = "Form"
-
+			
 			Return "Form"
-
+			
 		Case $this.View.Group
 			$clickedTool = "Group"
-
+			
 			Return "Group"
 
 		Case $this.View.Button
 			$clickedTool = "Button"
-
+			
 			Return "Button"
 
 		Case $this.View.Checkbox
 			$clickedTool = "Checkbox"
-
+			
 			Return "Checkbox"
 
 		Case $this.View.Radio
 			$clickedTool = "Radio"
-
+			
 			Return "Radio"
 
 		Case $this.View.Edit
 			$clickedTool = "Edit"
-
+			
 			Return "Edit"
 	EndSwitch
 
 	Return False
 EndFunc   ;==>Toolbar_Handler
 
-#EndRegion - Toolbar
+#endregion - Toolbar

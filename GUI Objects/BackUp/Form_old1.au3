@@ -14,17 +14,17 @@ Func Form(Const $parent, Const $title, Const $left = 5, Const $top = 5, Const $w
 			BitOR($WS_CHILD, $WS_OVERLAPPEDWINDOW), _
 			 -1, _
 			HWnd($parent))
-
+			
 	_WinAPI_SetWindowSubclass($hwnd, $pWndProc, 1000)
 
 	Local Const $formStyles = GUIGetStyle($hwnd)
-
-	#Region - Form Object
+	
+	#region - Form Object
 	Local $this = _AutoItObject_Class()
 
 	$this.Create()
-
-	#Region - Public
+	
+	#region - Public
 	$this.AddMethod("Handler", "Form_Handler")
 	$this.AddMethod("Show", "Form_Show")
 	$this.AddMethod("Hide", "Form_Hide")
@@ -64,7 +64,7 @@ Func Form(Const $parent, Const $title, Const $left = 5, Const $top = 5, Const $w
 	$this.AddMethod("SetState", "Form_SetState")
 	$this.AddMethod("SetStyle", "Form_SetStyle")
 	$this.AddMethod("SetExStyle", "Form_SetExStyle")
-
+	
 	GUICtrlCreateContextMenu()
 
 	$this.AddProperty("ChildForm", $ELSCOPE_READONLY, GUICtrlCreateMenuItem("Child Form", -1))
@@ -73,9 +73,9 @@ Func Form(Const $parent, Const $title, Const $left = 5, Const $top = 5, Const $w
 	$this.AddProperty("ExStyles", $ELSCOPE_READONLY, GUICtrlCreateMenuItem("Extended Styles", -1))
 	$this.AddProperty("ContextMenu", $ELSCOPE_READONLY, GUICtrlCreateMenuItem("Context Menu", -1))
 	$this.AddProperty("Menubar", $ELSCOPE_READONLY, GUICtrlCreateMenuItem("Menubar", -1))
-	#EndRegion - Public
-
-	#Region - Private
+	#endregion - Public
+	
+	#region - Private
 	$this.AddProperty("Hwnd", $ELSCOPE_PRIVATE, $hwnd)
 	$this.AddProperty("Title", $ELSCOPE_PRIVATE, $title)
 	$this.AddProperty("Name", $ELSCOPE_PRIVATE, StringStripWS($title, $STR_STRIPALL))
@@ -91,11 +91,11 @@ Func Form(Const $parent, Const $title, Const $left = 5, Const $top = 5, Const $w
 	$this.AddProperty("Helpfile", $ELSCOPE_PRIVATE, '')
 	$this.AddProperty("Style", $ELSCOPE_PRIVATE, $formStyles[0])
 	$this.AddProperty("ExStyle", $ELSCOPE_PRIVATE, $formStyles[1])
-	#EndRegion - Private
-
+	#endregion - Private
+	
 	$this.AddDestructor("Form_Dtor")
-	#EndRegion - Form Object
-
+	#endregion - Form Object
+	
 	GUISetState(@SW_SHOW, $hwnd)
 
 	Return $this.Object
@@ -122,7 +122,7 @@ Func Form_Handler(ByRef $this, Const ByRef $event)
 			Case $this.Menubar
 				Return "Menubar"
 
-			Case $GUI_EVENT_PRIMARYUP, $NC_CLICKED
+			Case $GUI_EVENT_PRIMARYUP, $NC_CLICKED				
 				Return "Form Selected"
 
 			Case $GUI_EVENT_RESIZED

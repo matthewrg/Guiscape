@@ -1,4 +1,6 @@
 
+#AutoIt3Wrapper_Add_Constants=y
+
 #include-once
 
 #region - Script
@@ -41,13 +43,11 @@ Func Script_Create(ByRef $this, Const ByRef $parent)
 	
 	$this.Hwnd = $parent.CreateImbeddedWindow("Script")
 	
-	GUISetBkColor($COLOR_BLUE, HWnd($this.Hwnd))
-	
 	GUICtrlCreateTab(5 * $DPIRatio, 5 * $DPIRatio, ($parent.Width - 115) * $DPIRatio, ($parent.Height - 95) * $DPIRatio)
 
 	GUICtrlCreateTabItem("Script")
 
-	$this.Edit = GUICtrlCreateEdit('', 15 * $DPIRatio, 35 * $DPIRatio, ($parent.Width - 135) * $DPIRatio, ($parent.Height - 165) * $DPIRatio, BitOR($GUI_SS_DEFAULT_EDIT, $ES_MULTILINE, $ES_WANTRETURN, $ES_AUTOVSCROLL, $WS_VSCROLL))
+	$this.Edit = GUICtrlCreateEdit('', 15 * $DPIRatio, 35 * $DPIRatio, ($parent.Width - 135) * $DPIRatio, ($parent.Height - 165) * $DPIRatio, BitOR($ES_MULTILINE, $ES_WANTRETURN, $ES_AUTOVSCROLL, $WS_VSCROLL))
 
 	$this.Open = GUICtrlCreateButton("Open", 20, ($parent.Height - 123) * $DPIRatio, 50 * $DPIRatio, 25 * $DPIRatio)
 

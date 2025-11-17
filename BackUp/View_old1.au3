@@ -8,7 +8,7 @@
 
 #include-once
 
-#Region - Guiscape View
+#region - Guiscape View
 
 Func GuiscapeView()
 	Local Const $width = 815
@@ -48,28 +48,28 @@ EndFunc   ;==>GuiscapeView
 Func GuiscapeView_Handler(ByRef $this, Const ByRef $event)
 	Switch $event.ID
 		Case $GUI_EVENT_PRIMARYUP
-			Switch _GUICtrlTab_HitTest($this.Tab, (MouseGetPos(0) - $this.TabLeft), (MouseGetPos(1) - $this.TabTop))[0]
+			Switch _GUICtrlTab_HitTest($this.Tab, (MouseGetPos(0) - $this.TabLeft) , (MouseGetPos(1) - $this.TabTop))[0]
 				Case $this.CanvasTab
 					Return "Canvas Tab"
-
+					
 				Case $this.ParametersTab
 					Return "Parameters Tab"
-
+					
 				Case $this.ScriptTab
 					Return "Script Tab"
-
+					
 				Case $this.ObjectExplorerTab
 					Return "Object Explorer Tab"
-
+					
 				Case $this.SettingsTab
 					Return "Settings Tab"
 			EndSwitch
 	EndSwitch
-
+	
 	Return False
 EndFunc   ;==>GuiscapeView_Handler
 
-Func GuiscapeView_Create(ByRef $this, Const $title)
+Func GuiscapeView_Create(ByRef $this, Const $title)	
 	Local Const $hwnd = GUICreate( _
 			$title, _
 			$this.Width * $DPIRatio, _
@@ -77,9 +77,9 @@ Func GuiscapeView_Create(ByRef $this, Const $title)
 			$this.Left * $DPIRatio, _
 			$this.Top * $DPIRatio, _
 			BitOR($GUI_SS_DEFAULT_GUI, $WS_SIZEBOX, $WS_SYSMENU))
-
+			
 	$this.Hwnd = $hwnd
-
+	
 	$this.Tab = GUICtrlCreateTab($this.TabLeft * $DPIRatio, $this.TabTop * $DPIRatio, 390 * $DPIRatio, 20 * $DPIRatio)
 
 	GUICtrlSetResizing($this.Tab, $GUI_DOCKLEFT + $GUI_DOCKSIZE + $GUI_DOCKTOP)
@@ -97,7 +97,7 @@ EndFunc   ;==>GuiscapeView_Create
 
 Func GuiscapeView_Show(Const ByRef $this)
 	GUISetState(@SW_SHOW, HWnd($this.Hwnd))
-EndFunc   ;==>GuiscapeView_Show
+EndFunc   ;==>Func GuiscapeView_Show
 
 Func GuiscapeView_SetFont(ByRef $this, Const ByRef $fontName)
 	$this.FontName = $fontName
@@ -132,7 +132,7 @@ Func GuiscapeView_CreateImbeddedWindow(Const ByRef $this, Const ByRef $title)
 			HWnd($this.Hwnd))
 
 	GUISetBkColor($COLOR_WHITE, $hwnd)
-
+	
 	GUISetState(@SW_HIDE, $hwnd)
 
 	Return $hwnd
@@ -154,4 +154,4 @@ Func Settings_ActivateTab(Const ByRef $this)
 	_GUICtrlTab_ActivateTab($this.Parent.Tab, $this.Tab)
 EndFunc   ;==>Settings_ActivateTab
 
-#EndRegion - Guiscape View
+#endregion - Guiscape View

@@ -6,7 +6,7 @@
 
 #include "AutoItObject\AutoItObject.au3"
 
-#Region - Guiscape Model
+#region - Guiscape Model
 
 Func GuiscapeModel()
 	Local Const $resourcesDir = @ScriptDir & "\Resources\"
@@ -49,18 +49,18 @@ EndFunc   ;==>GuiscapeModel_WriteSetting
 
 Func GuiscapeModel_GUIEvent(Const ByRef $this)
 	#forceref $this
-
+	
 	Local Const $eventArray = GUIGetMsg($GUI_EVENT_ARRAY)
-
-	If $eventArray[0] <> $GUI_EVENT_NONE Then
+	  
+	If $eventArray[0] <> $GUI_EVENT_NONE  Then
 		Local $event[]
-
+			
 		Local Const $sizePos = WinGetPos(HWnd($eventArray[1]))
-
+		
 		If $eventArray[0] = -9999 Then
 			Print("GUIEvent: $TITLE_CLICKED")
 		EndIf
-
+		
 		$event.ID = $eventArray[0]
 		$event.Form = HWnd($eventArray[1])
 		$event.Control = HWnd($eventArray[2])
@@ -68,12 +68,12 @@ Func GuiscapeModel_GUIEvent(Const ByRef $this)
 		$event.Y = $eventArray[4]
 		$event.Width = $sizePos[2]
 		$event.Height = $sizePos[3]
-
+		
 		Return $event
 	EndIf
-
-	Return $GUI_EVENT_NONE
-EndFunc   ;==>GuiscapeModel_GUIEvent
+	
+	Return $GUI_EVENT_NONE 
+EndFunc   ;==>GuiscapeModel_EventArrayToMap
 
 Func GuiscapeModel_CursorInfoToMap(Const ByRef $this, Const ByRef $cursorInfo)
 	#forceref $this
@@ -89,4 +89,4 @@ Func GuiscapeModel_CursorInfoToMap(Const ByRef $this, Const ByRef $cursorInfo)
 	Return $map
 EndFunc   ;==>GuiscapeModel_CursorInfoToMap
 
-#EndRegion - Guiscape Model
+#endregion - Guiscape Model

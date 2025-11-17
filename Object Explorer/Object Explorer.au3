@@ -35,8 +35,6 @@ Func ObjectExplorer_Create(ByRef $this, Const ByRef $parent)
 	$this.Parent = $parent 
 	
 	$this.Hwnd = $parent.CreateImbeddedWindow("Object Explorer")
-
-	GUISetBkColor($COLOR_RED, HWnd($this.Hwnd))
 EndFunc   ;==>ObjectExplorer_Create
 
 Func ObjectExplorer_Show(ByRef $this)	
