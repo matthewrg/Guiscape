@@ -3,80 +3,63 @@
 
 #Region - Canvas
 
+#include <MsgBoxConstants.au3>
+
+#include "..\Embedded Object.au3"
+
 Func Canvas()
-	Local $this = _AutoItObject_Class()
+	Local $this = _AutoItObject_Create(TabItemObject())
 
-	$this.Create()
+	_AutoItObject_AddMethod($this, "Handler", "Canvas_Handler")
 
-	$this.AddMethod("Handler", "Canvas_Handler")
-	$this.AddMethod("Create", "Canvas_Create")
-	$this.AddMethod("Show", "Canvas_Show")
-	$this.AddMethod("Hide", "Canvas_Hide")
-	$this.AddMethod("Resize", "Canvas_Resize")
+	_AutoItObject_OverrideMethod($this, "Create", "Canvas_Create")
 
-	$this.AddProperty("Hwnd", $ELSCOPE_READONLY)	
+	_AutoItObject_AddProperty($this, "ContextCreateForm", $ELSCOPE_PRIVATE, Null)
+	_AutoItObject_AddProperty($this, "ContextErase", $ELSCOPE_PRIVATE, Null)
 	
-	$this.AddProperty("Parent", $ELSCOPE_PRIVATE)
-	$this.AddProperty("CreateForm", $ELSCOPE_PRIVATE)
-	$this.AddProperty("Erase", $ELSCOPE_PRIVATE)
-	$this.AddProperty("Visible", $ELSCOPE_PRIVATE, False)
-
-	Return $this.Object
+	$this.Name = "Canvas"
+	
+	Return $this
 EndFunc   ;==>Canvas
 
 Func Canvas_Handler(ByRef $this, Const ByRef $event)
+	$this.InitHandler($event)
+	
 	Switch $event.ID
-		Case $this.CreateForm
-			Return "Create Form"
+		Case $this.ContextCreateForm
+			$messageQueue.Push($messageQueue.CreateEvent($this.Name, "Form Create Request"))
 
-		Case $this.Erase
-			Return "Erase Canvas"
+			Return True
+
+		Case $this.ContextErase
+			MsgBox($MB_YESNO + $MB_ICONQUESTION, "Are you sure?", "This action cannot be undone unless you save your progress.", 0, $this.TabItemHwnd)
+
+			Return True
 
 		Case $GUI_EVENT_PRIMARYUP
 			Switch WinGetTitle($event.Form)
-				Case "Canvas"
-					Return "Canvas Clicked"
+				Case $this.Name
+					$messageQueue.Push($messageQueue.CreateEvent($this.Name, $this.Name & " Clicked"))
+
+					Return True
 			EndSwitch
-
-			Return True
-
-		Case $GUI_EVENT_RESIZED
-			$this.Resize($event)
-
-			Return True
+			
+			Return False
 	EndSwitch
 
 	Return False
 EndFunc   ;==>Canvas_Handler
 
-Func Canvas_Create(ByRef $this, Const ByRef $parent)
-	$this.Parent = $parent
-
-	$this.Hwnd = $parent.CreateImbeddedWindow("Canvas")
-
+Func Canvas_Create(ByRef $this)	
+	Local Const $prevHwnd = GUISwitch($this.TabItemHwnd)
+	
 	Local Const $contextMenu = GUICtrlCreateContextMenu()
 
-	$this.CreateForm = GUICtrlCreateMenuItem("Create Form", $contextMenu)
+	$this.ContextCreateForm = GUICtrlCreateMenuItem("Create Form", $contextMenu)
 
-	$this.Erase = GUICtrlCreateMenuItem("Erase Canvas", $contextMenu)
+	$this.ContextErase = GUICtrlCreateMenuItem("Erase " & $this.Name, $contextMenu)
+
+	GUISwitch($prevHwnd)
 EndFunc   ;==>Canvas_Create
-
-Func Canvas_Show(ByRef $this)
-	GUISetState(@SW_SHOW, HWnd($this.Hwnd))
-EndFunc   ;==>Canvas_Show
-
-Func Canvas_Hide(ByRef $this)
-	GUISetState(@SW_HIDE, HWnd($this.Hwnd))
-EndFunc   ;==>Canvas_Hide
-
-Func Canvas_Resize(Const ByRef $this, Const ByRef $event)
-	WinMove( _
-			HWnd($this.Hwnd), _
-			"Canvas", _
-			90 * $DPIRatio, _
-			30 * $DPIRatio, _
-			($event.Width - 112) * $DPIRatio, _
-			($event.Height - 95) * $DPIRatio)
-EndFunc   ;==>Canvas_Resize
 
 #EndRegion - Canvas

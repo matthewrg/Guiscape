@@ -1,92 +1,46 @@
-
 #include-once
 
-#include <GuiConstantsEx.au3>
-#include <WinAPISysWin.au3>
+#Region - Guiscape Model
 
-#include "AutoItObject\AutoItObject.au3"
+Func Guiscape_Model()
+	Local $this = _AutoItObject_Create()
 
-#region - Guiscape Model
+	_AutoItObject_AddMethod($this, "Handler", "Guiscape_Model_Handler")
 
-Func GuiscapeModel()
-	Local Const $resourcesDir = @ScriptDir & "\Resources\"
+	_AutoItObject_AddProperty($this, $ELSCOPE_PRIVATE, "ResourcesDirectory", @ScriptDir & "\Resources\")
+	_AutoItObject_AddProperty($this, $ELSCOPE_PRIVATE, "SettingsINI", @ScriptDir & "\Resources\Settings.ini")
+	_AutoItObject_AddProperty($this, $ELSCOPE_PRIVATE, "ProgramName", "Guiscape")
 
-	Local $this = _AutoItObject_Class()
+	Return $this
+EndFunc   ;==>Guiscape_Model
 
-	$this.Create()
+Func Guiscape_Model_Handler(ByRef $this, Const ByRef $event)
+	Switch $event.ID
+		Case "Init"
+	$messageQueue.Push($messageQueue.CreateEvent("Guiscape", "Init"))
 
-	$this.AddMethod("GetSettings", "GuiscapeModel_GetSettings")
-	$this.AddMethod("WriteSetting", "GuiscapeModel_WriteSetting")
-	$this.AddMethod("Initialize", "GuiscapeModel_Initialize")
-	$this.AddMethod("GUIEvent", "GuiscapeModel_GUIEvent")
-	$this.AddMethod("CursorInfoToMap", "GuiscapeModel_CursorInfoToMap")
+	$messageQueue.Push($messageQueue.CreateEvent("Guiscape", "Main Form Show"))
 
-	$this.AddProperty("Title", $ELSCOPE_READONLY, "Guiscape")
-	$this.AddProperty("ResourcesDir", $ELSCOPE_READONLY, $resourcesDir)
+	$messageQueue.Push($messageQueue.CreateEvent("Guiscape", "Select Canvas Tab"))
 
-	$this.AddProperty("INI", $ELSCOPE_PRIVATE, $resourcesDir & "\Settings.ini")
+			Return True
 
-	Return $this.Object
-EndFunc   ;==>GuiscapeModel
+		Case "Resources Directory Request"
+			Print("Resources Directory Request")
 
-Func GuiscapeModel_GetSettings(Const ByRef $this)
-	Return IniReadSection($this.INI, "Settings")
-EndFunc   ;==>GuiscapeModel_GetSettings
+			$messageQueue.Push($messageQueue.CreateEvent("Guiscape", "Resources Directory Requested", "ResourcesDirectory", $this.ResourcesDirectory))
 
-Func GuiscapeModel_WriteSetting(Const ByRef $this, Const $key, Const $value)
-	Local $setting
+			Return True
 
-	Switch $value
-		Case $GUI_CHECKED
-			$setting = 1
+		Case "Settings INI Request"
+			Print("Settings INI Request")
 
-		Case $GUI_UNCHECKED
-			$setting = 0
+			$messageQueue.Push($messageQueue.CreateEvent("Guiscape", "Settings INI Requested", "ResourcesDirectory", $this.SettingsINI))
+
+			Return True
 	EndSwitch
 
-	IniWrite($this.INI, "Settings", $key, $setting)
-EndFunc   ;==>GuiscapeModel_WriteSetting
+	Return False
+EndFunc   ;==>Guiscape_Model_Handler
 
-Func GuiscapeModel_GUIEvent(Const ByRef $this)
-	#forceref $this
-	
-	Local Const $eventArray = GUIGetMsg($GUI_EVENT_ARRAY)
-	  
-	If $eventArray[0] <> $GUI_EVENT_NONE  Then
-		Local $event[]
-			
-		Local Const $sizePos = WinGetPos(HWnd($eventArray[1]))
-		
-		If $eventArray[0] = -9999 Then
-			Print("GUIEvent: $TITLE_CLICKED")
-		EndIf
-		
-		$event.ID = $eventArray[0]
-		$event.Form = HWnd($eventArray[1])
-		$event.Control = HWnd($eventArray[2])
-		$event.X = $eventArray[3]
-		$event.Y = $eventArray[4]
-		$event.Width = $sizePos[2]
-		$event.Height = $sizePos[3]
-		
-		Return $event
-	EndIf
-	
-	Return $GUI_EVENT_NONE 
-EndFunc   ;==>GuiscapeModel_EventArrayToMap
-
-Func GuiscapeModel_CursorInfoToMap(Const ByRef $this, Const ByRef $cursorInfo)
-	#forceref $this
-
-	Local $map[]
-
-	$map.X = $cursorInfo[0]
-	$map.Y = $cursorInfo[1]
-	$map.Primary = $cursorInfo[2]
-	$map.Secondary = $cursorInfo[3]
-	$map.ID = $cursorInfo[4]
-
-	Return $map
-EndFunc   ;==>GuiscapeModel_CursorInfoToMap
-
-#endregion - Guiscape Model
+#EndRegion - Guiscape Model

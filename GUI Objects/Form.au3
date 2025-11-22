@@ -29,6 +29,7 @@ Func Form(Const $parent, Const $title, Const $left = 5, Const $top = 5, Const $w
 	$this.AddMethod("Show", "Form_Show")
 	$this.AddMethod("Hide", "Form_Hide")
 	$this.AddMethod("Delete", "Form_Delete")
+	$this.AddMethod("CreateButton", "Form_CreateButton")
 
 	$this.AddMethod("GetHwnd", "Form_GetHwnd")
 	$this.AddMethod("GetProperties", "Form_GetProperties")
@@ -73,6 +74,8 @@ Func Form(Const $parent, Const $title, Const $left = 5, Const $top = 5, Const $w
 	$this.AddProperty("ExStyles", $ELSCOPE_READONLY, GUICtrlCreateMenuItem("Extended Styles", -1))
 	$this.AddProperty("ContextMenu", $ELSCOPE_READONLY, GUICtrlCreateMenuItem("Context Menu", -1))
 	$this.AddProperty("Menubar", $ELSCOPE_READONLY, GUICtrlCreateMenuItem("Menubar", -1))
+
+	$this.AddProperty("Button", $ELSCOPE_PRIVATE, '')
 	#EndRegion - Public
 
 	#Region - Private
@@ -91,9 +94,9 @@ Func Form(Const $parent, Const $title, Const $left = 5, Const $top = 5, Const $w
 	$this.AddProperty("Helpfile", $ELSCOPE_PRIVATE, '')
 	$this.AddProperty("Style", $ELSCOPE_PRIVATE, $formStyles[0])
 	$this.AddProperty("ExStyle", $ELSCOPE_PRIVATE, $formStyles[1])
-	#EndRegion - Private
 
 	$this.AddDestructor("Form_Dtor")
+	#EndRegion - Private
 	#EndRegion - Form Object
 
 	GUISetState(@SW_SHOW, $hwnd)
@@ -122,7 +125,7 @@ Func Form_Handler(ByRef $this, Const ByRef $event)
 			Case $this.Menubar
 				Return "Menubar"
 
-			Case $GUI_EVENT_PRIMARYUP, $NC_CLICKED
+			Case $GUI_EVENT_PRIMARYUP
 				Return "Form Selected"
 
 			Case $GUI_EVENT_RESIZED
@@ -154,9 +157,17 @@ Func Form_Delete(Const ByRef $this)
 	GUIDelete(($this.Hwnd))
 EndFunc   ;==>Form_Delete
 
-Func Form_Dtor(Const ByRef $this)
-	$this.Delete()
-EndFunc   ;==>Form_Dtor
+Func Form_CreateButton(ByRef $this, Const $x, Const $y, Const $width, Const $height)
+	$this.Button = _GUICtrlButton_Create(HWnd($this.Hwnd), _
+			"Button1", _
+			$x * $DPIRatio, _
+			$y * $DPIRatio, _
+			$width * $DPIRatio, _
+			$height * $DPIRatio, _
+			BitOR($BS_PUSHLIKE, $WS_BORDER, $WS_CLIPSIBLINGS))
+			
+	_WinAPI_SetWindowSubclass($this.Button, $pCtrlProc, _WinAPI_GetDlgCtrlID($this.Button))
+EndFunc   ;==>Form_CreateButton
 
 #Region - Getters
 
@@ -346,3 +357,7 @@ Func Form_SetExStyle(ByRef $this, Const ByRef $exStyle)
 EndFunc   ;==>Form_SetExStyle
 
 #EndRegion - Setters
+
+Func Form_Dtor(Const ByRef $this)
+	$this.Delete()
+EndFunc   ;==>Form_Dtor

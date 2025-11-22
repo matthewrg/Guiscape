@@ -1,49 +1,41 @@
 
 #include-once
 
-#region - Declarations
+#Region - Declarations
 
 Global $Guiscape
 
 Global $oError = ObjEvent("AutoIt.Error", _ErrFunc)
 
-Global $NC_CLICKED
-
-Global $clickedForm
+Global $messageQueue = MessageQueue()
 
 Global $clickedTool = "Button"
 
-Func CreateMessage(Const ByRef $message, $form = Null)
-	Local $event[]
-
-	$event.ID = $message
-
-	$event.Form = $form
-
-	Return $event
-EndFunc   ;==>CreateMessage
+Global $NC_CLICKED = -9999
 
 Func Print(Const $message)
 	ConsoleWrite($message & @CRLF)
 EndFunc   ;==>Print
 
-Func _Exit(ByRef $Guiscape, Const ByRef $event)
+Func _Exit(Const ByRef $event)
 	#forceref $event
-
-	GUIDelete($Guiscape.Canvas.Hwnd)
-
+	
+	;
+	
 	Exit
 EndFunc   ;==>_Exit
 
-Func GUIObjectsEvent($hwnd, $msg)
+Func NCClickendEvent($hwnd, $msg)
 	#forceref $msg
-
-	GUICtrlSendToDummy($NC_CLICKED, $hwnd)
 	
-	$clickedForm = $hwnd
+	Local Static $dummy = GUICtrlCreateDummy()
 
+	GUICtrlSendToDummy($dummy, $hwnd)
+	
+	$messageQueue.CreateEvent($NC_CLICKED, $hwnd)
+	
 	Return $GUI_RUNDEFMSG
-EndFunc   ;==>GUIObjectsEvent
+EndFunc   ;==>NCClickendEvent
 
 Func _ErrFunc()
 	ConsoleWrite(@ScriptName & " (" & $oError.scriptline & ") : ==> COM Error intercepted !" & @CRLF & _
@@ -94,4 +86,4 @@ Func HWndFromPoint()
 	Return _WinAPI_GetAncestor($hwnd, $GA_PARENT)
 EndFunc   ;==>HWndFromPoint
 
-#endregion - Declarations
+#EndRegion - Declarations

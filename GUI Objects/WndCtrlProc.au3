@@ -1,4 +1,8 @@
-; *** Start added by AutoIt3Wrapper ***
+
+#AutoIt3Wrapper_Add_Constants=n
+
+#include-once
+
 #include <APIGdiConstants.au3>
 #include <APISysConstants.au3>
 #include <ButtonConstants.au3>
@@ -8,13 +12,6 @@
 #include <WindowsNotifsConstants.au3>
 #include <WindowsStylesConstants.au3>
 #include <WindowsSysColorConstants.au3>
-; *** End added by AutoIt3Wrapper ***
-
-; Authored by MattyD --- Thank you!
-
-#AutoIt3Wrapper_Add_Constants=n
-
-#include-once
 
 #Region - Wnd Ctrl Proc
 
@@ -28,8 +25,7 @@ Global Const $MK_MBUTTON = 0x0010
 Global Const $MK_XBUTTON1 = 0x0020
 Global Const $MK_XBUTTON2 = 0x0040
 
-Global $iSnap = 15, $iMinCtrlW = 15, $iMinCtrlH = 15
-Global $mh_SelCtrls[]
+Global $iSnap = 15, $iMinCtrlW = 15, $iMinCtrlH = 15, $mh_SelCtrls[]
 
 Global Const $hCursor_Cross = _WinAPI_LoadCursor(0, $IDC_CROSS)
 
@@ -147,59 +143,57 @@ Func WndProc($hwnd, $iMsg, $wParam, $lParam, $iIdSubclass, $dwRefData)
 ;~ 				If Abs($tPaintRect.Left - $tPaintRect.Right) >= $iMinCtrlW And Abs($tPaintRect.Top - $tPaintRect.Bottom) >= $iMinCtrlH Then
 				;Yes, this can be done better - too lazy right now!
 
-				Local $hCtrl
+;~ 				Local $hCtrl
 
-				Select
-					Case $clickedTool = "Group"
-						$hCtrl = GUICtrlCreateGroup($hwnd, "", _
-								($tPaintRect.Left < $tPaintRect.Right) ? $tPaintRect.Left : $tPaintRect.Right, _
-								($tPaintRect.Top < $tPaintRect.Bottom) ? $tPaintRect.Top : $tPaintRect.Bottom, _
-								Abs($tPaintRect.Left - $tPaintRect.Right), _
-								Abs($tPaintRect.Top - $tPaintRect.Bottom), _
-								BitOR($BS_PUSHLIKE, $WS_BORDER, $WS_CLIPSIBLINGS))
+;~ 				Select
+;~ 					Case $clickedTool = "Group"
+;~ 						$hCtrl = GUICtrlCreateGroup("Group1", _
+;~ 								($tPaintRect.Left < $tPaintRect.Right) ? $tPaintRect.Left : $tPaintRect.Right, _
+;~ 								($tPaintRect.Top < $tPaintRect.Bottom) ? $tPaintRect.Top : $tPaintRect.Bottom, _
+;~ 								Abs($tPaintRect.Left - $tPaintRect.Right), _
+;~ 								Abs($tPaintRect.Top - $tPaintRect.Bottom))
 
-						_WinAPI_SetWindowSubclass($hCtrl, $pCtrlProc, _WinAPI_GetDlgCtrlID($hCtrl))
+;~ 						_WinAPI_SetWindowSubclass($hCtrl, $pCtrlProc, _WinAPI_GetDlgCtrlID($hCtrl))
 
-					Case $clickedTool = "Button"
-						;Need border & clipsiblings to paint custom frame. using UDF for button to avoid any surprises in autoit's default btn proc
-						$hCtrl = _GUICtrlButton_Create($hwnd, "", _
-								($tPaintRect.Left < $tPaintRect.Right) ? $tPaintRect.Left : $tPaintRect.Right, _
-								($tPaintRect.Top < $tPaintRect.Bottom) ? $tPaintRect.Top : $tPaintRect.Bottom, _
-								Abs($tPaintRect.Left - $tPaintRect.Right), _
-								Abs($tPaintRect.Top - $tPaintRect.Bottom), _
-								BitOR($BS_PUSHLIKE, $WS_BORDER, $WS_CLIPSIBLINGS))
+;~ 					Case $clickedTool = "Button"
+;~ 						;Need border & clipsiblings to paint custom frame. using UDF for button to avoid any surprises in autoit's default btn proc
+;~ 						Local $form = $Guiscape.GuiObjects.GetForm($hwnd)
 
-						_WinAPI_SetWindowSubclass($hCtrl, $pCtrlProc, _WinAPI_GetDlgCtrlID($hCtrl))
+;~ 						$form.CreateButton( _
+;~ 								($tPaintRect.Left < $tPaintRect.Right) ? $tPaintRect.Left : $tPaintRect.Right, _
+;~ 								($tPaintRect.Top < $tPaintRect.Bottom) ? $tPaintRect.Top : $tPaintRect.Bottom, _
+;~ 								Abs($tPaintRect.Left - $tPaintRect.Right), _
+;~ 								Abs($tPaintRect.Top - $tPaintRect.Bottom))						
 
-					Case $clickedTool = "Checkbox"
-						$hCtrl = _GUICtrlButton_Create($hwnd, "Checkbox", _
-								($tPaintRect.Left < $tPaintRect.Right) ? $tPaintRect.Left : $tPaintRect.Right, _
-								($tPaintRect.Top < $tPaintRect.Bottom) ? $tPaintRect.Top : $tPaintRect.Bottom, _
-								Abs($tPaintRect.Left - $tPaintRect.Right), _
-								Abs($tPaintRect.Top - $tPaintRect.Bottom), _
-								BitOR($BS_AUTOCHECKBOX, $WS_BORDER, $WS_CLIPSIBLINGS))
+;~ 					Case $clickedTool = "Checkbox"
+;~ 						$hCtrl = _GUICtrlButton_Create($hwnd, "Checkbox", _
+;~ 								($tPaintRect.Left < $tPaintRect.Right) ? $tPaintRect.Left : $tPaintRect.Right, _
+;~ 								($tPaintRect.Top < $tPaintRect.Bottom) ? $tPaintRect.Top : $tPaintRect.Bottom, _
+;~ 								Abs($tPaintRect.Left - $tPaintRect.Right), _
+;~ 								Abs($tPaintRect.Top - $tPaintRect.Bottom), _
+;~ 								BitOR($BS_AUTOCHECKBOX, $WS_BORDER, $WS_CLIPSIBLINGS))
 
-						_WinAPI_SetWindowSubclass($hCtrl, $pCtrlProc, _WinAPI_GetDlgCtrlID($hCtrl))
+;~ 						_WinAPI_SetWindowSubclass($hCtrl, $pCtrlProc, _WinAPI_GetDlgCtrlID($hCtrl))
 
-					Case $clickedTool = "Radio"
-						$hCtrl = _GUICtrlButton_Create($hwnd, "Radio", _
-								($tPaintRect.Left < $tPaintRect.Right) ? $tPaintRect.Left : $tPaintRect.Right, _
-								($tPaintRect.Top < $tPaintRect.Bottom) ? $tPaintRect.Top : $tPaintRect.Bottom, _
-								Abs($tPaintRect.Left - $tPaintRect.Right), _
-								Abs($tPaintRect.Top - $tPaintRect.Bottom), _
-								BitOR($BS_AUTORADIOBUTTON, $WS_BORDER, $WS_CLIPSIBLINGS))
+;~ 					Case $clickedTool = "Radio"
+;~ 						$hCtrl = _GUICtrlButton_Create($hwnd, "Radio", _
+;~ 								($tPaintRect.Left < $tPaintRect.Right) ? $tPaintRect.Left : $tPaintRect.Right, _
+;~ 								($tPaintRect.Top < $tPaintRect.Bottom) ? $tPaintRect.Top : $tPaintRect.Bottom, _
+;~ 								Abs($tPaintRect.Left - $tPaintRect.Right), _
+;~ 								Abs($tPaintRect.Top - $tPaintRect.Bottom), _
+;~ 								BitOR($BS_AUTORADIOBUTTON, $WS_BORDER, $WS_CLIPSIBLINGS))
 
-						_WinAPI_SetWindowSubclass($hCtrl, $pCtrlProc, _WinAPI_GetDlgCtrlID($hCtrl))
+;~ 						_WinAPI_SetWindowSubclass($hCtrl, $pCtrlProc, _WinAPI_GetDlgCtrlID($hCtrl))
 
-					Case $clickedTool = "Edit"
-						$hCtrl = _GUICtrlEdit_Create($hwnd, "", _
-								($tPaintRect.Left < $tPaintRect.Right) ? $tPaintRect.Left : $tPaintRect.Right, _
-								($tPaintRect.Top < $tPaintRect.Bottom) ? $tPaintRect.Top : $tPaintRect.Bottom, _
-								Abs($tPaintRect.Left - $tPaintRect.Right), _
-								Abs($tPaintRect.Top - $tPaintRect.Bottom), _
-								BitOR($ES_WANTRETURN, $WS_VSCROLL, $WS_HSCROLL, $ES_AUTOVSCROLL, $ES_AUTOHSCROLL, $WS_BORDER, $WS_CLIPSIBLINGS))
+;~ 					Case $clickedTool = "Edit"
+;~ 						$hCtrl = _GUICtrlEdit_Create($hwnd, "", _
+;~ 								($tPaintRect.Left < $tPaintRect.Right) ? $tPaintRect.Left : $tPaintRect.Right, _
+;~ 								($tPaintRect.Top < $tPaintRect.Bottom) ? $tPaintRect.Top : $tPaintRect.Bottom, _
+;~ 								Abs($tPaintRect.Left - $tPaintRect.Right), _
+;~ 								Abs($tPaintRect.Top - $tPaintRect.Bottom), _
+;~ 								BitOR($ES_WANTRETURN, $WS_VSCROLL, $WS_HSCROLL, $ES_AUTOVSCROLL, $ES_AUTOHSCROLL, $WS_BORDER, $WS_CLIPSIBLINGS))
 
-						_WinAPI_SetWindowSubclass($hCtrl, $pCtrlProc, _WinAPI_GetDlgCtrlID($hCtrl))
+;~ 						_WinAPI_SetWindowSubclass($hCtrl, $pCtrlProc, _WinAPI_GetDlgCtrlID($hCtrl))
 
 ;~                             Case GUICtrlRead($idInput) = $GUI_CHECKED
 ;~                                 $hCtrl = _GUICtrlEdit_Create($hWnd, "", _
@@ -210,7 +204,7 @@ Func WndProc($hwnd, $iMsg, $wParam, $lParam, $iIdSubclass, $dwRefData)
 ;~                                         BitOR($ES_LEFT, $ES_AUTOHSCROLL, $WS_BORDER, $WS_CLIPSIBLINGS))
 
 ;~                                 _WinAPI_SetWindowSubclass($hCtrl, $pCtrlProc, _WinAPI_GetDlgCtrlID($hCtrl))
-				EndSelect
+;~ 				EndSelect
 ;~ 				EndIf
 			EndIf
 
@@ -444,43 +438,62 @@ Func _Ctrl_MoveSizeCtrlProc($hwnd, $iMsg, $wParam, $lParam)
 
 		Case $WM_GETMINMAXINFO
 			;Min width jumps to ~150 with WS_BORDER - I guess it gets min window size: SM_CYMINTRACK
+			
 			$tMinMaxInfo = DllStructCreate($tagMINMAXINFO, $lParam)
+			
 			$tMinMaxInfo.MinTrackSize(1) = $iMinCtrlW
+			
 			$tMinMaxInfo.MinTrackSize(2) = $iMinCtrlH
+			
 			$iRetVal = 0
 
 		Case $WM_SIZING
 			$tWinRect = _WinAPI_GetWindowRect($hwnd)
+			
 			$tTgtRect = DllStructCreate($tagRect, $lParam)
 
 			$tTgtRect.Left += Mod($tWinRect.Left - $tTgtRect.Left, $iSnap)
+			
 			$tTgtRect.Top += Mod($tWinRect.Top - $tTgtRect.Top, $iSnap)
+			
 			$tTgtRect.Right += Mod($tWinRect.Right - $tTgtRect.Right, $iSnap)
+			
 			$tTgtRect.Bottom += Mod($tWinRect.Bottom - $tTgtRect.Bottom, $iSnap)
 
 			$iRetVal = True
 
 		Case $WM_MOVING
 			$tWinRect = _WinAPI_GetWindowRect($hwnd)
+			
 			$tTgtRect = DllStructCreate($tagRect, $lParam)
 
 			$iXOffset += $tTgtRect.Left - $tWinRect.Left
+			
 			$iYOffset += $tTgtRect.Top - $tWinRect.Top
+			
 			Local $iSnapH = Floor($iXOffset / $iSnap) * $iSnap
+			
 			Local $iSnapV = Floor($iYOffset / $iSnap) * $iSnap
+			
 			$iXOffset -= $iSnapH
+			
 			$iYOffset -= $iSnapV
 
 			$tTgtRect.Left = $tWinRect.Left + $iSnapH
+			
 			$tTgtRect.Right = $tWinRect.Right + $iSnapH
+			
 			$tTgtRect.Top = $tWinRect.Top + $iSnapV
+			
 			$tTgtRect.Bottom = $tWinRect.Bottom + $iSnapV
 
 			$iRetVal = 0
 
 		Case $WM_EXITSIZEMOVE
 			$iXOffset = 0
+			
 			$iYOffset = 0
+			
 			$iRetVal = _WinAPI_DefSubclassProc($hwnd, $iMsg, $wParam, $lParam)
 
 		Case $WM_SETCURSOR
@@ -498,7 +511,6 @@ Func _Ctrl_MoveSizeCtrlProc($hwnd, $iMsg, $wParam, $lParam)
 
 		Case Else
 			$iRetVal = _WinAPI_DefSubclassProc($hwnd, $iMsg, $wParam, $lParam)
-
 	EndSwitch
 
 	Return $iRetVal
@@ -506,11 +518,13 @@ EndFunc   ;==>_Ctrl_MoveSizeCtrlProc
 
 Func RegisterWndProc()
 	Local Const $hWndProc = DllCallbackRegister("WndProc", "lresult", "hwnd;uint;wparam;lparam;uint_ptr;dword_ptr")
+	
 	Return DllCallbackGetPtr($hWndProc)
 EndFunc   ;==>RegisterWndProc
 
 Func RegisterCtrlProc()
 	Local Const $hCtrlProc = DllCallbackRegister("CtrlProc", "lresult", "hwnd;uint;wparam;lparam;uint_ptr;dword_ptr")
+	
 	Return DllCallbackGetPtr($hCtrlProc)
 EndFunc   ;==>RegisterCtrlProc
 

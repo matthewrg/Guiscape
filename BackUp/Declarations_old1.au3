@@ -3,51 +3,67 @@
 
 #Region - Declarations
 
-Global $Guiscape
+Global $messageQueue
 
 Global $oError = ObjEvent("AutoIt.Error", _ErrFunc)
 
-Global $NC_CLICKED
-
-Global $clickedForm
-
 Global $clickedTool = "Button"
-
-Func CreateMessage(Const ByRef $message, $form = Null)
-	Local $event[]
-
-	$event.ID = $message
-
-	$event.Form = $form
-
-	Return $event
-EndFunc   ;==>CreateMessage
 
 Func Print(Const $message)
 	ConsoleWrite($message & @CRLF)
 EndFunc   ;==>Print
 
-Func _Exit(ByRef $Guiscape, Const ByRef $event)
+Func _Exit(Const ByRef $event)
 	#forceref $event
 
-	GUIDelete($Guiscape.Canvas.Hwnd)
+	; Ask if the Designer would like to save their progress before closing the window.
 
 	Exit
 EndFunc   ;==>_Exit
 
-Func GUIObjectsEvent($hwnd, $msg)
+Func NCClicked_Event(Const ByRef $hwnd, Const ByRef $msg)
 	#forceref $msg
 
-	GUICtrlSendToDummy($NC_CLICKED, $hwnd)
+	Local $event = $messageQueue.CreateEvent("System", "GUI_NC_Clicked", "Hwnd", $hwnd)
 
-	$clickedForm = $hwnd
+	$messageQueue.Push($event)
 
 	Return $GUI_RUNDEFMSG
-EndFunc   ;==>GUIObjectsEvent
+EndFunc   ;==>NCClickedEvent
+
+Func CreateEvent(Const $sender, Const $id, Const $key1 = Null, Const $data1 = Null, Const $key2 = Null, Const $data2 = Null, Const $key3 = Null, Const $data3 = Null, Const $key4 = Null, Const $data4 = Null, Const $key5 = Null, Const $data5 = Null)
+	Local $messageMap[]
+
+	$messageMap.Sender = $sender
+
+	$messageMap.ID = $id
+
+	If $key1 Then
+		$messageMap[$key1] = $data1
+	EndIf
+
+	If $key2 Then
+		$messageMap[$key2] = $data2
+	EndIf
+
+	If $key3 Then
+		$messageMap[$key3] = $data3
+	EndIf
+
+	If $key4 Then
+		$messageMap[$key4] = $data4
+	EndIf
+
+	If $key5 Then
+		$messageMap[$key5] = $data5
+	EndIf
+
+	Return $messageMap
+EndFunc   ;==>MessageQueue_CreateEvent
 
 Func _ErrFunc()
 	ConsoleWrite(@ScriptName & " (" & $oError.scriptline & ") : ==> COM Error intercepted !" & @CRLF & _
-			@TAB & "err.windescription:" & @TAB & $oError.windescription & @CRLF & _
+			@TAB & "err.windescription:" & @TAB & $oError.windescription & _
 			@TAB & "err.scriptline is: " & @TAB & $oError.scriptline & @CRLF & @CRLF)
 EndFunc   ;==>_ErrFunc
 

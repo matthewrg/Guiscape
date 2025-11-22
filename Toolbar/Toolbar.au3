@@ -1,55 +1,58 @@
 #include-once
 
-#include "View.au3"
-
 #Region - Toolbar
 
+#include "View.au3"
+
 Func Toolbar()
-	Local $this = _AutoItObject_Class()
+	Local $this = _AutoItObject_Create()
 
-	$this.Create()
+	_AutoItObject_AddMethod($this, "Handler", "Toolbar_Handler")
+	
+	_AutoItObject_AddMethod($this, "Create", "Toolbar_Create", True)
 
-	$this.AddMethod("Create", "Toolbar_Create")
-	$this.AddMethod("Handler", "Toolbar_Handler")
-
-	$this.AddProperty("View", $ELSCOPE_PRIVATE, ToolbarView())
-
-	Return $this.Object
+	_AutoItObject_AddProperty($this, "View", $ELSCOPE_PRIVATE, Toolbar_View())
+	
+	_AutoItObject_AddProperty($this, "ResourcesDirectory", $ELSCOPE_PRIVATE, Null)
+	
+	Return $this
 EndFunc   ;==>Toolbar
 
-Func Toolbar_Create(Const ByRef $this, Const ByRef $resourcesDir)
-	$this.View.Create($resourcesDir)
-EndFunc   ;==>Toolbar_Create
+Func Toolbar_Handler(ByRef $this, Const ByRef $event)
+	If $event.Sender = "Toolbar" Then Return False
 
-Func Toolbar_Handler(Const ByRef $this, Const ByRef $event)
-	Switch $event.ID
+	Switch $event.ID			
+		Case "Init"
+			$messageQueue.Push($messageQueue.CreateEvent("Toolbar", "Resources Directory Request"))
+			
+			Return True
+			
+		Case "Resources Directory Requested"
+			$this.ResourcesDirectory = $event.ResourcesDirectory
+	
+			$this.View.Create($this.ResourcesDirectory)
+			
 		Case $this.View.Form
-			$clickedTool = "Form"
 
 			Return "Form"
 
 		Case $this.View.Group
-			$clickedTool = "Group"
 
 			Return "Group"
 
 		Case $this.View.Button
-			$clickedTool = "Button"
 
 			Return "Button"
 
 		Case $this.View.Checkbox
-			$clickedTool = "Checkbox"
 
 			Return "Checkbox"
 
 		Case $this.View.Radio
-			$clickedTool = "Radio"
 
 			Return "Radio"
 
 		Case $this.View.Edit
-			$clickedTool = "Edit"
 
 			Return "Edit"
 	EndSwitch

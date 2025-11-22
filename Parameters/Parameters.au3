@@ -6,60 +6,56 @@
 #Region - Parameters
 
 Func Parameters()
-	Local $this = _AutoItObject_Class()
+	Local $this = _AutoItObject_Create(TabItemObject())
 
-	$this.Create()
+	_AutoItObject_AddMethod($this, "Handler", "Parameters_Handler")
+	
+	_AutoItObject_OverrideMethod($this, "Create", "Parameters_Create")
 
-	$this.AddMethod("Create", "Parameters_Create")
-	$this.AddMethod("Handler", "Parameters_Handler")
-	$this.AddMethod("Show", "Parameters_Show")
-	$this.AddMethod("Hide", "Parameters_Hide")
+	_AutoItObject_AddProperty($this, "ActiveParameters", $ELSCOPE_PRIVATE, Null)
+	_AutoItObject_AddProperty($this, "Form", $ELSCOPE_PRIVATE, FormParameters())
+	_AutoItObject_AddProperty($this, "Group", $ELSCOPE_PRIVATE, Null)
+	_AutoItObject_AddProperty($this, "Button", $ELSCOPE_PRIVATE, Null)
+	_AutoItObject_AddProperty($this, "Checkbox", $ELSCOPE_PRIVATE, Null)
+	_AutoItObject_AddProperty($this, "Radio", $ELSCOPE_PRIVATE, Null)
 	
-	$this.AddProperty("Form", $ELSCOPE_PRIVATE, FormParameters())
-	$this.AddProperty("Active", $ELSCOPE_PRIVATE)
-	$this.AddProperty("Group", $ELSCOPE_PRIVATE)
-	$this.AddProperty("Button", $ELSCOPE_PRIVATE)
-	$this.AddProperty("Checkbox", $ELSCOPE_PRIVATE)
-	$this.AddProperty("Radio", $ELSCOPE_PRIVATE)
-	$this.AddProperty("Visible", $ELSCOPE_PRIVATE, False)
-	
-	Return $this.Object
+	$this.Name = "Parameters"
+
+	Return $this
 EndFunc   ;==>Parameters
 
 Func Parameters_Handler(ByRef $this, Const ByRef $event)
+	$this.InitHandler($event)
+	
 	Switch $event.ID
-		Case "Initialize Form"						
-			$this.Active = $this.Form
-
-			$this.Active.Init($event.Form)
-
-			Return "Form Initialized"
-
-		Case "Form Deselected"
-			$this.Hide()
+		Case $this.Name & " Selected"
+			If $this.ActiveParameters Then
+				$messageQueue.Push($messageQueue.CreateEvent($this.Name, $this.ActiveParameters & " Hide"))
+				
+				$this.ActiveParameters = Null
+			EndIf
+			
+			$this.Show()
 
 			Return True
 
-		Case "Initialize Group"
-			Return True
+		Case "Form Selected"
+			$this.ActiveParameters = "Form Parameters"
 
-		Case "Initialize Button"
 			Return True
 	EndSwitch
 
 	Return False
 EndFunc   ;==>Parameters_Handler
 
-Func Parameters_Create(ByRef $this, Const ByRef $parent)	
-	$this.Form.Create($parent)
-EndFunc
+Func Parameters_Create(ByRef $this)
+	#forceref $this
+	
+	Local Const $prevHwnd = GUISwitch($this.TabItemHwnd)
+	
 
-Func Parameters_Show(Const ByRef $this)
-	$this.Active.Show()
-EndFunc   ;==>Parameters_Show
 
-Func Parameters_Hide(Const ByRef $this)
-	$this.Active.Hide()
-EndFunc   ;==>Parameters_Hide
+	GUISwitch($prevHwnd)
+EndFunc   ;==>Parameters_Create
 
 #EndRegion - Parameters

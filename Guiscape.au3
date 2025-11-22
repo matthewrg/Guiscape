@@ -1,8 +1,12 @@
 
 #include-once
 
-#Autoit3Wrapper_Testing=n
-#AutoIt3Wrapper_Run_Debug_Mode=N
+#Region ; Guiscape
+
+#Region - AutoIt3Wrapper
+;~ #Autoit3Wrapper_Testing=Y
+;~ #AutoIt3Wrapper_Run_Debug_Mode=Y
+#AutoIt3Wrapper_Run_Debug=Y
 #AutoIt3Wrapper_Add_Constants=n
 #AutoIt3Wrapper_Change2CUI=N
 #AutoIt3Wrapper_Run_Au3Stripper=N
@@ -10,13 +14,26 @@
 #AutoIt3Wrapper_Res_HiDpi=N  ;must be n otherwise _WinAPI_SetDPIAwareness() function will fail! --- (Is this so?)
 #AutoIt3Wrapper_UseX64=Y
 #AutoIt3Wrapper_Run_Au3Check=Y
+#AutoIt3Wrapper_Au3Check_Stop_OnWarning=Y
 #AutoIt3Wrapper_AU3Check_Parameters=-w 1 -w 2 -w 3 -w 4 -w 5 -w 6 -w 7 -d
+#EndRegion - AutoIt3Wrapper
 
+#Region - Opt
 Opt("WinTitleMatchMode", 4)
 Opt("MouseCoordMode", 2)
 ;~ Opt("GUICoordMode", 1)
 Opt("MustDeclareVars", 1)
+#EndRegion - Opt
 
+#Region - Globals
+Global $messageQueue
+
+Global $oError = ObjEvent("AutoIt.Error", _ErrFunc)
+
+Global $clickedTool = "Button"
+#EndRegion - Globals
+
+#Region - Includes
 #include <APIGdiConstants.au3>
 #include <APISysConstants.au3>
 #include <ButtonConstants.au3>
@@ -37,11 +54,11 @@ Opt("MustDeclareVars", 1)
 #include <BorderConstants.au3>
 
 #include "AutoItObject\AutoItObject.au3"
+#include "Message Queue\Message Queue.au3"
 #include "_WinAPI_DPI\_WinAPI_DPI.au3"
-#include "Resources\Declarations.au3"
-#include "GUI Objects\WndCtrlProc.au3"
 #include "Model.au3"
-#include "View.au3"
+#include "Main Form\Main Form.au3"
+#include "Main Tab\Main Tab.au3"
 #include "Menubar\Menubar.au3"
 #include "Toolbar\Toolbar.au3"
 #include "Canvas\Canvas.au3"
@@ -49,409 +66,183 @@ Opt("MustDeclareVars", 1)
 #include "Script\Script.au3"
 #include "Object Explorer\Object Explorer.au3"
 #include "Settings\Settings.au3"
+#include "File Manager\File Manager.au3"
+#include "GUI Objects\WndCtrlProc.au3"
 #include "GUI Objects\GUI Objects.au3"
+#EndRegion - Includes
 
 _AutoItObject_Startup()
 
-#Region ; Guiscape
+$messageQueue = MessageQueue()
+
+GUIRegisterMsg($WM_NCLBUTTONDOWN, NC_Clicked_Event)
 
 main()
 
+#Region - Functions
+
 Func main()
-	$Guiscape = Guiscape()
+	$messageQueue.Subscribe(Guiscape())
+	$messageQueue.Subscribe(MainForm())
+	$messageQueue.Subscribe(Menubar())
+	$messageQueue.Subscribe(Toolbar())
+	$messageQueue.Subscribe(Maintab())
+	$messageQueue.Subscribe(Canvas())
+	$messageQueue.Subscribe(Parameters())
+	$messageQueue.Subscribe(Script())
+	$messageQueue.Subscribe(ObjectExplorer())
+	$messageQueue.Subscribe(Settings())
+;~ 	$messageQueue.Subscribe(GuiObjects())
 
-	$Guiscape.InitView()
+	$messageQueue.Push($messageQueue.CreateEvent("Main", "Init"))
 
-	$NC_CLICKED = GUICtrlCreateDummy()
+	$messageQueue.Push($messageQueue.CreateEvent("Main", "Canvas Show"))
+	
+	$messageQueue.Push($messageQueue.CreateEvent("Main", "Main Form Show"))
 
-	GUIRegisterMsg($WM_NCLBUTTONDOWN, GUIObjectsEvent)
+	Local $event
 
 	Do
-		$Guiscape.Handler()
+		$event = GUIEvent()
+
+		Switch $event.ID
+			Case $GUI_EVENT_NONE
+				ContinueLoop
+		EndSwitch
+
+		$messageQueue.Push($event)
 	Until False
 EndFunc   ;==>main
 
 Func Guiscape()
-	Local $this = _AutoItObject_Class()
+	Local $this = _AutoItObject_Create()
 
-	$this.Create()
+	_AutoItObject_AddMethod($this, "Handler", "Guiscape_Handler")
 
-	#Region - Public
-	$this.AddMethod("InitView", "Guiscape_InitView")
-	$this.AddMethod("Handler", "Guiscape_Handler")
-	$this.AddMethod("GUIObjectsHandler", "Guiscape_GUIObjectsHandler")
+	_AutoItObject_AddProperty($this, "Model", $ELSCOPE_PRIVATE, Model())
 
-	$this.AddProperty("Model", $ELSCOPE_READONLY, GuiscapeModel())
-	$this.AddProperty("View", $ELSCOPE_READONLY, GuiscapeView())
-	$this.AddProperty("Menubar", $ELSCOPE_READONLY, Menubar())
-	$this.AddProperty("Toolbar", $ELSCOPE_READONLY, Toolbar())
-	$this.AddProperty("GUIObjects", $ELSCOPE_READONLY)
-	$this.AddProperty("Canvas", $ELSCOPE_READONLY, Canvas())
-	$this.AddProperty("Parameters", $ELSCOPE_READONLY, Parameters())
-	$this.AddProperty("Script", $ELSCOPE_READONLY, Script())
-	$this.AddProperty("ObjectExplorer", $ELSCOPE_READONLY, ObjectExplorer())
-	$this.AddProperty("Settings", $ELSCOPE_READONLY, Settings())
-	#EndRegion - Public
-
-	#Region - Private
-	$this.AddMethod("ViewHandler", "Guiscape_View_Handler", True)
-	$this.AddMethod("MenubarHandler", "Guiscape_Menubar_Handler", True)
-	$this.AddMethod("ToolbarHandler", "Guiscape_Toolbar_Handler", True)
-	$this.AddMethod("CanvasHandler", "Guiscape_Canvas_Handler", True)
-	$this.AddMethod("ParametersHandler", "Guiscape_Parameters_Handler", True)
-	$this.AddMethod("ScriptHandler", "Guiscape_Script_Handler", True)
-	$this.AddMethod("ObjectExplorerHandler", "Guiscape_ObjectExplorer_Handler", True)
-	$this.AddMethod("SettingsHandler", "Guiscape_Settings_Handler", True)
-	#EndRegion - Private
-
-	Return $this.Object
+	Return $this
 EndFunc   ;==>Guiscape
 
-Func Guiscape_InitView(ByRef $this)
-	$this.View.Create($this.Model.Title)
-
-	$this.Menubar.Create($this.Model.GetSettings())
-
-	$this.Toolbar.Create($this.Model.ResourcesDir)
-
-	$this.Canvas.Create($this.View)
-
-	$this.Parameters.Create($this.View)
-
-	$this.Script.Create($this.View)
-
-	$this.ObjectExplorer.Create($this.View)
-
-	$this.Settings.Create($this.View)
-
-	$this.GUIObjects = GUIObjects($this.Canvas.Hwnd)
-
-	$this.View.Show()
-
-	$this.Canvas.Show()
-
-	$this.GUIObjectsHandler(CreateMessage("Create Form"))
-
-	Return True
-EndFunc   ;==>Guiscape_InitView
-
-Func Guiscape_Handler(ByRef $this)
-	Local Const $event = $this.Model.GUIEvent()
-
-	If $event = $GUI_EVENT_NONE Then Return True
-
+Func Guiscape_Handler(ByRef $this, ByRef Const $event)
 	Switch $event.ID
-		Case $GUI_EVENT_RESIZED
-			Switch $event.Form
-				Case $this.View.Hwnd
-					$this.View.SetSizePos()
+		Case "Resources Directory Request"
+			$messageQueue.Push($messageQueue.CreateEvent("Model", "Resources Directory Requested", "ResourcesDirectory", $this.Model.ResourcesDirectory))
 
-					$this.Canvas.Resize($event)
+			Return True
 
-					Return True
-			EndSwitch
+		Case "Settings INI Request"
+			$messageQueue.Push($messageQueue.CreateEvent("Model", "Settings INI Requested", "SettingsINI", $this.Model.SettingsINI))
 
-		Case $NC_CLICKED
-			Switch GUICtrlRead($NC_CLICKED)
-				Case $this.View.Hwnd
-					Return True
-			EndSwitch
+			Return True
 
-		Case $GUI_EVENT_CLOSE
-			; Ask if the Designer would like to save their progress before closing the window.
+		Case "Program Name Request"
+			$messageQueue.Push($messageQueue.CreateEvent("Model", "Program Name Requested", "ProgramName", $this.Model.ProgramName))
 
-			Switch $event.Form
-				Case $this.View.Hwnd
-					_Exit($this, $event)
-
-				Case Else
-					$this.Parameters.Hide()
-			EndSwitch
+			Return True
 	EndSwitch
 
-	If $this.GUIObjectsHandler($event) Then Return True
-
-	If $this.ViewHandler($event) Then Return True
-
-	If $this.MenubarHandler($event) Then Return True
-
-	If $this.ToolbarHandler($event) Then Return True
-
-	If $this.CanvasHandler($event) Then Return True
-
-	If $this.ParametersHandler($event) Then Return True
-
-	If $this.ScriptHandler($event) Then Return True
-
-	If $this.ObjectExplorerHandler($event) Then Return True
-
-	If $this.SettingsHandler($event) Then Return True
+	Return False
 EndFunc   ;==>Guiscape_Handler
 
-Func Guiscape_View_Handler(ByRef $this, Const ByRef $event)
-	Switch $this.View.Handler($event)
-		Case "Canvas Tab"
-			$this.Canvas.Show()
-			$this.Parameters.Hide()
-			$this.Script.Hide()
-			$this.ObjectExplorer.Hide()
-			$this.Settings.Hide()
+Func GUIEvent()
+	Local Const $eventArray = GUIGetMsg($GUI_EVENT_ARRAY)
 
-			Return True
+	Local Static $event[]
 
-		Case "Parameters Tab"
-			$this.Canvas.Hide()
-			$this.Parameters.Show()
-			$this.Script.Hide()
-			$this.ObjectExplorer.Hide()
-			$this.Settings.Hide()
+	$event.Sender = "System"
+	$event.ID = $eventArray[0]
+	$event.Form = HWnd($eventArray[1])
+	$event.Control = HWnd($eventArray[2])
+	$event.X = $eventArray[3]
+	$event.Y = $eventArray[4]
 
-			Return True
+	Return $event
+EndFunc   ;==>GUIEvent
 
-		Case "Script Tab"
-			$this.Canvas.Hide()
-			$this.Parameters.Hide()
-			$this.Script.Show()
-			$this.ObjectExplorer.Hide()
-			$this.Settings.Hide()
+Func _AutoItObject_OverrideMethod(ByRef $this, Const ByRef $name, Const ByRef $member)
+	_AutoItObject_RemoveMember($this, $name)
+	
+	_AutoItObject_AddMethod($this, $name, $member, True)
+	
+	Return True
+EndFunc
 
-			Return True
+Func Print(Const $message)
+	ConsoleWrite($message & @CRLF)
+EndFunc   ;==>Print
 
-		Case "Object Explorer Tab"
-			$this.Canvas.Hide()
-			$this.Parameters.Hide()
-			$this.Script.Hide()
-			$this.ObjectExplorer.Show()
-			$this.Settings.Hide()
+Func _Exit(Const ByRef $event)
+	#forceref $event
 
-			Return True
+	; Ask if the Designer would like to save their progress before closing the window.
 
-		Case "Settings Tab"
-			$this.Canvas.Hide()
-			$this.Parameters.Hide()
-			$this.Script.Hide()
-			$this.ObjectExplorer.Hide()
-			$this.Settings.Show()
+	Exit
+EndFunc   ;==>_Exit
 
-			Return True
-	EndSwitch
+Func NC_Clicked_Event(Const ByRef $hwnd, Const ByRef $msg)
+	#forceref $msg
 
-	Return False
-EndFunc   ;==>Guiscape_View_Handler
+	Local Const $event = $messageQueue.CreateEvent("System", "GUI_NC_Clicked", "Form", $hwnd)
 
-Func Guiscape_Menubar_Handler(ByRef $this, Const ByRef $event)
-	; To-Do: Handle all menu bar items
-	Local Const $menubar = $this.Menubar.Handler(CreateMessage($event.ID))
+	$messageQueue.Push($event)
 
-	If IsMap($menubar) Then
-		Switch $menubar.Message
-			Case "Save"
-				Return True
+	Return $GUI_RUNDEFMSG
+EndFunc   ;==>NC_Clicked_Event
 
-			Case "Load"
-				Return True
+Func _ErrFunc()
+	ConsoleWrite(@ScriptName & " (" & $oError.scriptline & ") : ==> COM Error Intercepted !" & @CRLF & _
+			@TAB & "err.windescription:" & @TAB & $oError.windescription & @CRLF & _
+			@TAB & "err.scriptline is: " & @TAB & $oError.scriptline & @CRLF & @CRLF)
+EndFunc   ;==>_ErrFunc
 
-			Case "Exit"
-				_Exit($this, $event)
+Func CreateInput(Const $text, Const $left, Const $top, Const $width)
+	Return GUICtrlCreateInput($text, $left * $DPIRatio, $top * $DPIRatio, $width * $DPIRatio, 22 * $DPIRatio)
+EndFunc   ;==>CreateInput
 
-			Case "Canvas"
-;~ 				$this.ShowCanvasTab()
+Func CreateLabel(Const $text, Const $left, Const $top)
+	Return GUICtrlCreateLabel($text, $left * $DPIRatio, $top * $DPIRatio)
+EndFunc   ;==>CreateLabel
 
-				Return True
+Func CreateGroup(Const $name, Const $left, Const $top, Const $width, Const $height)
+	Return GUICtrlCreateGroup($name, $left * $DPIRatio, $top * $DPIRatio, $width * $DPIRatio, $height * $DPIRatio)
+EndFunc   ;==>CreateGroup
 
-			Case "Parameters"
-;~ 				$this.ShowParametersTab()
+Func EndGroup()
+	GUICtrlCreateGroup('', -99, -99, 1, 1)
+EndFunc   ;==>EndGroup
 
-				Return True
+Func CreateButton(Const $text, Const $left, Const $top)
+	Return GUICtrlCreateButton($text, $left * $DPIRatio, $top * $DPIRatio)
+EndFunc   ;==>CreateButton
 
-			Case "Script"
-;~ 				$this.ShowScriptTab()
+Func CreateEdit(Const $left, Const $top, Const $width, Const $height)
+	Return GUICtrlCreateEdit('', $left, $top * $DPIRatio, $width * $DPIRatio, $height * $DPIRatio)
+EndFunc   ;==>CreateEdit
 
-				Return True
+Func CreateCheckbox(Const $text, Const $left, Const $top)
+	Return GUICtrlCreateCheckbox($text, $left * $DPIRatio, $top * $DPIRatio)
+EndFunc   ;==>CreateCheckbox
 
-			Case "Object Explorer"
-;~ 				$this.ShowObjectExplorerTab()
+Func CreateRadio(Const $text, Const $left, Const $top)
+	Return GUICtrlCreateRadio($text, $left * $DPIRatio, $top * $DPIRatio)
+EndFunc   ;==>CreateCheckbox
 
-				Return True
+Func HWndFromPoint()
+	Local Static $g_tStruct = DllStructCreate($tagPOINT)
 
-			Case "Settings"
-;~ 				$this.ShowSettingsTab()
+	DllStructSetData($g_tStruct, "x", MouseGetPos(0))
 
-				Return True
+	DllStructSetData($g_tStruct, "y", MouseGetPos(1))
 
-			Case "ShowGrid", "SnapToGrid", "PasteAtMousePosition", "ShowControlWhenMoving", "ShowHiddenControls"
-				$this.Model.WriteSetting($menubar.Message, $menubar.Setting)
+	ConsoleWrite(_WinAPI_WindowFromPoint($g_tStruct) & @CRLF)
 
-				Return True
-		EndSwitch
-	Else
-		Return False
-	EndIf
-EndFunc   ;==>Guiscape_Menubar_Handler
+	Local $hwnd = _WinAPI_WindowFromPoint($g_tStruct)
 
-Func Guiscape_Toolbar_Handler(ByRef $this, ByRef $event)
-	; Allows the Designer to select from a form or a control to create. If the Designer chooses "Form" then the Canvas is
-	; sent into "Create" mode at which point it will wait for the Designer to click on the canvas. At that point a form
-	; will be created. Otherwise, if the Designer wishes to place a control on a form then a control is selected in the
-	; toolbar and then the form is sent into Create mode and will wait for the designer to click on it.
+	;Return _WinAPI_GetClassName($hwnd)
+	Return _WinAPI_GetAncestor($hwnd, $GA_PARENT)
+EndFunc   ;==>HWndFromPoint
 
-	Switch $this.Toolbar.Handler($event)
-		Case "Form"
-			$this.GUIObjectsHandler(CreateMessage("Create Form"))
-
-			Return True
-
-		Case "Group"
-			Return True
-
-		Case "Button"
-			$clickedTool = "Button"
-			Return True
-
-		Case "Checkbox"
-			Return True
-
-		Case "Radio"
-			Return True
-
-		Case "Edit"
-			Return True
-
-		Case "Input"
-			Return True
-
-		Case "Label"
-			Return True
-
-		Case "UpDown"
-			Return True
-
-		Case "List"
-			Return True
-
-		Case "Combo"
-			Return True
-
-		Case "Date"
-			Return True
-
-		Case "Treeview"
-			Return True
-
-		Case "Progress"
-			Return True
-
-		Case "Avi"
-			Return True
-
-		Case "Icon"
-			Return True
-
-		Case "Pic"
-			Return True
-
-		Case "Slider"
-			Return True
-
-		Case "Tab"
-			Return True
-	EndSwitch
-
-	Return False
-EndFunc   ;==>Guiscape_Toolbar_Handler
-
-Func Guiscape_Canvas_Handler(ByRef $this, Const ByRef $event)
-	Switch $this.Canvas.Handler($event)
-		Case "Erase Canvas"
-			; Ask if the Designer would like to save their progress before erasing the canvas.
-
-			Return True
-
-		Case "Create Form"
-			$this.GUIObjectsHandler(CreateMessage("Create Form"))
-
-			Return True
-
-		Case "Canvas Clicked"
-			$this.ParametersHandler(CreateMessage("Form Deselected"))
-
-			Return True
-	EndSwitch
-
-	Return False
-EndFunc   ;==>Guiscape_Canvas_Handler
-
-Func Guiscape_Parameters_Handler(ByRef $this, Const ByRef $event)
-	Switch $this.Parameters.Handler($event)
-		Case True
-			Return True
-	EndSwitch
-
-	Return False
-EndFunc   ;==>Guiscape_Parameters_Handler
-
-Func Guiscape_Script_Handler(ByRef $this, Const ByRef $event)
-	Switch $this.Script.Handler($event)
-		Case True
-
-			Return True
-	EndSwitch
-
-	Return False
-EndFunc   ;==>Guiscape_Script_Handler
-
-Func Guiscape_ObjectExplorer_Handler(ByRef $this, Const ByRef $event)
-	Switch $this.ObjectExplorer.Handler($event)
-		Case True
-
-			Return True
-	EndSwitch
-
-	Return False
-EndFunc   ;==>Guiscape_ObjectExplorer_Handler
-
-Func Guiscape_Settings_Handler(ByRef $this, Const ByRef $event)
-	Switch $this.Settings.Handler($event)
-		Case True
-
-			Return True
-	EndSwitch
-
-	Return False
-EndFunc   ;==>Guiscape_Settings_Handler
-
-Func Guiscape_GUIObjectsHandler(ByRef $this, Const ByRef $event)
-	Switch $this.GUIObjects.Handler($event)
-		Case "Create Form"
-			$this.ParametersHandler(CreateMessage("Initialize Form", $this.GUIObjects.CreateForm()))
-
-			Return True
-
-		Case "Form Selected"
-			$this.ParametersHandler(CreateMessage("Initialize Form", $this.GUIObjects.GetForm($clickedForm)))
-
-			Return True
-
-		Case "Form Close"
-			Print("Form Close")
-
-			; Ask the designer if they are sure ...
-
-			_WinAPI_RemoveWindowSubclass($event.Form, $pWndProc, 1000)
-
-;~ 			$this.GUIObjects.GetForm($event.Form).Delete()
-
-			$this.GUIObjects.RemoveForm($event.Form)
-
-			Return True
-
-		Case "Form Resized"
-			; do nothing so that the canvas doesn't stupidly resize itself
-
-			Return True
-	EndSwitch
-
-	Return False
-EndFunc   ;==>Guiscape_GUIObjectsHandler
+#EndRegion - Functions
 
 #EndRegion ; Guiscape

@@ -4,176 +4,212 @@
 #Region ; FormParameters
 
 Func FormParameters()
-	Local $this = _AutoItObject_Class()
+	Local $this = _AutoItObject_Create()
 
-	$this.Create()
+	_AutoItObject_AddMethod($this, "Handler", "FormParameters_Handler")
 
-	$this.AddMethod("Handler", "FormParameters_Handler")
-	$this.AddMethod("Create", "FormParameters_Create")
-	$this.AddMethod("Init", "FormParameters_Init")
-	$this.AddMethod("PropertiesInit", "FormParameters_PropertiesInit")
-	$this.AddMethod("StylesInit", "FormParameters_StylesInit")
-	$this.AddMethod("ExStylesInit", "FormParameters_ExStylesInit")
-	$this.AddMethod("Show", "FormParameters_Show")
-	$this.AddMethod("Hide", "FormParameters_Hide")
+	_AutoItObject_AddMethod($this, "Create", "FormParameters_Create", True)
+	_AutoItObject_AddMethod($this, "Init", "FormParameters_Init", True)
+	_AutoItObject_AddMethod($this, "PropertiesInit", "FormParameters_PropertiesInit", True)
+	_AutoItObject_AddMethod($this, "StylesInit", "FormParameters_StylesInit", True)
+	_AutoItObject_AddMethod($this, "ExStylesInit", "FormParameters_ExStylesInit", True)
+	_AutoItObject_AddMethod($this, "Show", "FormParameters_Show", True)
+	_AutoItObject_AddMethod($this, "Hide", "FormParameters_Hide", True)
+
+	_AutoItObject_AddProperty($this, "Hwnd", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "ParentHwnd", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "ParentWidth", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "ParentHeight", $ELSCOPE_PRIVATE)
 
 	#Region - Properties
-	$this.AddProperty("Name", $ELSCOPE_READONLY)
-	$this.AddProperty("Title", $ELSCOPE_READONLY)
-	$this.AddProperty("Width", $ELSCOPE_READONLY)
-	$this.AddProperty("Height", $ELSCOPE_READONLY)
-	$this.AddProperty("Left", $ELSCOPE_READONLY)
-	$this.AddProperty("Top", $ELSCOPE_READONLY)
-	$this.AddProperty("BgColor", $ELSCOPE_READONLY)
-	$this.AddProperty("DefBgColor", $ELSCOPE_READONLY)
-	$this.AddProperty("DefFgColor", $ELSCOPE_READONLY)
-	$this.AddProperty("Cursor", $ELSCOPE_READONLY)
-	$this.AddProperty("Font", $ELSCOPE_READONLY)
-	$this.AddProperty("Helpfile", $ELSCOPE_READONLY)
-	$this.AddProperty("Icon", $ELSCOPE_READONLY)
+	_AutoItObject_AddProperty($this, "Name", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "Title", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "Width", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "Height", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "Left", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "Top", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "BgColor", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "DefBgColor", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "DefFgColor", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "Cursor", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "Font", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "Helpfile", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "Icon", $ELSCOPE_PRIVATE)
 	#EndRegion - Properties
 
 	#Region - Styles
-	$this.AddProperty("SS_DEFAULT_GUI", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_BORDER", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_POPUP", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_CAPTION", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_CLIPCHILDREN", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_CLIPSIBLINGS", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_DISABLED", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_DLGFRAME", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_HSCROLL", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_MAXIMIZE", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_MAXIMIZEBOX", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_OVERLAPPED", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_OVERLAPPEDWINDOW", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_POPUPWINDOW", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_SIZEBOX", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_SYSMENU", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_THICKFRAME", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_VSCROLL", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_VISIBLE", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_CHILD", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_GROUP", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_TABSTOP", $ELSCOPE_READONLY)
-	$this.AddProperty("DS_MODALFRAME", $ELSCOPE_READONLY)
-	$this.AddProperty("DS_SETFOREGROUND", $ELSCOPE_READONLY)
-	$this.AddProperty("DS_CONTEXTHELP", $ELSCOPE_READONLY)
+	_AutoItObject_AddProperty($this, "SS_DEFAULT_GUI", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_BORDER", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_POPUP", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_CAPTION", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_CLIPCHILDREN", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_CLIPSIBLINGS", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_DISABLED", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_DLGFRAME", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_HSCROLL", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_MAXIMIZE", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_MAXIMIZEBOX", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_OVERLAPPED", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_OVERLAPPEDWINDOW", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_POPUPWINDOW", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_SIZEBOX", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_SYSMENU", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_THICKFRAME", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_VSCROLL", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_VISIBLE", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_CHILD", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_GROUP", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_TABSTOP", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "DS_MODALFRAME", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "DS_SETFOREGROUND", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "DS_CONTEXTHELP", $ELSCOPE_PRIVATE)
 	#EndRegion - Styles
 
 	#Region - Extended Styles
-	$this.AddProperty("WS_EX_ACCEPTFILES", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_EX_APPWINDOW", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_EX_CLIENTEDGE", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_EX_COMPOSITED", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_EX_CONTEXTHELP", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_EX_CONTROLPARENT", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_EX_DLGMODALFRAME", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_EX_LAYERED", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_EX_LAYOUTRTL", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_EX_LEFT", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_EX_LEFTSCROLLBAR", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_EX_LTRREADING", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_EX_MDICHILD", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_EX_NOACTIVATE", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_EX_NOINHERITLAYOUT", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_EX_NOPARENTNOTIFY", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_EX_NOREDIRECTIONBITMAP", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_EX_OVERLAPPEDWINDOW", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_EX_PALETTEWINDOW", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_EX_RIGHT", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_EX_RIGHTSCROLLBAR", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_EX_RTLREADING", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_EX_STATICEDGE", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_EX_TOOLWINDOW", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_EX_TOPMOST", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_EX_TRANSPARENT", $ELSCOPE_READONLY)
-	$this.AddProperty("WS_EX_WINDOWEDGE", $ELSCOPE_READONLY)
-	$this.AddProperty("GUI_WS_EX_PARENTDRAG", $ELSCOPE_READONLY)
+	_AutoItObject_AddProperty($this, "WS_EX_ACCEPTFILES", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_EX_APPWINDOW", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_EX_CLIENTEDGE", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_EX_COMPOSITED", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_EX_CONTEXTHELP", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_EX_CONTROLPARENT", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_EX_DLGMODALFRAME", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_EX_LAYERED", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_EX_LAYOUTRTL", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_EX_LEFT", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_EX_LEFTSCROLLBAR", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_EX_LTRREADING", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_EX_MDICHILD", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_EX_NOACTIVATE", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_EX_NOINHERITLAYOUT", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_EX_NOPARENTNOTIFY", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_EX_NOREDIRECTIONBITMAP", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_EX_OVERLAPPEDWINDOW", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_EX_PALETTEWINDOW", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_EX_RIGHT", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_EX_RIGHTSCROLLBAR", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_EX_RTLREADING", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_EX_STATICEDGE", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_EX_TOOLWINDOW", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_EX_TOPMOST", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_EX_TRANSPARENT", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "WS_EX_WINDOWEDGE", $ELSCOPE_PRIVATE)
+	_AutoItObject_AddProperty($this, "GUI_WS_EX_PARENTDRAG", $ELSCOPE_PRIVATE)
 	#EndRegion - Extended Styles
 
-	$this.AddProperty("Hwnd", $ELSCOPE_PRIVATE)
-	$this.AddProperty("Visible", $ELSCOPE_PRIVATE, False)
-
-	Return $this.Object
+	Return $this
 EndFunc   ;==>FormParameters
 
 Func FormParameters_Handler(ByRef $this, Const ByRef $event)
 	Switch $event.ID
+		Case "Init View"
+			$messageQueue.Push($messageQueue.CreateEvent("Form Parameters", "Size Request"))
+
+			Return True
+
+		Case "Size Requested"
+			$this.ParentWidth = $event.Width
+
+			$this.ParentHeight = $event.Height
+
+			$messageQueue.Push($messageQueue.CreateEvent("Form Parameters", "Hwnd Request"))
+
+			Return True
+
+		Case "Hwnd Requested"
+			$this.ParentHwnd = $event.Form
+
+			$this.Create()
+
+			Return True
+
+		Case "Form Parameters Show"
+			$this.Show()
+
+			Return True
+
+		Case "Form Parameters Hide"
+			$this.Hide()
+
+			Return True
+
 		Case $this.Name
-			$event.Form.SetName(GUICtrlRead($event.ID))
+			$messageQueue.Push($messageQueue.CreateEvent("Form Parameters", "Name Changed", "Form", $event.Form, "Name", GUICtrlRead($event.ID)))
 
 			Return True
 
 		Case $this.Title
-			$event.Form.SetTitle(GUICtrlRead($event.ID))
+			$messageQueue.Push($messageQueue.CreateEvent("Form Parameters", "Title Changed", "Form", $event.Form, "Title", GUICtrlRead($event.ID)))
 
 			Return True
 
 		Case $this.Left
-			$event.Form.SetLeft(GUICtrlRead($event.ID))
+			$messageQueue.Push($messageQueue.CreateEvent("Form Parameters", "Left Changed", "Form", $event.Form, "Left", GUICtrlRead($event.ID)))
 
 			Return True
 
 		Case $this.Top
-			$event.Form.SetTop(GUICtrlRead($event.ID))
+			$messageQueue.Push($messageQueue.CreateEvent("Form Parameters", "Top Changed", "Form", $event.Form, "Top", GUICtrlRead($event.ID)))
 
 			Return True
 
 		Case $this.Width
-			$event.Form.SetWidth(GUICtrlRead($event.ID))
+			$messageQueue.Push($messageQueue.CreateEvent("Form Parameters", "Width Changed", "Form", $event.Form, "Width", GUICtrlRead($event.ID)))
 
 			Return True
 
 		Case $this.Height
-			$event.Form.SetHeight(GUICtrlRead($event.ID))
+			$messageQueue.Push($messageQueue.CreateEvent("Form Parameters", "Height Changed", "Form", $event.Form, "Height", GUICtrlRead($event.ID)))
 
 			Return True
 
 		Case $this.BGColor
-			Local Const $bgColor = _ChooseColor(2, $event.Form.GetBgColor(), 2, HWnd($this.View.Hwnd))
+			$messageQueue.Push($messageQueue.CreateEvent("Form Parameters", "Background Color Request"))
 
-			$event.Form.SetBGColor($bgColor)
+			Return True
+
+		Case "Background Color Requested"
+			Local Const $bgColor = _ChooseColor(2, $event.BGColor, 2, HWnd($this.View.Hwnd))
+
+			$messageQueue.Push($messageQueue.CreateEvent("Form Parameters", "Foreground Color Changed", "Form", $event.Form, "Background Color", GUICtrlRead($bgColor)))
 
 			Return True
 
 		Case $this.DefBgColor
-			Local Const $DefBgColor = _ChooseColor(2, $event.Form.GetDefBgColor(), 2, HWnd($this.View.Hwnd))
-
-			$event.Form.SetDefBgColor($DefBgColor)
+			$messageQueue.Push($messageQueue.CreateEvent("Form Parameters", "Foreground Color Request"))
 
 			Return True
 
-		Case $this.DefFgColor
-			Local Const $DefFgColor = _ChooseColor(2, $event.Form.GetDefFgColor(), 2, HWnd($this.View.Hwnd))
+		Case "Foreground Color Requested"
+			Local Const $fgColor = _ChooseColor(2, $event.FGColor, 2, HWnd($this.View.Hwnd))
 
-			$event.Form.SetDefFGColor($DefFgColor)
+			$messageQueue.Push($messageQueue.CreateEvent("Form Parameters", "Foreground Color Changed", "Form", $event.Form, "Foreground Color", GUICtrlRead($fgColor)))
 
 			Return True
 
 		Case $this.Cursor
-			$event.Form.SetCursor(Eval("MCID_" & GUICtrlRead($event.ID)))
+			$messageQueue.Push($messageQueue.CreateEvent("Form Parameters", "Cursor Changed", "Form", $event.Form, "Cursor", Eval("MCID_" & GUICtrlRead($event.ID))))
 
 			Return True
 
 		Case $this.Font
 			Local Const $font = _ChooseFont(Default, Default, Default, Default, Default, Default, Default, HWnd($this.View.Hwnd))
 
-			$event.Form.SetFont($font)
+			$messageQueue.Push($messageQueue.CreateEvent("Form Parameters", "Font Changed", "Form", $event.Form, "Font", $font))
 
 			Return True
+
 
 		Case $this.Helpfile
 			Local Const $helpfile = FileOpenDialog("Choose a helpfile.", @ScriptDir, "Help (*.chm)", 0, HWnd($this.View.Hwnd))
 
-			$event.Form.SetHelpfile($helpfile)
+			$messageQueue.Push($messageQueue.CreateEvent("Form Parameters", "Helpfile Changed", "Form", $event.Form, "Helpfile", $helpfile))
 
 			Return True
 
 		Case $this.Icon
 			Local Const $icon = FileOpenDialog("Choose an icon.", @ScriptDir, "Icon (*.ico)", 0, HWnd($this.View.Hwnd))
 
-			$event.Form.SetIcon($icon)
+			$messageQueue.Push($messageQueue.CreateEvent("Form Parameters", "Icon Changed", "Form", $event.Form, "Icon", $icon))
 
 			Return True
 	EndSwitch
@@ -181,10 +217,18 @@ Func FormParameters_Handler(ByRef $this, Const ByRef $event)
 	Return False
 EndFunc   ;==>FormParameters_Handler
 
-Func FormParameters_Create(ByRef $this, Const $parent)
-	$this.Hwnd = $parent.CreateImbeddedWindow("Form Properties")
+Func FormParameters_Create(ByRef $this)
+	$this.Hwnd = GUICreate( _
+			"Form Properties", _
+			(($this.ParentWidth - 100) * $DPIRatio), _
+			(($this.ParentHeight - 60) * $DPIRatio), _
+			(90 * $DPIRatio), _
+			(30 * $DPIRatio), _
+			$WS_CHILD, _
+			$WS_EX_OVERLAPPEDWINDOW, _
+			HWnd($this.ParentHwnd))
 
-	GUICtrlCreateTab(5 * $DPIRatio, 5 * $DPIRatio, ($parent.Width - 110) * $DPIRatio, ($parent.Height - 70) * $DPIRatio)
+	GUICtrlCreateTab(5 * $DPIRatio, 5 * $DPIRatio, ($this.ParentWidth - 110) * $DPIRatio, ($this.ParentHeight - 70) * $DPIRatio)
 
 	#Region - Properties
 	GUICtrlCreateTabItem("Properties")
@@ -319,7 +363,7 @@ Func FormParameters_Create(ByRef $this, Const $parent)
 	#Region - Menubar
 	GUICtrlCreateTabItem("Menubar")
 
-	Local $test1 = GUICtrlCreateTreeView(20 * $DPIRatio, 40 * $DPIRatio, ($parent.Width - 205) * $DPIRatio, ($parent.Height - 125) * $DPIRatio)
+	Local $test1 = GUICtrlCreateTreeView(20 * $DPIRatio, 40 * $DPIRatio, ($this.ParentWidth - 205) * $DPIRatio, ($this.ParentHeight - 125) * $DPIRatio)
 
 	GUICtrlCreateTreeViewItem("Menu Item 1", $test1)
 	Local $test1a = GUICtrlCreateTreeViewItem("Menu Item 2", $test1)
@@ -334,7 +378,7 @@ Func FormParameters_Create(ByRef $this, Const $parent)
 	#Region - Context Menu
 	GUICtrlCreateTabItem("Context Menu")
 
-	Local $test2 = GUICtrlCreateTreeView(20 * $DPIRatio, 40 * $DPIRatio, ($parent.Width - 205) * $DPIRatio, ($parent.Height - 125) * $DPIRatio)
+	Local $test2 = GUICtrlCreateTreeView(20 * $DPIRatio, 40 * $DPIRatio, ($this.ParentWidth - 205) * $DPIRatio, ($this.ParentHeight - 125) * $DPIRatio)
 
 	GUICtrlCreateTreeViewItem("Menu Item 1", $test2)
 	Local $test2a = GUICtrlCreateTreeViewItem("Menu Item 2", $test2)
@@ -345,35 +389,37 @@ Func FormParameters_Create(ByRef $this, Const $parent)
 
 	GUICtrlCreateTabItem('')
 	#EndRegion - Context Menu
-	
-	#region - Accelerators
+
+	#Region - Accelerators
 	GUICtrlCreateTabItem("Accelerators")
-	
+
 	GUICtrlCreateInput('Hotkey', 320, 50, 200, 25)
-	
+
 	GUICtrlCreateCombo('', 320, 80)
-	
+
 	GUICtrlSetData(-1, "Button1|Button2|Checkbox1")
-;~ 	
+;~
 ;~ 	GUICtrlCreateButton("Add", 300, 110)
-	
+
 	Local $test3 = GUICtrlCreateListView("Hotkey                     |Function                   ", 15, 45, 260, 680)
-	
+
 	GUICtrlCreateListViewItem("MyHotkey1|MyFunction1", $test3)
-	
-	GUICtrlCreateTabItem('')	
-	#endregion - Accelerators	
+
+	GUICtrlCreateTabItem('')
+	#EndRegion - Accelerators
+
+	GUISwitch(HWnd($this.ParentHwnd))
 EndFunc   ;==>FormParameters_Create
 
-Func FormParameters_Init(ByRef $this, Const ByRef $form)
+Func FormParameters_Init(Const ByRef $this, Const ByRef $form)
 	$this.PropertiesInit($form)
 	$this.StylesInit($form)
 	$this.ExStylesInit($form)
 EndFunc   ;==>FormParameters_Init
 
-Func FormParameters_PropertiesInit(ByRef $this, $form)	
+Func FormParameters_PropertiesInit(Const ByRef $this, Const $form)
 	Local Const $properties = $form.GetProperties()
-	
+
 	GUICtrlSetData($this.Name, $properties.Name)
 	GUICtrlSetData($this.Title, $properties.Title)
 	GUICtrlSetData($this.Left, $properties.Left)
@@ -551,14 +597,12 @@ Func FormParameters_ExStylesInit(ByRef $this, Const ByRef $form)
 	Next
 EndFunc   ;==>FormParameters_ExStylesInit
 
-Func FormParameters_Show(ByRef $this)
+Func FormParameters_Show(Const ByRef $this)
 	GUISetState(@SW_SHOW, HWnd($this.Hwnd))
 EndFunc   ;==>FormParameters_Show
 
-Func FormParameters_Hide(ByRef $this)
+Func FormParameters_Hide(Const ByRef $this)
 	GUISetState(@SW_HIDE, HWnd($this.Hwnd))
 EndFunc   ;==>FormParameters_Hide
 
-#EndRegion - Accelerators
-
-#endregion - Form Parameters
+#EndRegion ; FormParameters

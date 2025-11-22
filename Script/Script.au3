@@ -6,68 +6,50 @@
 #region - Script
 
 Func Script()
-	Local $this = _AutoItObject_Class()
+	Local $this = _AutoItObject_Create(TabItemObject())
 
-	$this.Create()
-
-	$this.AddMethod("Handler", "Script_Handler")
-	$this.AddMethod("Create", "Script_Create")
-	$this.AddMethod("Show", "Script_Show")
-	$this.AddMethod("Hide", "Script_Hide")
-
-	$this.AddProperty("Edit", $ELSCOPE_READONLY)
-	$this.AddProperty("Open", $ELSCOPE_READONLY)
-	$this.AddProperty("Save", $ELSCOPE_READONLY)
-	$this.AddProperty("SaveAs", $ELSCOPE_READONLY)
+	_AutoItObject_AddMethod($this, "Handler", "Script_Handler")
 	
-	$this.AddProperty("Hwnd", $ELSCOPE_PRIVATE)
-	$this.AddProperty("Parent", $ELSCOPE_PRIVATE)
-	$this.AddProperty("Visible", $ELSCOPE_PRIVATE, False)
+	_AutoItObject_OverrideMethod($this, "Create", "Script_Create")
+	
+	_AutoItObject_AddProperty($this, "Editor", $ELSCOPE_PRIVATE, Null)
+	_AutoItObject_AddProperty($this, "Open", $ELSCOPE_PRIVATE, Null)
+	_AutoItObject_AddProperty($this, "Save", $ELSCOPE_PRIVATE, Null)
+	_AutoItObject_AddProperty($this, "SaveAs", $ELSCOPE_PRIVATE, Null)
+	
+	$this.Name = "Script"
 
-	Return $this.Object
+	Return $this
 EndFunc   ;==>Script
 
 Func Script_Handler(ByRef $this, Const ByRef $event)
-	#forceref $this
-	
-	Switch $event.ID
-		Case $GUI_EVENT_PRIMARYUP
-			Return True
-	EndSwitch
+	$this.InitHandler($event)
 	
 	Return False
 EndFunc
 
-Func Script_Create(ByRef $this, Const ByRef $parent)	
-	$this.Parent = $parent 
+Func Script_Create(ByRef $this)			
+	Local Const $prevHwnd = GUISwitch($this.TabItemHwnd)
 	
-	$this.Hwnd = $parent.CreateImbeddedWindow("Script")
-	
-	GUICtrlCreateTab(5 * $DPIRatio, 5 * $DPIRatio, ($parent.Width - 115) * $DPIRatio, ($parent.Height - 95) * $DPIRatio)
+	GUICtrlCreateTab(5 * $DPIRatio, 5 * $DPIRatio, ($this.ParentWidth - 115) * $DPIRatio, ($this.ParentHeight - 95) * $DPIRatio)
 
 	GUICtrlCreateTabItem("Script")
 
-	$this.Edit = GUICtrlCreateEdit('', 15 * $DPIRatio, 35 * $DPIRatio, ($parent.Width - 135) * $DPIRatio, ($parent.Height - 165) * $DPIRatio, BitOR($ES_MULTILINE, $ES_WANTRETURN, $ES_AUTOVSCROLL, $WS_VSCROLL))
+	$this.Editor = GUICtrlCreateEdit('', 15 * $DPIRatio, 35 * $DPIRatio, ($this.ParentWidth - 135) * $DPIRatio, ($this.ParentHeight - 165) * $DPIRatio, BitOR($ES_MULTILINE, $ES_WANTRETURN, $ES_AUTOVSCROLL, $WS_VSCROLL))
 
-	$this.Open = GUICtrlCreateButton("Open", 20, ($parent.Height - 123) * $DPIRatio, 50 * $DPIRatio, 25 * $DPIRatio)
+	$this.Open = GUICtrlCreateButton("Open", 20, ($this.ParentHeight - 123) * $DPIRatio, 50 * $DPIRatio, 25 * $DPIRatio)
 
-	$this.Save = GUICtrlCreateButton("Save", 80, ($parent.Height - 123) * $DPIRatio, 50 * $DPIRatio, 25 * $DPIRatio)
+	$this.Save = GUICtrlCreateButton("Save", 80, ($this.ParentHeight - 123) * $DPIRatio, 50 * $DPIRatio, 25 * $DPIRatio)
 
-	$this.SaveAs = GUICtrlCreateButton("Save As", 140, ($parent.Height - 123) * $DPIRatio, 50 * $DPIRatio, 25 * $DPIRatio)
+	$this.SaveAs = GUICtrlCreateButton("Save As", 140, ($this.ParentHeight - 123) * $DPIRatio, 50 * $DPIRatio, 25 * $DPIRatio)
 
 	GUICtrlCreateTabItem('')
 
 	GUICtrlCreateTabItem("Options")
 
 	GUICtrlCreateTabItem('')
+
+	GUISwitch($prevHwnd)
 EndFunc   ;==>Script_Create
-
-Func Script_Show(ByRef $this)
-	GUISetState(@SW_SHOW, HWnd($this.Hwnd))
-EndFunc   ;==>Script_Show
-
-Func Script_Hide(ByRef $this)	
-	GUISetState(@SW_HIDE, HWnd($this.Hwnd))
-EndFunc   ;==>Script_Hide
 
 #endregion - Script
