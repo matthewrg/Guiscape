@@ -16,19 +16,13 @@ Func Parameters()
 EndFunc   ;==>Parameters
 
 Func Parameters_Handler(ByRef $this, Const ByRef $event)
-	#forceref $this, $event
+	$this.InitHandler($event)
 	
 	Return False
 EndFunc   ;==>Parameters_Handler
 
 Func Parameters_Create(ByRef $this)
 	#forceref $this
-	
-	Local Const $prevHwnd = GUISwitch(HWnd($this.TabItemHwnd))
-	
-	;
-
-	GUISwitch($prevHwnd)
 EndFunc   ;==>Parameters_Create
 
 #EndRegion - Parameters

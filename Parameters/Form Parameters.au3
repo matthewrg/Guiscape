@@ -10,12 +10,12 @@ Func FormParameters()
 	
 	_AutoItObject_OverrideMethod($this, "Create", "FormParameters_Create")
 	
+	$this.TabItemName = "Form Parameters"
+	
 	_AutoItObject_AddMethod($this, "Init", "FormParameters_Init", True)
 	_AutoItObject_AddMethod($this, "PropertiesInit", "FormParameters_PropertiesInit", True)
 	_AutoItObject_AddMethod($this, "StylesInit", "FormParameters_StylesInit", True)
 	_AutoItObject_AddMethod($this, "ExStylesInit", "FormParameters_ExStylesInit", True)
-	
-	$this.TabItemName = "Form Parameters"
 
 	#Region - Properties
 	_AutoItObject_AddProperty($this, "Name", $ELSCOPE_PRIVATE)
@@ -96,6 +96,10 @@ Func FormParameters()
 EndFunc   ;==>FormParameters
 
 Func FormParameters_Handler(ByRef $this, Const ByRef $event)
+	If $event.Sender = $this.TabItemName Then Return False
+		
+	$this.InitHandler($event)
+	
 	Switch $event.ID
 		Case $init
 			$messageQueue.Push($messageQueue.CreateEvent($this.TabItemName, $mainFormSizeRequest))
@@ -203,7 +207,7 @@ Func FormParameters_Handler(ByRef $this, Const ByRef $event)
 	Return False
 EndFunc   ;==>FormParameters_Handler
 
-Func FormParameters_Create(ByRef $this)
+Func FormParameters_Create(ByRef $this)	
 	Local Const $prevHwnd = GUISwitch(HWnd($this.TabItemHwnd))
 	
 	$this.Tab = CreateTab(5, 5, $this.ParentWidth - 110, $this.ParentHeight - 70)

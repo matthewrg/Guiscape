@@ -21,6 +21,8 @@ Func Canvas()
 EndFunc   ;==>Canvas
 
 Func Canvas_Handler(ByRef $this, Const ByRef $event)
+	If $event.Sender = $this.TabItemName Then Return False
+	
 	$this.InitHandler($event)
 	
 	Switch $event.ID

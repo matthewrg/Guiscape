@@ -54,6 +54,16 @@ Func MainTab_Handler(ByRef $this, Const ByRef $event)
 
 			Return True
 			
+		Case "Canvas Clicked"
+			$this.View.ActiveParametersHwnd = Null
+
+			Return True
+		
+		Case "Form Object Selected"
+			$this.View.ActiveParametersHwnd = $this.View.FormParametersHwnd
+
+			Return True
+		
 		Case "Canvas " & $tabItemHwndRequest
 			$messageQueue.Push($messageQueue.CreateEvent($this.Name, Response($event.Sender, $tabItemHwndRequest), "TabItemHwnd", $this.View.CanvasHwnd))
 
@@ -61,6 +71,11 @@ Func MainTab_Handler(ByRef $this, Const ByRef $event)
 			
 		Case "Parameters " & $tabItemHwndRequest
 			$messageQueue.Push($messageQueue.CreateEvent($this.Name, Response($event.Sender, $tabItemHwndRequest), "TabItemHwnd", $this.View.ParametersHwnd))
+
+			Return True
+			
+		Case "Form Parameters " & $tabItemHwndRequest
+			$messageQueue.Push($messageQueue.CreateEvent($this.Name, Response($event.Sender, $tabItemHwndRequest), "TabItemHwnd", $this.View.FormParametersHwnd))
 
 			Return True
 			

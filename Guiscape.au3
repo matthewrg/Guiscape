@@ -97,7 +97,7 @@ Func main()
 
 	$messageQueue.Push($messageQueue.CreateEvent("Main", $init))
 
-	$messageQueue.Push($messageQueue.CreateEvent("Main", $showSettingsRequest))
+	$messageQueue.Push($messageQueue.CreateEvent("Main", $showCanvasRequest))
 	
 	$messageQueue.Push($messageQueue.CreateEvent("Main", $mainFormShowRequest))
 	

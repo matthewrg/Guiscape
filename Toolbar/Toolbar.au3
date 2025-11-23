@@ -33,8 +33,9 @@ Func Toolbar_Handler(ByRef $this, Const ByRef $event)
 			$this.View.Create($this.ResourcesDirectory)
 			
 		Case $this.View.Form
-
-			Return "Form"
+			$messageQueue.Push($messageQueue.CreateEvent("Toolbar", "Form Tool Selected"))
+			
+			Return True
 
 		Case $this.View.Group
 

@@ -16,9 +16,11 @@ Func ObjectExplorer()
 EndFunc   ;==>ObjectExplorer
 
 Func ObjectExplorer_Handler(ByRef $this, Const ByRef $event)
+	If $event.Sender = $this.TabItemName Then Return False
+	
 	$this.InitHandler($event)
 	
-	
+	;
 	
 	Return False
 EndFunc

@@ -21,6 +21,8 @@ Func Script()
 EndFunc   ;==>Script
 
 Func Script_Handler(ByRef $this, Const ByRef $event)
+	If $event.Sender = $this.TabItemName Then Return False
+	
 	$this.InitHandler($event)
 	
 	Return False

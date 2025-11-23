@@ -51,10 +51,12 @@ Func MainTab_View_Create(ByRef $this)
 	$this.CanvasHwnd = $this.TabItem("Canvas")
 
 	$this.ParametersIndex = _GUICtrlTab_InsertItem($this.Tab, 1, "Parameters")
-
-	$this.ParametersHwnd = $this.TabItem("Parameters")
 	
 	$this.FormParametersHwnd = $this.TabItem("Form Parameters")
+	
+	$this.ActiveParametersHwnd = $this.FormParametersHwnd
+
+	$this.ParametersHwnd = $this.TabItem("Parameters")
 
 	$this.ScriptIndex = _GUICtrlTab_InsertItem($this.Tab, 2, "Script")
 
@@ -120,10 +122,10 @@ Func MainTab_View_ShowParameters(Const ByRef $this)
 	$this.Hide($this.SettingsHwnd)
 	
 	If $this.ActiveParametersHwnd Then
-		$this.Show($this.FormParametersHwnd)
 		$this.Hide($this.ParametersHwnd)
+		
+		$this.Show($this.ActiveParametersHwnd)
 	Else
-		$this.Hide($this.FormParametersHwnd)
 		$this.Show($this.ParametersHwnd)
 	EndIf
 EndFunc   ;==>MainTab_View_ShowParameters
@@ -131,7 +133,7 @@ EndFunc   ;==>MainTab_View_ShowParameters
 Func MainTab_View_ShowScript(Const ByRef $this)
 	$this.Hide($this.CanvasHwnd)
 	$this.Hide($this.ParametersHwnd)
-	$this.Hide($this.FormParametersHwnd)
+	$this.Hide($this.ActiveParametersHwnd)
 	$this.Hide($this.ObjectExplorerHwnd)
 	$this.Hide($this.SettingsHwnd)
 	$this.Show($this.ScriptHwnd)
@@ -140,7 +142,7 @@ EndFunc   ;==>MainTab_View_ShowScript
 Func MainTab_View_ShowObjectExplorer(Const ByRef $this)
 	$this.Hide($this.CanvasHwnd)
 	$this.Hide($this.ParametersHwnd)
-	$this.Hide($this.FormParametersHwnd)
+	$this.Hide($this.ActiveParametersHwnd)
 	$this.Hide($this.ScriptHwnd)
 	$this.Hide($this.SettingsHwnd)
 	$this.Show($this.ObjectExplorerHwnd)
@@ -149,22 +151,22 @@ EndFunc   ;==>MainTab_View_ShowObjectExplorer
 Func MainTab_View_ShowSettings(Const ByRef $this)
 	$this.Hide($this.CanvasHwnd)
 	$this.Hide($this.ParametersHwnd)
-	$this.Hide($this.FormParametersHwnd)
+	$this.Hide($this.ActiveParametersHwnd)
 	$this.Hide($this.ScriptHwnd)
 	$this.Hide($this.ObjectExplorerHwnd)
 	$this.Show($this.SettingsHwnd)
 EndFunc   ;==>MainTab_View_ShowSettings
 
-Func MainTab_View_Show(Const ByRef $this, Const ByRef $hwnd)
+Func MainTab_View_Show(Const ByRef $this, Const ByRef $tabItemHwnd)
 	#forceref $this
 
-	GUISetState(@SW_SHOW, HWnd($hwnd))
+	GUISetState(@SW_SHOW, HWnd($tabItemHwnd))
 EndFunc   ;==>MainTab_View_Show
 
-Func MainTab_View_Hide(Const ByRef $this, Const ByRef $hwnd)
+Func MainTab_View_Hide(Const ByRef $this, Const ByRef $tabItemHwnd)
 	#forceref $this
 
-	GUISetState(@SW_HIDE, HWnd($hwnd))
+	GUISetState(@SW_HIDE, HWnd($tabItemHwnd))
 EndFunc   ;==>MainTab_View_Hide
 
 #EndRegion - Main Tab View

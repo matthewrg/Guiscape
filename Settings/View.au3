@@ -10,7 +10,7 @@ Func Settings_View()
 
 	_AutoItObject_AddMethod($this, "Handler", "Settings_View_Handler")
 	
-	_AutoItObject_AddMethod($this, "GetState", "Settings_View_GetState")
+	_AutoItObject_AddMethod($this, "IsChecked", "Settings_View_IsChecked")
 
 	_AutoItObject_AddProperty($this, "ThemeLight", $ELSCOPE_PUBLIC, Null)
 	_AutoItObject_AddProperty($this, "ThemeDark", $ELSCOPE_PUBLIC, Null)
@@ -18,6 +18,7 @@ Func Settings_View()
 	_AutoItObject_AddProperty($this, "GridShow", $ELSCOPE_PUBLIC, Null)
 	_AutoItObject_AddProperty($this, "GridSnap", $ELSCOPE_PUBLIC, Null)
 	_AutoItObject_AddProperty($this, "GridSize", $ELSCOPE_PUBLIC, Null)
+	_AutoItObject_AddProperty($this, "ShowHidden", $ELSCOPE_PUBLIC, Null)
 
 	Return $this
 EndFunc   ;==>Settings_View
@@ -25,12 +26,18 @@ EndFunc   ;==>Settings_View
 Func Settings_View_Handler(ByRef $this, Const ByRef $event)
 	Switch $event.ID
 		Case $this.GridShow
-			If $this.GetState($event.ID) Then
-				GUICtrlSetState($this.GridSnap, @SW_DISABLE)
-
-				GUICtrlSetState($this.GridSize, @SW_DISABLE)
-			EndIf
-
+			$messageQueue.Push($messageQueue.CreateEvent($this.TabItemName, "Show Grid Setting", "ShowGrid", $this.IsChecked()))
+			
+			Return True
+			
+		Case $this.GridSnap
+			$messageQueue.Push($messageQueue.CreateEvent($this.TabItemName, "Grid Snap Setting", "GridSnap", $this.IsChecked()))
+			
+			Return True
+			
+		Case $this.GridSize
+			$messageQueue.Push($messageQueue.CreateEvent($this.TabItemName, "Grid Size Setting", "GridSize", GUICtrlRead($event.ID)))
+			
 			Return True
 	EndSwitch
 
@@ -65,10 +72,14 @@ Func Settings_View_Create(ByRef $this)
 	CreateLabel("Size", $gridGroupLeft + 40, $gridGroupTop + 68)
 
 	EndGroup()
+	
+	$this.ShowHidden = CreateCheckbox("Show Hidden Controls", 15, 215)
 EndFunc   ;==>Settings_View_Create
 
-Func Settings_View_GetState(ByRef $this, Const ByRef $ctrl)
-	Return
+Func Settings_View_IsChecked(ByRef $this, Const ByRef $ctrl)
+	#forceref $this
+	
+	Return BitAnd(GUICtrlRead($ctrl), $GUI_CHECKED) = $GUI_CHECKED
 EndFunc   ;==>Settings_View_GetState
 
 #EndRegion - Settings View
