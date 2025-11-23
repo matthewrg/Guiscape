@@ -3,43 +3,17 @@
 
 #Region - Main Tab
 
+#include "View.au3"
+
 Func MainTab()
 	Local $this = _AutoItObject_Create()
 
 	_AutoItObject_AddMethod($this, "Handler", "MainTab_Handler")
 
-	_AutoItObject_AddMethod($this, "Create", "MainTab_Create", True)
-	_AutoItObject_AddMethod($this, "TabItem", "MainTab_TabItem", True)
-	_AutoItObject_AddMethod($this, "Resize", "MainTab_Resize", True)
-	_AutoItObject_AddMethod($this, "Hide", "MainTab_Hide", True)
-	_AutoItObject_AddMethod($this, "Show", "MainTab_Show", True)
-	_AutoItObject_AddMethod($this, "ShowCanvas", "MainTab_ShowCanvas", True)
-	_AutoItObject_AddMethod($this, "ShowParameters", "MainTab_ShowParameters", True)
-	_AutoItObject_AddMethod($this, "ShowScript", "MainTab_ShowScript", True)
-	_AutoItObject_AddMethod($this, "ShowObjectExplorer", "MainTab_ShowObjectExplorer", True)
-	_AutoItObject_AddMethod($this, "ShowSettings", "MainTab_ShowSettings", True)
-
 	_AutoItObject_AddProperty($this, "Name", $ELSCOPE_PRIVATE, "Main Tab")
-	_AutoItObject_AddProperty($this, "ParentHwnd", $ELSCOPE_PRIVATE, Null)
-	_AutoItObject_AddProperty($this, "ParentWidth", $ELSCOPE_PRIVATE, Null)
-	_AutoItObject_AddProperty($this, "ParentHeight", $ELSCOPE_PRIVATE, Null)
-	_AutoItObject_AddProperty($this, "ParentLeft", $ELSCOPE_PRIVATE, Null)
-	_AutoItObject_AddProperty($this, "ParentTop", $ELSCOPE_PRIVATE, Null)
-	_AutoItObject_AddProperty($this, "Tab", $ELSCOPE_PRIVATE, Null)
-	_AutoItObject_AddProperty($this, "TabItemCount", $ELSCOPE_PRIVATE, 5)
-	_AutoItObject_AddProperty($this, "Left", $ELSCOPE_PRIVATE, 92 * $DPIRatio)
-	_AutoItObject_AddProperty($this, "Top", $ELSCOPE_PRIVATE, 5 * $DPIRatio)
-	_AutoItObject_AddProperty($this, "CanvasIndex", $ELSCOPE_PRIVATE, Null)
-	_AutoItObject_AddProperty($this, "ParametersIndex", $ELSCOPE_PRIVATE, Null)
-	_AutoItObject_AddProperty($this, "ScriptIndex", $ELSCOPE_PRIVATE, Null)
-	_AutoItObject_AddProperty($this, "ObjectExplorerIndex", $ELSCOPE_PRIVATE, Null)
-	_AutoItObject_AddProperty($this, "SettingsIndex", $ELSCOPE_PRIVATE, Null)
-	_AutoItObject_AddProperty($this, "CanvasHwnd", $ELSCOPE_PRIVATE, Null)
-	_AutoItObject_AddProperty($this, "ParametersHwnd", $ELSCOPE_PRIVATE, Null)
-	_AutoItObject_AddProperty($this, "ScriptHwnd", $ELSCOPE_PRIVATE, Null)
-	_AutoItObject_AddProperty($this, "ObjectExplorerHwnd", $ELSCOPE_PRIVATE, Null)
-	_AutoItObject_AddProperty($this, "SettingsHwnd", $ELSCOPE_PRIVATE, Null)
-
+	
+	_AutoItObject_AddProperty($this, "View", $ELSCOPE_PRIVATE, MainTab_View())
+	
 	Return $this
 EndFunc   ;==>MainTab
 
@@ -47,114 +21,123 @@ Func MainTab_Handler(ByRef $this, Const ByRef $event)
 	If $event.Sender = $this.Name Then Return False
 
 	Switch $event.ID
-		Case "Init"
-			$messageQueue.Push($messageQueue.CreateEvent($this.Name, "Main Form Request"))
+		Case $init
+			$messageQueue.Push($messageQueue.CreateEvent($this.Name, $mainFormRequest))
 
 			Return True
 
-		Case $this.Name & " Main Form Requested"
-			$this.ParentHwnd = $event.Form
+		Case Response($this.Name, $mainFormRequest)
+			$this.View.ParentHwnd = $event.Form
 
-			$this.ParentWidth = $event.Width
+			$this.View.ParentWidth = $event.Width
 
-			$this.ParentHeight = $event.Height
+			$this.View.ParentHeight = $event.Height
 			
-			$this.Create()
+			$this.View.ParentLeft = $event.Left
+
+			$this.View.ParentTop = $event.Top
+			
+			$this.View.Create()
 
 			Return True
 
-		Case "Main Form Resized"
-			$this.ParentWidth = $event.Width
+		Case $mainFormResized, $mainFormMoved
+			$this.View.ParentWidth = $event.Width
 
-			$this.ParentHeight = $event.Height
+			$this.View.ParentHeight = $event.Height
 
-			$this.Resize()
+			$this.View.ParentLeft = $event.Left
 
-			Return True
+			$this.View.ParentTop = $event.Top
 
-		Case "Main Form Moved"
-			$this.ParentLeft = $event.Left
-
-			$this.ParentTop = $event.Top
-
-			$this.Resize()
-
-			Return True
-
-		Case "Canvas Show"
-			$this.ShowCanvas()
-
-			Return True
-
-		Case "Parameters Show"
-			$this.ShowParameters()
-
-			Return True
-
-		Case "Script Show"
-			$this.ShowScript()
-
-			Return True
-
-		Case "Object Explorer Show"
-			$this.ShowObjectExplorer()
-
-			Return True
-
-		Case "Settings Show"
-			$this.ShowSettings()
+			$this.View.Resize()
 
 			Return True
 			
-		Case "Canvas Tab Item Request"					
-			$messageQueue.Push($messageQueue.CreateEvent($this.Name, $event.Sender & " Tab Item Requested", "TabItemHwnd", HWnd($this.CanvasHwnd)))
+		Case "Canvas " & $tabItemHwndRequest
+			$messageQueue.Push($messageQueue.CreateEvent($this.Name, Response($event.Sender, $tabItemHwndRequest), "TabItemHwnd", $this.View.CanvasHwnd))
 
 			Return True
 			
-		Case "Parameters Tab Item Request"
-			$messageQueue.Push($messageQueue.CreateEvent($this.Name, $event.Sender & " Tab Item Requested", "TabItemHwnd", HWnd($this.ParametersHwnd)))
+		Case "Parameters " & $tabItemHwndRequest
+			$messageQueue.Push($messageQueue.CreateEvent($this.Name, Response($event.Sender, $tabItemHwndRequest), "TabItemHwnd", $this.View.ParametersHwnd))
 
 			Return True
 			
-		Case "Script Tab Item Request"
-			$messageQueue.Push($messageQueue.CreateEvent($this.Name, $event.Sender & " Tab Item Requested", "TabItemHwnd", HWnd($this.ScriptHwnd)))
+		Case "Script " & $tabItemHwndRequest
+			$messageQueue.Push($messageQueue.CreateEvent($this.Name, Response($event.Sender, $tabItemHwndRequest), "TabItemHwnd", $this.View.ScriptHwnd))
 
 			Return True
 			
-		Case "Object Explorer Tab Item Request"
-			$messageQueue.Push($messageQueue.CreateEvent($this.Name, $event.Sender & " Tab Item Requested", "TabItemHwnd", HWnd($this.ObjectExplorerHwnd)))
+		Case "Object Explorer " & $tabItemHwndRequest
+			$messageQueue.Push($messageQueue.CreateEvent($this.Name, Response($event.Sender, $tabItemHwndRequest), "TabItemHwnd", $this.View.ObjectExplorerHwnd))
 
 			Return True
 			
-		Case "Settings Tab Item Request"
-			$messageQueue.Push($messageQueue.CreateEvent($this.Name, $event.Sender & " Tab Item Requested", "TabItemHwnd", HWnd($this.SettingsHwnd)))
+		Case "Settings " & $tabItemHwndRequest
+			$messageQueue.Push($messageQueue.CreateEvent($this.Name, Response($event.Sender, $tabItemHwndRequest), "TabItemHwnd", $this.View.SettingsHwnd))
+
+			Return True
+
+		Case $showCanvasRequest
+			_GUICtrlTab_ActivateTab($this.View.Tab, $this.View.CanvasIndex)
+			
+			$this.View.ShowCanvas()
+
+			Return True
+
+		Case $showParametersRequest
+			_GUICtrlTab_ActivateTab($this.View.Tab, $this.View.ParametersIndex)
+			
+			$this.View.ShowParameters()
+
+			Return True
+
+		Case $showScriptRequest
+			_GUICtrlTab_ActivateTab($this.View.Tab, $this.View.ScriptIndex)
+			
+			$this.View.ShowScript()
+
+			Return True
+
+		Case $showObjectExplorerRequest
+			_GUICtrlTab_ActivateTab($this.View.Tab, $this.View.ObjectExplorerIndex)
+			
+			$this.View.ShowObjectExplorer()
+
+			Return True
+
+		Case $showSettingsRequest
+			_GUICtrlTab_ActivateTab($this.View.Tab, $this.View.SettingsIndex)
+			
+			$this.View.ShowSettings()
 
 			Return True
 
 		Case $GUI_EVENT_PRIMARYUP
-			Switch _GUICtrlTab_HitTest($this.Tab, (MouseGetPos(0) - $this.Left), (MouseGetPos(1) - $this.Top))[0]
-				Case $this.CanvasIndex
-					$this.ShowCanvas()
+			Switch _GUICtrlTab_HitTest($this.View.Tab, ((MouseGetPos(0) - $this.View.TabLeft) * $DPIRatio), ((MouseGetPos(1) - $this.View.TabTop)  * $DPIRatio))[0]
+				Case $this.View.CanvasIndex
+					$this.View.ShowCanvas()
 
 					Return True
 
-				Case $this.ParametersIndex
-					$this.ShowParameters()
+				Case $this.View.ParametersIndex
+					$this.View.ShowParameters()
 
 					Return True
 
-				Case $this.ScriptIndex
-					$this.ShowScript()
+				Case $this.View.ScriptIndex
+					$this.View.ShowScript()
 
 					Return True
 
-				Case $this.ObjectExplorerIndex
-					$this.ShowObjectExplorer()
+				Case $this.View.ObjectExplorerIndex
+					$this.View.ShowObjectExplorer()
 
 					Return True
 
-				Case $this.SettingsIndex
-					$this.ShowSettings()
+				Case $this.View.SettingsIndex
+					$this.View.ShowSettings()
 
 					Return True
 			EndSwitch
@@ -164,118 +147,5 @@ Func MainTab_Handler(ByRef $this, Const ByRef $event)
 
 	Return False
 EndFunc   ;==>MainTab_Handler
-
-Func MainTab_Create(ByRef $this)
-	$this.Tab = GUICtrlCreateTab($this.Left, $this.Top, 350 * $DPIRatio, 25 * $DPIRatio)
-
-	GUICtrlSetResizing($this.Tab, $GUI_DOCKLEFT + $GUI_DOCKSIZE + $GUI_DOCKTOP)
-
-	$this.CanvasIndex = _GUICtrlTab_InsertItem($this.Tab, 0, "Canvas")
-
-	$this.CanvasHwnd = $this.TabItem("Canvas")
-
-	$this.ParametersIndex = _GUICtrlTab_InsertItem($this.Tab, 1, "Parameters")
-
-	$this.ParametersHwnd = $this.TabItem("Parameters")
-
-	$this.ScriptIndex = _GUICtrlTab_InsertItem($this.Tab, 2, "Script")
-
-	$this.ScriptHwnd = $this.TabItem("Script")
-
-	$this.ObjectExplorerIndex = _GUICtrlTab_InsertItem($this.Tab, 3, "Object Explorer")
-
-	$this.ObjectExplorerHwnd = $this.TabItem("Object Explorer")
-
-	$this.SettingsIndex = _GUICtrlTab_InsertItem($this.Tab, 4, "Settings")
-
-	$this.SettingsHwnd = $this.TabItem("Settings")
-EndFunc   ;==>MainTab_Create
-
-Func MainTab_TabItem(ByRef $this, Const ByRef $title)
-	Local Const $hwnd = GUICreate( _
-			$title, _
-			(($this.ParentWidth - 100) * $DPIRatio), _
-			(($this.ParentHeight - 60) * $DPIRatio), _
-			(90 * $DPIRatio), _
-			(30 * $DPIRatio), _
-			$WS_CHILD, _
-			$WS_EX_OVERLAPPEDWINDOW, _
-			HWnd($this.ParentHwnd))
-
-	GUISetBkColor($COLOR_WHITE, $hwnd)
-	
-	Return $hwnd
-EndFunc   ;==>MainTab_TabItem
-
-Func MainTab_Resize(Const ByRef $this)
-	Local Const $tabItems[] = [$this.CanvasHwnd, $this.ParametersHwnd, $this.ScriptIndex, $this.ObjectExplorerHwnd, $this.SettingsIndex]
-
-	Local Const $tabItemCount = UBound($tabItems) - 1
-
-	Local $hwnd
-
-	For $i = 0 To $tabItemCount
-		$hwnd = HWnd($tabItems[$i])
-
-		WinMove($hwnd, _
-				WinGetTitle($hwnd), _
-				(90 * $DPIRatio), _
-				(30 * $DPIRatio), _
-				(($this.ParentWidth - 100) * $DPIRatio), _
-				(($this.ParentHeight - 60) * $DPIRatio))
-	Next
-EndFunc   ;==>MainTab_Resize
-
-Func MainTab_ShowCanvas(Const ByRef $this)
-	$this.Hide($this.ParametersHwnd)
-	$this.Hide($this.ScriptHwnd)
-	$this.Hide($this.ObjectExplorerHwnd)
-	$this.Hide($this.SettingsHwnd)
-	$this.Show($this.CanvasHwnd)
-EndFunc   ;==>MainTab_ShowCanvas
-
-Func MainTab_ShowParameters(Const ByRef $this)
-	$this.Hide($this.CanvasHwnd)
-	$this.Hide($this.ScriptHwnd)
-	$this.Hide($this.ObjectExplorerHwnd)
-	$this.Hide($this.SettingsHwnd)
-	$this.Show($this.ParametersHwnd)
-EndFunc   ;==>MainTab_ShowParameters
-
-Func MainTab_ShowScript(Const ByRef $this)
-	$this.Hide($this.CanvasHwnd)
-	$this.Hide($this.ParametersHwnd)
-	$this.Hide($this.ObjectExplorerHwnd)
-	$this.Hide($this.SettingsHwnd)
-	$this.Show($this.ScriptHwnd)
-EndFunc   ;==>MainTab_ShowScript
-
-Func MainTab_ShowObjectExplorer(Const ByRef $this)
-	$this.Hide($this.CanvasHwnd)
-	$this.Hide($this.ParametersHwnd)
-	$this.Hide($this.ScriptHwnd)
-	$this.Hide($this.SettingsHwnd)
-	$this.Show($this.ObjectExplorerHwnd)
-EndFunc   ;==>MainTab_ShowObjectExplorer
-
-Func MainTab_ShowSettings(Const ByRef $this)
-	$this.Hide($this.CanvasHwnd)
-	$this.Hide($this.ParametersHwnd)
-	$this.Hide($this.ScriptHwnd)
-	$this.Hide($this.ObjectExplorerHwnd)
-	$this.Show($this.SettingsHwnd)
-EndFunc   ;==>MainTab_ShowSettings
-
-Func MainTab_Show(Const ByRef $this, Const ByRef $hwnd)
-	#forceref $this
-
-	GUISetState(@SW_SHOW, HWnd($hwnd))
-EndFunc   ;==>MainTab_Show
-
-Func MainTab_Hide(Const ByRef $this, Const ByRef $hwnd)
-	#forceref $this
-
-	GUISetState(@SW_HIDE, HWnd($hwnd))
-EndFunc   ;==>MainTab_Hide
 
 #EndRegion - Main Tab

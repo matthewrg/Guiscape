@@ -22,7 +22,7 @@ Func Toolbar_Handler(ByRef $this, Const ByRef $event)
 	If $event.Sender = "Toolbar" Then Return False
 
 	Switch $event.ID			
-		Case "Init"
+		Case $init
 			$messageQueue.Push($messageQueue.CreateEvent("Toolbar", "Resources Directory Request"))
 			
 			Return True

@@ -1,7 +1,7 @@
 
 #include-once
 
-#Region - Embedded Object
+#Region - Tab Item Object
 
 #include <MsgBoxConstants.au3>
 
@@ -11,7 +11,7 @@ Func TabItemObject()
 	_AutoItObject_AddMethod($this, "Create", "TabItemObject_Create")
 	_AutoItObject_AddMethod($this, "InitHandler", "TabItemObject_InitHandler")
 
-	_AutoItObject_AddProperty($this, "Name", $ELSCOPE_PUBLIC, Null)
+	_AutoItObject_AddProperty($this, "TabItemName", $ELSCOPE_PUBLIC, Null)
 	_AutoItObject_AddProperty($this, "ParentHwnd", $ELSCOPE_PUBLIC, Null)
 	_AutoItObject_AddProperty($this, "ParentWidth", $ELSCOPE_PUBLIC, Null)
 	_AutoItObject_AddProperty($this, "ParentHeight", $ELSCOPE_PUBLIC, Null)
@@ -29,19 +29,19 @@ EndFunc   ;==>TabItemObject
 
 Func TabItemObject_InitHandler(ByRef $this, Const ByRef $event)
 	Switch $event.ID
-		Case "Init"			
-			$messageQueue.Push($messageQueue.CreateEvent($this.Name, $this.Name & " Tab Item Request"))
+		Case $init		
+			$messageQueue.Push($messageQueue.CreateEvent($this.TabItemName, Request($this.TabItemName, $tabItemHwndRequest)))
 			
 			Return True
 
-		Case $this.Name & " Tab Item Requested"			
+		Case Response($this.TabItemName, $tabItemHwndRequest)
 			$this.TabItemHwnd = $event.TabItemHwnd
 
-			$messageQueue.Push($messageQueue.CreateEvent($this.Name, "Main Form Request"))
+			$messageQueue.Push($messageQueue.CreateEvent($this.TabItemName, $mainFormRequest))
 			
 			Return True
 			
-		Case $this.Name & " Main Form Requested"
+		Case Response($this.TabItemName, $mainFormRequest)
 			$this.ParentHwnd = $event.Form
 
 			$this.ParentWidth = $event.Width

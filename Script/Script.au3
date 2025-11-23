@@ -1,6 +1,4 @@
 
-#AutoIt3Wrapper_Add_Constants=y
-
 #include-once
 
 #region - Script
@@ -17,7 +15,7 @@ Func Script()
 	_AutoItObject_AddProperty($this, "Save", $ELSCOPE_PRIVATE, Null)
 	_AutoItObject_AddProperty($this, "SaveAs", $ELSCOPE_PRIVATE, Null)
 	
-	$this.Name = "Script"
+	$this.TabItemName = "Script"
 
 	Return $this
 EndFunc   ;==>Script
@@ -29,19 +27,19 @@ Func Script_Handler(ByRef $this, Const ByRef $event)
 EndFunc
 
 Func Script_Create(ByRef $this)			
-	Local Const $prevHwnd = GUISwitch($this.TabItemHwnd)
+	Local Const $prevHwnd = GUISwitch(HWnd($this.TabItemHwnd))
 	
-	GUICtrlCreateTab(5 * $DPIRatio, 5 * $DPIRatio, ($this.ParentWidth - 115) * $DPIRatio, ($this.ParentHeight - 95) * $DPIRatio)
+	CreateTab(5, 5, $this.ParentWidth - 115, $this.ParentHeight - 95)
 
 	GUICtrlCreateTabItem("Script")
 
-	$this.Editor = GUICtrlCreateEdit('', 15 * $DPIRatio, 35 * $DPIRatio, ($this.ParentWidth - 135) * $DPIRatio, ($this.ParentHeight - 165) * $DPIRatio, BitOR($ES_MULTILINE, $ES_WANTRETURN, $ES_AUTOVSCROLL, $WS_VSCROLL))
+	$this.Editor = CreateEdit(15, 35, $this.ParentWidth - 135, $this.ParentHeight - 165, BitOR($ES_MULTILINE, $ES_WANTRETURN, $ES_AUTOVSCROLL, $WS_VSCROLL))
 
-	$this.Open = GUICtrlCreateButton("Open", 20, ($this.ParentHeight - 123) * $DPIRatio, 50 * $DPIRatio, 25 * $DPIRatio)
+	$this.Open = CreateButton("Open", 20, $this.ParentHeight - 123)
 
-	$this.Save = GUICtrlCreateButton("Save", 80, ($this.ParentHeight - 123) * $DPIRatio, 50 * $DPIRatio, 25 * $DPIRatio)
+	$this.Save = CreateButton("Save", 80, $this.ParentHeight - 123)
 
-	$this.SaveAs = GUICtrlCreateButton("Save As", 140, ($this.ParentHeight - 123) * $DPIRatio, 50 * $DPIRatio, 25 * $DPIRatio)
+	$this.SaveAs = CreateButton("Save As", 140, $this.ParentHeight - 123)
 
 	GUICtrlCreateTabItem('')
 

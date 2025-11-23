@@ -9,92 +9,81 @@ Func Menubar()
 
 	_AutoItObject_AddMethod($this, "Handler", "Menubar_Handler")
 
+	_AutoItObject_AddProperty($this, "View", $ELSCOPE_PRIVATE, Menubar_View())
+	
 	_AutoItObject_AddProperty($this, "ParentHwnd", $ELSCOPE_PRIVATE, Null)
-
-	_AutoItObject_AddProperty($this, "View", $ELSCOPE_PRIVATE, MenubarView())
+	
+	_AutoItObject_AddProperty($this, "Menubar", $ELSCOPE_PRIVATE, "Menubar")
 
 	Return $this
 EndFunc   ;==>Menubar
 
-Func MenuBar_Handler($this, Const $event)
-	If $event.Sender = "Menubar" Then Return False
+Func MenuBar_Handler(ByRef $this, Const ByRef $event)
+	If $event.Sender = $this.Menubar Then Return False
 
 	Switch $event.ID
-		Case "Init"
+		Case $init
 			$this.View.Create()
 
-			$messageQueue.Push($messageQueue.CreateEvent("Menubar", "Hwnd Request"))
-
-			$messageQueue.Push($messageQueue.CreateEvent("Menubar", "Settings Request"))
+			$messageQueue.Push($messageQueue.CreateEvent($this.Menubar, $mainFormHwndRequest))
 
 			Return True
 
-		Case "Hwnd Requested"
+		Case Response($this.Menubar, $mainFormHwndRequest)
 			$this.ParentHwnd = $event.Hwnd
 
-		Case "Settings Requested"
-			Print("Menubar_InitView_Handler: Settings Requested")
-
-;~ 			$this.View.Initialize($settings) ; uncomment this after Settings is finished
+			$messageQueue.Push($messageQueue.CreateEvent($this.Menubar, $settingsRequest))
 
 			Return True
 			
-		Case $this.View.Canvas
-			$messageQueue.Push($messageQueue.CreateEvent("Menubar", "Canvas Menu Item Selected"))
-
-			Return True
-
-		Case $this.View.Parameters
-			$messageQueue.Push($messageQueue.CreateEvent("Menubar", "Parameters Menu Item Selected"))
-
-			Return True
-
-		Case $this.View.Script
-			$messageQueue.Push($messageQueue.CreateEvent("Menubar", "Script Menu Item Selected"))
-
-			Return True
-
-		Case $this.View.ObjectExplorer
-			$messageQueue.Push($messageQueue.CreateEvent("Menubar", "Object Explorer Menu Item Selected"))
-
-			Return True
-
-		Case $this.View.Settings
-			$messageQueue.Push($messageQueue.CreateEvent("Menubar", "Settings Menu Item Selected"))
-
-			Return True
-
-		Case $this.View.New
-			$messageQueue.Push($messageQueue.CreateEvent("Menubar", "New au3"))
+		Case Response($this.Menubar, $settingsRequest)
+;~ 			$this.View.Initialize($settings) ; uncomment this after Settings is finished
 
 			Return True
 
 		Case $this.View.Open
-			Local Const $selectedAu3 = FileOpenDialog("Choose an .au3", @DesktopCommonDir, "AutoIt (*.au3)", '', '', HWnd($this.ParentHwnd))
+			Local $selectedAu3 = FileOpenDialog("Choose an .au3", @DesktopCommonDir, "AutoIt (*.au3)", '', '', HWnd($this.ParentHwnd))
 
-			$messageQueue.Push($messageQueue.CreateEvent("Menubar", "Selected au3", "au3", $selectedAu3))
+			$messageQueue.Push($messageQueue.CreateEvent($this.Menubar, "Selected au3", "au3", $selectedAu3))
 
 			Return True
 
 		Case $this.View.Save
-			$messageQueue.Push($messageQueue.CreateEvent("Menubar", "Save au3"))
+			$messageQueue.Push($messageQueue.CreateEvent($this.Menubar, "Save au3"))
 
 			Return True
 
 		Case $this.View.SaveAs
-			$messageQueue.Push($messageQueue.CreateEvent("Menubar", "Save as"))
+			$selectedAu3 = FileOpenDialog("Choose an .au3", @DesktopCommonDir, "AutoIt (*.au3)", '', '', HWnd($this.ParentHwnd))
+			
+			$messageQueue.Push($messageQueue.CreateEvent($this.Menubar, "Save au3 as", "au3", $selectedAu3))
 
 			Return True
 
 		Case $this.View.Exit
-			$messageQueue.Push($messageQueue.CreateEvent("Menubar", $GUI_EVENT_CLOSE))
+			$messageQueue.Push($messageQueue.CreateEvent($this.Menubar, $GUI_EVENT_CLOSE))
 			
 			_Exit($event)
 
 			Return True
 
-		Case $this.View.ShowGrid, $this.View.GridSnap, $this.View.ShowHidden
+		Case $this.View.ShowGrid
+			$messageQueue.Push($messageQueue.CreateEvent($this.Menubar, "Show Grid " & $this.View.GetState($event.ID)))
+			
+			$this.View.Toggle($event.ID)
 
+			Return True
+
+		Case $this.View.GridSnap
+			$messageQueue.Push($messageQueue.CreateEvent($this.Menubar, "Grid Snap " & $this.View.GetState($event.ID)))
+			
+			$this.View.Toggle($event.ID)
+
+			Return True
+
+		Case $this.View.ShowHidden
+			$messageQueue.Push($messageQueue.CreateEvent($this.Menubar, "Show Hidden " & $this.View.GetState($event.ID)))
+			
 			$this.View.Toggle($event.ID)
 
 			Return True

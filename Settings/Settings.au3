@@ -4,6 +4,7 @@
 #Region - Settings
 
 #include "Model.au3"
+
 #include "View.au3"
 
 Func Settings()
@@ -14,26 +15,28 @@ Func Settings()
 	_AutoItObject_OverrideMethod($this, "Create", "Settings_Create")
 	
 	_AutoItObject_AddProperty($this, "Model", $ELSCOPE_PRIVATE, Settings_Model())
+	
 	_AutoItObject_AddProperty($this, "View", $ELSCOPE_PRIVATE, Settings_View())
 	
-	$this.Name = "Settings"
+	$this.TabItemName = "Settings"
 
 	Return $this
 EndFunc   ;==>Settings
 
 Func Settings_Handler(ByRef $this, Const ByRef $event)
 	$this.InitHandler($event)
-
-	Switch $event.ID
-		Case "Settings Requested"
-			
-	EndSwitch
+	
+	$this.View.Handler($event)
 	
 	Return False
 EndFunc   ;==>Settings_Handler
 
 Func Settings_Create(ByRef $this)
+	Local Const $prevHwnd = GUISwitch(HWnd($this.TabItemHwnd))
+
 	$this.View.Create()
+
+	GUISwitch($prevHwnd)
 EndFunc
 
 #EndRegion - Settings

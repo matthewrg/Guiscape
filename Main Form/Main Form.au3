@@ -25,12 +25,12 @@ Func MainForm_Handler(ByRef $this, Const ByRef $event)
 				Case $this.View.Hwnd
 					$this.View.SetSizePos()
 					
-					$messageQueue.Push($messageQueue.CreateEvent($this.Name, "Resized", "Width", $this.View.Width, "Height", $this.View.Height))
+					$messageQueue.Push($messageQueue.CreateEvent($this.Name, $mainFormResized, "Width", $this.View.Width, "Height", $this.View.Height, "Left", $this.View.Left, "Top", $this.View.Top))
 
 					Return True
 			EndSwitch
 			
-		Case "GUI_NC_CLICKED"
+		Case $GUI_NC_CLICKED
 			Switch $event.Form
 				Case $this.View.Hwnd
 					;
@@ -38,24 +38,24 @@ Func MainForm_Handler(ByRef $this, Const ByRef $event)
 			
 			Return True
 
-		Case "Init"
+		Case $init
 			$this.View.Create()
 			
-			$messageQueue.Push($messageQueue.CreateEvent($this.Name, "Main Form Broadcast", "Form", $this.View.Hwnd, "Width", $this.View.Width, "Height", $this.View.Height))
+			$messageQueue.Push($messageQueue.CreateEvent($this.Name, $mainFormBroadcast, "Form", $this.View.Hwnd, "Width", $this.View.Width, "Height", $this.View.Height, "Left", $this.View.Left, "Top", $this.View.Top))
 			
 			Return True
 			
-		Case "Main Form Request"
-			$messageQueue.Push($messageQueue.CreateEvent($this.Name, $event.Sender & " Main Form Requested", "Form", $this.View.Hwnd, "Width", $this.View.Width, "Height", $this.View.Height))
+		Case $mainFormRequest
+			$messageQueue.Push($messageQueue.CreateEvent($this.Name, Response($event.Sender, $mainFormRequest), "Form", $this.View.Hwnd, "Width", $this.View.Width, "Height", $this.View.Height, "Left", $this.View.Left, "Top", $this.View.Top))
 
 			Return True
 			
-		Case "Hwnd Request"
-			$messageQueue.Push($messageQueue.CreateEvent($this.Name, $event.Sender & " Hwnd Requested", "Hwnd", $this.View.Hwnd))
+		Case $mainFormHwndRequest
+			$messageQueue.Push($messageQueue.CreateEvent($this.Name, Response($event.Sender, $mainFormHwndRequest), "Hwnd", $this.View.Hwnd))
 
 			Return True
 			
-		Case "Main Form Show"
+		Case $mainFormShowRequest
 			$this.View.Show()
 
 			Return True

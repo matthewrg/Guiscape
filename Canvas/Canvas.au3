@@ -5,8 +5,6 @@
 
 #include <MsgBoxConstants.au3>
 
-#include "..\Embedded Object.au3"
-
 Func Canvas()
 	Local $this = _AutoItObject_Create(TabItemObject())
 
@@ -17,7 +15,7 @@ Func Canvas()
 	_AutoItObject_AddProperty($this, "ContextCreateForm", $ELSCOPE_PRIVATE, Null)
 	_AutoItObject_AddProperty($this, "ContextErase", $ELSCOPE_PRIVATE, Null)
 	
-	$this.Name = "Canvas"
+	$this.TabItemName = "Canvas"
 	
 	Return $this
 EndFunc   ;==>Canvas
@@ -27,19 +25,19 @@ Func Canvas_Handler(ByRef $this, Const ByRef $event)
 	
 	Switch $event.ID
 		Case $this.ContextCreateForm
-			$messageQueue.Push($messageQueue.CreateEvent($this.Name, "Form Create Request"))
+			$messageQueue.Push($messageQueue.CreateEvent($this.TabItemName, "Form Create Request"))
 
 			Return True
 
 		Case $this.ContextErase
-			MsgBox($MB_YESNO + $MB_ICONQUESTION, "Are you sure?", "This action cannot be undone unless you save your progress.", 0, $this.TabItemHwnd)
+			MsgBox($MB_YESNO + $MB_ICONQUESTION, "Are you sure?", "This action cannot be undone unless you save your progress.", 0, HWnd($this.TabItemHwnd))
 
 			Return True
 
 		Case $GUI_EVENT_PRIMARYUP
 			Switch WinGetTitle($event.Form)
-				Case $this.Name
-					$messageQueue.Push($messageQueue.CreateEvent($this.Name, $this.Name & " Clicked"))
+				Case $this.TabItemName
+					$messageQueue.Push($messageQueue.CreateEvent($this.TabItemName, $this.TabItemName & " Clicked"))
 
 					Return True
 			EndSwitch
@@ -51,13 +49,13 @@ Func Canvas_Handler(ByRef $this, Const ByRef $event)
 EndFunc   ;==>Canvas_Handler
 
 Func Canvas_Create(ByRef $this)	
-	Local Const $prevHwnd = GUISwitch($this.TabItemHwnd)
+	Local Const $prevHwnd = GUISwitch(HWnd($this.TabItemHwnd))
 	
 	Local Const $contextMenu = GUICtrlCreateContextMenu()
 
 	$this.ContextCreateForm = GUICtrlCreateMenuItem("Create Form", $contextMenu)
 
-	$this.ContextErase = GUICtrlCreateMenuItem("Erase " & $this.Name, $contextMenu)
+	$this.ContextErase = GUICtrlCreateMenuItem("Erase " & $this.TabItemName, $contextMenu)
 
 	GUISwitch($prevHwnd)
 EndFunc   ;==>Canvas_Create

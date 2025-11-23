@@ -10,7 +10,7 @@ Func ObjectExplorer()
 	
 	_AutoItObject_OverrideMethod($this, "Create", "ObjectExplorer_Create")
 	
-	$this.Name = "Object Explorer"
+	$this.TabItemName = "Object Explorer"
 
 	Return $this
 EndFunc   ;==>ObjectExplorer
@@ -24,7 +24,7 @@ Func ObjectExplorer_Handler(ByRef $this, Const ByRef $event)
 EndFunc
 
 Func ObjectExplorer_Create(ByRef $this)	
-	Local Const $prevHwnd = GUISwitch($this.TabItemHwnd)
+	Local Const $prevHwnd = GUISwitch(HWnd($this.TabItemHwnd))
 
 
 

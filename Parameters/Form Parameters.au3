@@ -4,22 +4,18 @@
 #Region ; FormParameters
 
 Func FormParameters()
-	Local $this = _AutoItObject_Create()
+	Local $this = _AutoItObject_Create(TabItemObject())
 
 	_AutoItObject_AddMethod($this, "Handler", "FormParameters_Handler")
-
-	_AutoItObject_AddMethod($this, "Create", "FormParameters_Create", True)
+	
+	_AutoItObject_OverrideMethod($this, "Create", "FormParameters_Create")
+	
 	_AutoItObject_AddMethod($this, "Init", "FormParameters_Init", True)
 	_AutoItObject_AddMethod($this, "PropertiesInit", "FormParameters_PropertiesInit", True)
 	_AutoItObject_AddMethod($this, "StylesInit", "FormParameters_StylesInit", True)
 	_AutoItObject_AddMethod($this, "ExStylesInit", "FormParameters_ExStylesInit", True)
-	_AutoItObject_AddMethod($this, "Show", "FormParameters_Show", True)
-	_AutoItObject_AddMethod($this, "Hide", "FormParameters_Hide", True)
-
-	_AutoItObject_AddProperty($this, "Hwnd", $ELSCOPE_PRIVATE)
-	_AutoItObject_AddProperty($this, "ParentHwnd", $ELSCOPE_PRIVATE)
-	_AutoItObject_AddProperty($this, "ParentWidth", $ELSCOPE_PRIVATE)
-	_AutoItObject_AddProperty($this, "ParentHeight", $ELSCOPE_PRIVATE)
+	
+	$this.TabItemName = "Form Parameters"
 
 	#Region - Properties
 	_AutoItObject_AddProperty($this, "Name", $ELSCOPE_PRIVATE)
@@ -101,115 +97,105 @@ EndFunc   ;==>FormParameters
 
 Func FormParameters_Handler(ByRef $this, Const ByRef $event)
 	Switch $event.ID
-		Case "Init View"
-			$messageQueue.Push($messageQueue.CreateEvent("Form Parameters", "Size Request"))
+		Case $init
+			$messageQueue.Push($messageQueue.CreateEvent($this.TabItemName, $mainFormSizeRequest))
 
 			Return True
 
-		Case "Size Requested"
+		Case Response($this.TabItemName, $mainFormSizeRequest)
 			$this.ParentWidth = $event.Width
 
 			$this.ParentHeight = $event.Height
 
-			$messageQueue.Push($messageQueue.CreateEvent("Form Parameters", "Hwnd Request"))
+			$messageQueue.Push($messageQueue.CreateEvent($this.TabItemName, $mainFormHwndRequest))
 
 			Return True
 
-		Case "Hwnd Requested"
+		Case Response($this.TabItemName, $mainFormHwndRequest)
 			$this.ParentHwnd = $event.Form
 
 			$this.Create()
 
 			Return True
 
-		Case "Form Parameters Show"
-			$this.Show()
-
-			Return True
-
-		Case "Form Parameters Hide"
-			$this.Hide()
-
-			Return True
-
 		Case $this.Name
-			$messageQueue.Push($messageQueue.CreateEvent("Form Parameters", "Name Changed", "Form", $event.Form, "Name", GUICtrlRead($event.ID)))
+			$messageQueue.Push($messageQueue.CreateEvent($this.TabItemName, "Name Changed", "Form", $event.Form, "Name", GUICtrlRead($event.ID)))
 
 			Return True
 
 		Case $this.Title
-			$messageQueue.Push($messageQueue.CreateEvent("Form Parameters", "Title Changed", "Form", $event.Form, "Title", GUICtrlRead($event.ID)))
+			$messageQueue.Push($messageQueue.CreateEvent($this.TabItemName, "Title Changed", "Form", $event.Form, "Title", GUICtrlRead($event.ID)))
 
 			Return True
 
 		Case $this.Left
-			$messageQueue.Push($messageQueue.CreateEvent("Form Parameters", "Left Changed", "Form", $event.Form, "Left", GUICtrlRead($event.ID)))
+			$messageQueue.Push($messageQueue.CreateEvent($this.TabItemName, "Left Changed", "Form", $event.Form, "Left", GUICtrlRead($event.ID)))
 
 			Return True
 
 		Case $this.Top
-			$messageQueue.Push($messageQueue.CreateEvent("Form Parameters", "Top Changed", "Form", $event.Form, "Top", GUICtrlRead($event.ID)))
+			$messageQueue.Push($messageQueue.CreateEvent($this.TabItemName, "Top Changed", "Form", $event.Form, "Top", GUICtrlRead($event.ID)))
 
 			Return True
 
 		Case $this.Width
-			$messageQueue.Push($messageQueue.CreateEvent("Form Parameters", "Width Changed", "Form", $event.Form, "Width", GUICtrlRead($event.ID)))
+			$messageQueue.Push($messageQueue.CreateEvent($this.TabItemName, "Width Changed", "Form", $event.Form, "Width", GUICtrlRead($event.ID)))
 
 			Return True
 
 		Case $this.Height
-			$messageQueue.Push($messageQueue.CreateEvent("Form Parameters", "Height Changed", "Form", $event.Form, "Height", GUICtrlRead($event.ID)))
+			$messageQueue.Push($messageQueue.CreateEvent($this.TabItemName, "Height Changed", "Form", $event.Form, "Height", GUICtrlRead($event.ID)))
 
 			Return True
 
 		Case $this.BGColor
-			$messageQueue.Push($messageQueue.CreateEvent("Form Parameters", "Background Color Request"))
+			$messageQueue.Push($messageQueue.CreateEvent($this.TabItemName, "Background Color Request"))
 
 			Return True
 
 		Case "Background Color Requested"
-			Local Const $bgColor = _ChooseColor(2, $event.BGColor, 2, HWnd($this.View.Hwnd))
+			Local Const $bgColor = _ChooseColor(2, $event.BGColor, 2, HWnd($this.ParentHwnd))
 
-			$messageQueue.Push($messageQueue.CreateEvent("Form Parameters", "Foreground Color Changed", "Form", $event.Form, "Background Color", GUICtrlRead($bgColor)))
+			$messageQueue.Push($messageQueue.CreateEvent($this.TabItemName, "Foreground Color Changed", "Form", $event.Form, "Background Color", GUICtrlRead($bgColor)))
 
 			Return True
 
 		Case $this.DefBgColor
-			$messageQueue.Push($messageQueue.CreateEvent("Form Parameters", "Foreground Color Request"))
+			$messageQueue.Push($messageQueue.CreateEvent($this.TabItemName, "Foreground Color Request"))
 
 			Return True
 
 		Case "Foreground Color Requested"
-			Local Const $fgColor = _ChooseColor(2, $event.FGColor, 2, HWnd($this.View.Hwnd))
+			Local Const $fgColor = _ChooseColor(2, $event.FGColor, 2, HWnd($this.ParentHwnd))
 
-			$messageQueue.Push($messageQueue.CreateEvent("Form Parameters", "Foreground Color Changed", "Form", $event.Form, "Foreground Color", GUICtrlRead($fgColor)))
+			$messageQueue.Push($messageQueue.CreateEvent($this.TabItemName, "Foreground Color Changed", "Form", $event.Form, "Foreground Color", GUICtrlRead($fgColor)))
 
 			Return True
 
 		Case $this.Cursor
-			$messageQueue.Push($messageQueue.CreateEvent("Form Parameters", "Cursor Changed", "Form", $event.Form, "Cursor", Eval("MCID_" & GUICtrlRead($event.ID))))
+			$messageQueue.Push($messageQueue.CreateEvent($this.TabItemName, "Cursor Changed", "Form", $event.Form, "Cursor", Eval("MCID_" & GUICtrlRead($event.ID))))
 
 			Return True
 
 		Case $this.Font
-			Local Const $font = _ChooseFont(Default, Default, Default, Default, Default, Default, Default, HWnd($this.View.Hwnd))
+			Local Const $font = _ChooseFont(Default, Default, Default, Default, Default, Default, Default, HWnd($this.ParentHwnd))
 
-			$messageQueue.Push($messageQueue.CreateEvent("Form Parameters", "Font Changed", "Form", $event.Form, "Font", $font))
+			$messageQueue.Push($messageQueue.CreateEvent($this.TabItemName, "Font Changed", "Form", $event.Form, "Font", $font))
 
 			Return True
 
 
 		Case $this.Helpfile
-			Local Const $helpfile = FileOpenDialog("Choose a helpfile.", @ScriptDir, "Help (*.chm)", 0, HWnd($this.View.Hwnd))
+			Local Const $helpfile = FileOpenDialog("Choose a helpfile.", @ScriptDir, "Help (*.chm)", 0, HWnd($this.ParentHwnd))
 
-			$messageQueue.Push($messageQueue.CreateEvent("Form Parameters", "Helpfile Changed", "Form", $event.Form, "Helpfile", $helpfile))
+			$messageQueue.Push($messageQueue.CreateEvent($this.TabItemName, "Helpfile Changed", "Form", $event.Form, "Helpfile", $helpfile))
 
 			Return True
 
 		Case $this.Icon
-			Local Const $icon = FileOpenDialog("Choose an icon.", @ScriptDir, "Icon (*.ico)", 0, HWnd($this.View.Hwnd))
+			Local Const $icon = FileOpenDialog("Choose an icon.", @ScriptDir, "Icon (*.ico)", 0, HWnd($this.ParentHwnd))
 
-			$messageQueue.Push($messageQueue.CreateEvent("Form Parameters", "Icon Changed", "Form", $event.Form, "Icon", $icon))
+			$messageQueue.Push($messageQueue.CreateEvent($this.TabItemName, "Icon Changed", "Form", $event.Form, "Icon", $icon))
 
 			Return True
 	EndSwitch
@@ -218,17 +204,9 @@ Func FormParameters_Handler(ByRef $this, Const ByRef $event)
 EndFunc   ;==>FormParameters_Handler
 
 Func FormParameters_Create(ByRef $this)
-	$this.Hwnd = GUICreate( _
-			"Form Properties", _
-			(($this.ParentWidth - 100) * $DPIRatio), _
-			(($this.ParentHeight - 60) * $DPIRatio), _
-			(90 * $DPIRatio), _
-			(30 * $DPIRatio), _
-			$WS_CHILD, _
-			$WS_EX_OVERLAPPEDWINDOW, _
-			HWnd($this.ParentHwnd))
-
-	GUICtrlCreateTab(5 * $DPIRatio, 5 * $DPIRatio, ($this.ParentWidth - 110) * $DPIRatio, ($this.ParentHeight - 70) * $DPIRatio)
+	Local Const $prevHwnd = GUISwitch(HWnd($this.TabItemHwnd))
+	
+	$this.Tab = CreateTab(5, 5, $this.ParentWidth - 110, $this.ParentHeight - 70)
 
 	#Region - Properties
 	GUICtrlCreateTabItem("Properties")
@@ -408,7 +386,7 @@ Func FormParameters_Create(ByRef $this)
 	GUICtrlCreateTabItem('')
 	#EndRegion - Accelerators
 
-	GUISwitch(HWnd($this.ParentHwnd))
+	GUISwitch($prevHwnd)
 EndFunc   ;==>FormParameters_Create
 
 Func FormParameters_Init(Const ByRef $this, Const ByRef $form)
@@ -596,13 +574,5 @@ Func FormParameters_ExStylesInit(ByRef $this, Const ByRef $form)
 		EndIf
 	Next
 EndFunc   ;==>FormParameters_ExStylesInit
-
-Func FormParameters_Show(Const ByRef $this)
-	GUISetState(@SW_SHOW, HWnd($this.Hwnd))
-EndFunc   ;==>FormParameters_Show
-
-Func FormParameters_Hide(Const ByRef $this)
-	GUISetState(@SW_HIDE, HWnd($this.Hwnd))
-EndFunc   ;==>FormParameters_Hide
 
 #EndRegion ; FormParameters
